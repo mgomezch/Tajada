@@ -6,8 +6,8 @@ Proyecto de [CI4721](http://ldc.usb.ve/~emhn/cursos/ci4721/) (Lenguajes de progr
 
 Por ahora, solo unos links interesantes:
 
-*   Hemos escrito algunos [trozos de código](http://github.com/Targen/rel/blob/master/sample/misc.rel).
+*   Hemos escrito algunos [trozos de código](http://github.com/Targen/rel/raw/master/sample/misc.rel).
 
 *   La idea de hacer un lenguaje con operaciones relacionales salió de [las observaciones de Matthew Might sobre la similitud de muchos componentes de scripts de UNIX con operadores relacionales](http://matt.might.net/articles/sql-in-the-shell/).
 
-*   Parte de la sintaxis está ~~siendo copiada descaradamente de~~inspirada en [esta información sobre un lenguaje de consultas llamado ISBL](http://github.com/Targen/rel/blob/master/ref/RelMod.pdf).
+*   Parte de la sintaxis está ~~siendo copiada descaradamente de~~inspirada en [esta información sobre un lenguaje de consultas llamado ISBL](http://github.com/Targen/rel/raw/master/ref/RelMod.pdf).

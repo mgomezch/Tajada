@@ -1,5 +1,5 @@
 [curso]: http://ldc.usb.ve/~emhn/cursos/ci4721/
-[sample/misc.c]: http://github.com/Targen/rel/sample/misc.c
+[sample/misc.c]: http://github.com/Targen/rel/blob/master/sample/misc.rel
 
 # Rel: ¿Un lenguaje relacional?
 

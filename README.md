@@ -26,7 +26,7 @@ Tajada soporta varios tipos de tipos:
 
     *   **Caracter**: Almacena exactamente un punto de código Unicode cualquiera.  El tipo se especifica con la palabra clave `char` o `caraota`.
 
-    *   **Entero**: Almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive.  El tipo se especifica con la palabra clave `int` o `queso`.
+    *   **Entero**: Almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque eso es lo que cabe en un entero de 32 bits en C).  El tipo se especifica con la palabra clave `int` o `queso`.
 
     *   **Punto flotante**: Almacena un número de punto flotante con al menos la precisión de un `float` de 32 bits de C.  El tipo se especifica con la palabra clave `float` o `papelón`.
 
@@ -76,8 +76,10 @@ Cosas por hacer
 ---------------
 
 Términos asignados:
+
 *   arroz → arreglo
 *   arepa → void
 
 Términos por asignar:
+
 *   carne mechada

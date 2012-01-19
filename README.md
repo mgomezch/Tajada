@@ -20,6 +20,7 @@ Tipos de datos
 --------------
 
 Tajada soporta varios tipos de tipos:
+
 *   Los escalares:
     *   **Booleano**: Solo puede tomar dos valores: `true` o `tetero` para representar representar “verdadero”, y `false` o `negrito` para representar “falso”.  El tipo se especifica con la palabra clave `bool` o `café`.
 

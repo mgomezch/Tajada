@@ -126,7 +126,7 @@ Proyecto de [CI4721](https://ldc.usb.ve/~emhn/cursos/ci4721) (Lenguajes de progr
 
 3.  ## Estructura
 
-    Las tajadas consisten de una secuencia de definiciones de variables, y declaraciones y definiciones de tipos, operadores y funciones.
+    Las tajadas son una secuencia de definiciones de variables, y declaraciones y definiciones de tipos, operadores y funciones.
 
     1.  ### Declaraciones
 

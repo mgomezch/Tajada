@@ -24,11 +24,11 @@ Proyecto de [CI4721](https://ldc.usb.ve/~emhn/cursos/ci4721) (Lenguajes de progr
 
         Los **símbolos reservados** de Tajada son ciertas secuencias no vacías de puntos de código Unicode usadas por el lenguaje como parte de su sintaxis.  Los **símbolos** son aquellas secuencias no vacías de puntos de código Unicode consecutivos que ocurren en una tajada, no tienen como subsecuencia a ningún símbolo reservado, y son delimitados por símbolos reservados o el inicio o final de la tajada.
 
-        1.  ### Espacio en blanco
+        1.  #### Espacio en blanco
 
             Un **espacio en blanco** es un símbolo reservado que no tiene efecto otro que delimitar símbolos y otros símbolos reservados.
 
-            1.  #### Comentarios de bloque
+            1.  ##### Comentarios de bloque
 
                 Un **inicio de comentario de bloque** es un punto de código “SINGLE LEFT-POINTING ANGLE QUOTATION MARK” (U+2039: ‹).
 
@@ -40,7 +40,7 @@ Proyecto de [CI4721](https://ldc.usb.ve/~emhn/cursos/ci4721) (Lenguajes de progr
 
                 Si el punto de código que indica el inicio de un comentario de bloque es usado en un documento fuera de un literal de cadena de caracteres, y no es seguido eventualmente por el correspondiente punto de código que indica el final del comentario de bloque, entonces ese documento no es una tajada.
 
-            2.  #### Comentarios de línea
+            2.  ##### Comentarios de línea
 
                 Un **fin de línea** es [cualquier punto de código considerado como indicador de fin o separación de líneas o párrafos según Unicode][UNL].
 
@@ -50,7 +50,7 @@ Proyecto de [CI4721](https://ldc.usb.ve/~emhn/cursos/ci4721) (Lenguajes de progr
 
 [UNL]: <http://www.unicode.org/versions/Unicode6.0.0/ch05.pdf> (Sección 5.8 (Newline Guidelines) del capítulo 5 (Implementation Guidelines) de la versión 6.0.0 del estándar Unicode (PDF))
 
-            3.  #### Simple
+            3.  ##### Caracteres blancos
 
                 [Todo punto de código Unicode que tenga la propiedad “White_Space”][UWS] es un espacio en blanco si ocurre fuera de un literal de cadena de caracteres, fuera de un comentario de línea y fuera de un comentario de bloque.
 
@@ -84,11 +84,11 @@ Proyecto de [CI4721](https://ldc.usb.ve/~emhn/cursos/ci4721) (Lenguajes de progr
 
                 Se interpreta como un número natural escrito en base decimal.
 
-            2.  #### Punto flotante
+            2.  ##### Punto flotante
 
-            3.  #### Cadena de caracteres
+            3.  ##### Cadena de caracteres
 
-            4.  #### Pabellón
+            4.  ##### Pabellón
 
         5.  #### Identificadores
 

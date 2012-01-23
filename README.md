@@ -31,6 +31,8 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         Un **escapador de literal de cadena de caracteres** es un punto de código “REVERSE SOLIDUS” (U+005C, \).
 
+        [Nota: Cuando se hace referencia por primera vez en este documento a un punto de código particular de Unicode, normalmente se escribe entre un inicio de literal de cadena de caracteres y un final de literal de cadena de caracteres el valor de la propiedad “Name” del punto de código, seguido de un punto de código “SPACE” (U+0020,  ), luego un punto de código “LEFT PARENTHESIS” (U+0028, (), luego la expresión del punto de código de interés en el formato especificado por la primera sección del apéndice A del [estándar Unicode 6.0.0], luego un punto de código “COMMA” (U+002C, ,), luego otro punto de código “SPACE” (U+0020,  ), luego el punto de código de interés y finalmente un punto de código “RIGHT PARENTHESIS” (U+0029, )).  Si para el punto de código de interés la propiedad “Name” se define como la cadena vacía, se usará algún otro nombre para el punto de código.  Si el punto de código no representa por sí solo a un glifo, se podría omite junto con la coma y el espacio que le preceden. —fin de la nota más inútil jamás escrita en una especificación de un lenguaje]
+
         Un **escapado de literal de cadena de caracteres** es una secuencia de dos puntos de código en la que el primero es un escapador de literal de cadena de caracteres.
 
         Un **elemento de literal de cadena de caracteres** es un escapado de literal de cadena de caracteres, o un punto de código distinto de un fin de literal de cadena de caracteres y de un escapador de literal de cadena de caracteres.
@@ -59,7 +61,23 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Comentarios de línea
 
-            Un **fin de línea** es [cualquier punto de código considerado como indicador de fin o separación de líneas o párrafos según Unicode][UNL].
+            Un **fin de línea** es [cualquiera de los siguientes puntos de código:][UNL].
+
+            *   “LINE FEED (LF)”       (U+000A)
+
+            *   “LINE TABULATION”      (U+000B)
+
+            *   “FORM FEED (FF)”       (U+000C)
+
+            *   “CARRIAGE RETURN (CR)” (U+000D)
+
+            *   “NEXT LINE (NEL)”      (U+0085)
+
+            *   “LINE SEPARATOR”       (U+2028)
+
+            *   “PARAGRAPH SEPARATOR”  (U+2029)
+
+            [Nota: Los nombres mostrados para los puntos de código anteriormente enumerados, exceptuando a los dos últimos, no corresponden a la propiedad “Name” (que es vacía para todos ellos) sino a la propiedad “Unicode_1_Name”. —fin de la nota]
 
             Un **inicio de comentario de línea** es un punto de código “DOUBLE SOLIDUS OPERATOR” (U+2AFD, ⫽).
 
@@ -71,7 +89,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
 [UNL]: <http://www.unicode.org/versions/Unicode6.0.0/ch05.pdf> (Sección 5.8 (Newline Guidelines) del capítulo 5 (Implementation Guidelines) de la versión 6.0.0 del estándar Unicode (PDF))
 
-        3.  #### Caracteres blancos
+        3.  #### Espacio en blanco individual
 
             [Todo punto de código Unicode que tenga la propiedad “White_Space”][UWS] es un espacio en blanco si ocurre fuera de un literal de cadena de caracteres, fuera de un comentario de línea y fuera de un comentario de bloque.
 
@@ -81,7 +99,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         1.  #### Enteros
 
-            Un **literal entero** es un símbolo compuesto de una secuencia de uno o más de los siguientes puntos de código:
+            Un **dígito** es cualquiera de los siguientes puntos de código:
 
             *   “DIGIT ZERO”  (U+0030, 0)
 
@@ -103,11 +121,11 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             *   “DIGIT NINE”  (U+0039, 9)
 
-            Se interpreta como un número natural escrito en notación posicional en base decimal.
+            Un **literal entero** es un símbolo compuesto de una secuencia de uno o más dígitos.  Se interpreta como un número natural escrito en notación posicional en base decimal.
 
         2.  #### Punto flotante
 
-            TODO
+            Un **literal de punto flotante** es un símbolo compuesto de una secuencia de uno o más dígitos, seguido de un punto de código “FULL STOP” (U+002E, .), seguido de una secuencia de uno o más dígitos.  La primera secuencia de dígitos se interpreta como si fuera un literal entero y especifica la parte entera del número de punto flotante que el literal de punto flotante representa.  La segunda secuencia de dígitos TODO.
 
     4.  ### Identificadores
 

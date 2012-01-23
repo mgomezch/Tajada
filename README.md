@@ -51,19 +51,23 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **fin de comentario de bloque** es un punto de código “SINGLE RIGHT-POINTING ANGLE QUOTATION MARK” (U+203A, ›).
 
-            Un **comentario de bloque** es un espacio en blanco: es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de bloque que no ocurra dentro de un literal de cadena de caracteres, seguido de cualquier secuencia de cero o más puntos de código que no sean un fin de comentario de bloque, seguida de un punto de código como el último nombrado.
+            Un **comentario de bloque** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de bloque que no ocurra dentro de un literal de cadena de caracteres, seguido de cualquier secuencia de cero o más puntos de código que no sean un fin de comentario de bloque, seguida de un punto de código como el último nombrado.
 
             Un comentario de bloque es un espacio en blanco.
 
-            Si el punto de código que indica el inicio de un comentario de bloque es usado en un documento fuera de un literal de cadena de caracteres, y no es seguido eventualmente por el correspondiente punto de código que indica el final del comentario de bloque, entonces ese documento no es una tajada.
+            Una tajada nunca contiene un inicio de un comentario de bloque que no forme parte ni de un comentario de bloque ni de un literal de cadena de caracteres.
 
         2.  #### Comentarios de línea
 
             Un **fin de línea** es [cualquier punto de código considerado como indicador de fin o separación de líneas o párrafos según Unicode][UNL].
 
-            Un **comentario de línea** es una secuencia de puntos de código que comienza con la ocurrencia del punto de código “DOUBLE SOLIDUS OPERATOR” (U+2AFD, ⫽) que no ocurra dentro de un literal de cadena de caracteres, seguido de una secuencia de cero o más puntos de código que no sean fines de línea, seguido de un fin de línea o del final del documento.
+            Un **inicio de comentario de línea** es un punto de código “DOUBLE SOLIDUS OPERATOR” (U+2AFD, ⫽).
 
-            Un comentario de línea es un espacio en blanco.  Un fin de línea es un espacio en blanco si ocurre fuera de un comentario de bloque y fuera de un literal de cadena de caracteres.
+            Un **comentario de línea** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de línea que no forme parte de un literal de cadena de caracteres, seguido de una secuencia de cero o más puntos de código que no sean fines de línea, seguido de un fin de línea o del final del documento.
+
+            Un comentario de línea es un espacio en blanco.
+
+            Un fin de línea es un espacio en blanco si ocurre fuera de un comentario de bloque y fuera de un literal de cadena de caracteres.
 
 [UNL]: <http://www.unicode.org/versions/Unicode6.0.0/ch05.pdf> (Sección 5.8 (Newline Guidelines) del capítulo 5 (Implementation Guidelines) de la versión 6.0.0 del estándar Unicode (PDF))
 
@@ -99,13 +103,11 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             *   “DIGIT NINE”  (U+0039, 9)
 
-            Se interpreta como un número natural escrito en base decimal.
+            Se interpreta como un número natural escrito en notación posicional en base decimal.
 
         2.  #### Punto flotante
 
-        3.  #### Cadena de caracteres
-
-        4.  #### Pabellón
+            TODO
 
     4.  ### Identificadores
 
@@ -117,23 +119,23 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     Tajada soporta varios tipos de tipos:
 
-    1.  Los escalares, que se especifican con una palabra clave:
+    1.  Los escalares, que se especifican con una palabra reservada:
 
-        1.  ### Booleano
+        1.  ### Café
 
-            Solo puede tomar dos valores: `true` o `tetero` para representar representar “verdadero”, y `false` o `negrito` para representar “falso”.  El tipo se especifica con la palabra clave `bool` o `café`.
+            El café es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: la palabra reservada `tetero` representa un valor “verdadero”, y la palabra reservada `negrito` representa un valor “falso”.  El tipo se especifica con la palabra reservada `café`.
 
-        2.  ### Caracter
+        2.  ### Caraota
 
-            Almacena exactamente un punto de código Unicode cualquiera.  El tipo se especifica con la palabra clave `char` o `caraota`.
+            Almacena exactamente un punto de código Unicode cualquiera.  El tipo se especifica con la palabra reservada `caraota`.
 
-        3.  ### Entero
+        3.  ### Queso
 
-            Almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque eso es lo que cabe en un entero de 32 bits en C).  El tipo se especifica con la palabra clave `int` o `queso`.
+            Almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque ese es el rango de un entero de 32 bits en C, y C nos gusta).  El tipo se especifica con la palabra reservada `queso`.
 
-        4.  ### Punto flotante
+        4.  ### Papelón
 
-            Almacena un número de punto flotante con al menos la precisión de un `float` de 32 bits de C.  El tipo se especifica con la palabra clave `float` o `papelón`.
+            Almacena un número de punto flotante con al menos la precisión y el rango de un `float` de 32 bits de C.  El tipo se especifica con la palabra reservada `papelón`.
 
             *TODO*: especificar mejor la precisión.
 
@@ -149,7 +151,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  ## Dulces
 
-            En Tajada es posible agregar, como azucar sintáctica, definiciones de ciertos **dulces**.  Un dulce es un nombre alternativo para un tipo definido por el programador.
+            En Tajada es posible agregar definiciones de ciertos **dulces**.  Un dulce es un nombre alternativo para un tipo definido por el programador.
 
     2.  ### Definiciones
 
@@ -158,7 +160,6 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
             Para crear una variable, se escribe su tipo seguido del nombre de la variable.  Por ejemplo,
 
                 queso guayanés;
-
 
     3.  ### Instrucciones
 

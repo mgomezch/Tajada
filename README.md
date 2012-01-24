@@ -125,7 +125,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Punto flotante
 
-            Un **literal de punto flotante** es un símbolo compuesto de una secuencia de uno o más dígitos, seguido de un punto de código “FULL STOP” (U+002E, .), seguido de una secuencia de uno o más dígitos.  La primera secuencia de dígitos se interpreta como si fuera un literal entero y especifica la parte entera del número de punto flotante que el literal de punto flotante representa.  La segunda secuencia de dígitos TODO.
+            Un **literal de punto flotante** es un símbolo compuesto de una secuencia de uno o más dígitos, seguido de un punto de código “FULL STOP” (U+002E, .), seguido de una secuencia de uno o más dígitos.  La primera secuencia de dígitos se interpreta como si fuera un literal entero y especifica la parte entera del número de punto flotante que el literal de punto flotante representa.  La segunda secuencia de dígitos especifica la parte fraccional del número de punto flotante que el literal de punto flotante representa.  Ambas secuencias se interpretan como números en notación posicional en base decimal con la correspondencia obvia entre dígitos decimales y puntos de código.  El número de punto flotante representado por el símbolo es el valor más cercano representable en la implementación de valores de punto flotante, y si hay más de uno igualmente cercano, se toma el de menor valor absoluto.
+
+            TODO: overflow, underflow, NaN, infinitos, etc
 
     4.  ### Identificadores
 

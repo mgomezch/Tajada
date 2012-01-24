@@ -77,7 +77,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             *   “PARAGRAPH SEPARATOR”  (U+2029)
 
-            [Nota: Los nombres mostrados para los puntos de código anteriormente enumerados, exceptuando a los dos últimos, no corresponden a la propiedad “Name” (que es vacía para todos ellos) sino a la propiedad “Unicode_1_Name”. —fin de la nota]
+            [Nota: Los nombres mostrados para los puntos de código anteriormente enumerados, exceptuando a los dos últimos, no corresponden a la propiedad “Name” (que es vacía para todos ellos) sino a la propiedad “Unicode\_1\_Name”. —fin de la nota]
 
             Un **inicio de comentario de línea** es un punto de código “DOUBLE SOLIDUS OPERATOR” (U+2AFD, ⫽).
 
@@ -91,11 +91,11 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         3.  #### Espacio en blanco individual
 
-            [Todo punto de código Unicode que tenga la propiedad “White_Space”][UWS] es un espacio en blanco si ocurre fuera de un literal de cadena de caracteres, fuera de un comentario de línea y fuera de un comentario de bloque.
+            [Todo punto de código Unicode que tenga la propiedad “White\_Space”][UWS] es un espacio en blanco si ocurre fuera de un literal de cadena de caracteres, fuera de un comentario de línea y fuera de un comentario de bloque.
 
 [UWS]: <http://www.unicode.org/Public/6.0.0/ucd/PropList.txt>  (Base de datos de caracteres Unicode 6.0.0: lista de propiedades de caracteres (líneas 11–22))
 
-    3.  ### Literales
+    3.  ### Otros literales
 
         1.  #### Enteros
 
@@ -125,7 +125,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Punto flotante
 
-            Un **literal de punto flotante** es un símbolo compuesto de una secuencia de uno o más dígitos, seguido de un punto de código “FULL STOP” (U+002E, .), seguido de una secuencia de uno o más dígitos.  La primera secuencia de dígitos se interpreta como si fuera un literal entero y especifica la parte entera del número de punto flotante que el literal de punto flotante representa.  La segunda secuencia de dígitos especifica la parte fraccional del número de punto flotante que el literal de punto flotante representa.  Ambas secuencias se interpretan como números en notación posicional en base decimal con la correspondencia obvia entre dígitos decimales y puntos de código.  El número de punto flotante representado por el símbolo es el valor más cercano representable en la implementación de valores de punto flotante, y si hay más de uno igualmente cercano, se toma el de menor valor absoluto.
+            Un **literal de punto flotante** es un símbolo compuesto de una secuencia de uno o más dígitos, seguido de un punto de código “COMMA” (U+002C, ,), seguido de una secuencia de uno o más dígitos.  La primera secuencia de dígitos se interpreta como si fuera un literal entero y especifica la parte entera del número de punto flotante que el literal de punto flotante representa.  La segunda secuencia de dígitos especifica la parte fraccional del número de punto flotante que el literal de punto flotante representa.  Ambas secuencias se interpretan como números en notación posicional en base decimal con la correspondencia obvia entre dígitos decimales y puntos de código.
 
             TODO: overflow, underflow, NaN, infinitos, etc
 
@@ -137,41 +137,67 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
 2.  ## Tipos de datos
 
-    Tajada soporta varios tipos de tipos:
+    1.  ### Escalares
 
-    1.  Los escalares, que se especifican con una palabra reservada:
+        1.  #### Café
 
-        1.  ### Café
+            El **café** es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: la palabra reservada `tetero` representa un valor “verdadero”, y la palabra reservada `negrito` representa un valor “falso”.  El tipo se especifica con la palabra reservada `café`.
 
-            El café es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: la palabra reservada `tetero` representa un valor “verdadero”, y la palabra reservada `negrito` representa un valor “falso”.  El tipo se especifica con la palabra reservada `café`.
+        2.  #### Caraota
 
-        2.  ### Caraota
+            La **caraota** es un tipo que almacena exactamente un punto de código Unicode cualquiera.  El tipo se especifica con la palabra reservada `caraota`.
 
-            Almacena exactamente un punto de código Unicode cualquiera.  El tipo se especifica con la palabra reservada `caraota`.
+        3.  #### Queso
 
-        3.  ### Queso
+            El **queso** es un tipo que almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque ese es el rango de un entero de 32 bits en C, y C nos gusta).  El tipo se especifica con la palabra reservada `queso`.
 
-            Almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque ese es el rango de un entero de 32 bits en C, y C nos gusta).  El tipo se especifica con la palabra reservada `queso`.
+            Un literal entero especifica un valor de tipo queso.  Una tajada no tiene literales enteros cuyo correspondiente número natural no esté dentro del rango del queso.
 
-        4.  ### Papelón
+        4.  #### Papelón
 
-            Almacena un número de punto flotante con al menos la precisión y el rango de un `float` de 32 bits de C.  El tipo se especifica con la palabra reservada `papelón`.
+            El **papelón** es un tipo que almacena un número de punto flotante con al menos la precisión y el rango de un `float` de 32 bits de C.  El tipo se especifica con la palabra reservada `papelón`.
 
-            *TODO*: especificar mejor la precisión.
+            Un literal de punto flotante especifica un valor de tipo papelón.  El valor de tipo papelón correspondiente a un literal de punto flotante es el valor más cercano representable en la implementación de valores de punto flotante, y si hay más de uno igualmente cercano, se toma el de menor valor absoluto.
 
-    2.  Un tipo de tipos estructurados, el **pabellón**, que asocia en un mismo objeto una cantidad *fija* de valores de otros tipos.
+            TODO: especificar mejor la precisión.
 
-    3.  Y tipos definidos en la tajada, los **dulces**, que son simplemente nombres nuevos para otros tipos.
+            TODO: overflow, underflow, NaN, infinitos, etc; y si el valor del literal se sale del rango del tipo?  Se toma el valor máximo finito, o infinito, o qué?  Es un error?  Un warning?
+
+    2.  ### Pabellón
+
+        El **pabellón** es un tipo de tipos estructurado que asocia en un mismo objeto una cantidad *fija* de valores de otros tipos.
+
+        TODO: sintaxis, « y » como símbolos reservados si ocurren fuera de blahblah, quizás una definición recursiva
+
+        TODO: preguntar si es tipo polimórfico, tipo parametrizado, tipo de tipos, clase, o qué
 
 3.  ## Estructura
 
-    Las tajadas son una secuencia de definiciones de variables, y declaraciones y definiciones de tipos, operadores y funciones.
+    Las tajadas son una secuencia de declaraciones de dulces, definiciones de variables, y declaraciones y definiciones de operadores y funciones.
 
     1.  ### Declaraciones
 
-        2.  ## Dulces
+        Las **declaraciones** son asociaciones entre un tipo y un identificador.
 
-            En Tajada es posible agregar definiciones de ciertos **dulces**.  Un dulce es un nombre alternativo para un tipo definido por el programador.
+        1.  #### Dulces
+
+            `es` es una palabra reservada.
+
+            `dulce` es una palabra reservada.
+
+            `de` es una palabra reservada.
+
+            Un **terminador de frase** es un punto de código “FULL STOP” (U+002E, .).  Un terminador de frase es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+
+            Una **declaración de dulce** es una especificación de tipo seguida de `es`, seguida de `dulce`, seguida de `de`, seguida de un identificador, seguido de un terminador de frase.
+
+            Un **dulce** es una identificación entre un tipo y un identificador.  Cuando se ha declarado un dulce con un cierto tipo y un cierto identificador, puede sustituirse a partir de ese punto de la tajada cualquier ocurrencia de la especificación de ese tipo por el identificador asociado con el dulce.  En otras palabras, un dulce define un nombre alternativo para un tipo, y su único propósito es permitir al programador agregar a gusto azucar sintáctica a su tajada.
+
+            Una tajada nunca tiene dos declaraciones de dulces para el mismo identificador.
+
+        2.  #### Funciones
+
+        3.  #### Operadores
 
     2.  ### Definiciones
 
@@ -179,9 +205,15 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Para crear una variable, se escribe su tipo seguido del nombre de la variable.  Por ejemplo,
 
-                queso guayanés;
+                queso guayanés.
+
+        2.  #### Funciones
+
+        3.  #### Operadores
 
     3.  ### Instrucciones
+
+    4.  ### Expresiones
 
 * * *
 

@@ -41,6 +41,82 @@ Tajada soporta varios tipos de tipos:
 
     TODO: tuplas con uniones y eso
 
+    *   **Tupla**:
+
+*   Definición de operadores
+
+Variables
+---------
+
+Las variables
+
+Funciones
+---------
+
+
+
+Llamada a funciones
+-------------------
+
+Escribir como es el paso de parámetros de las funciones importante.
+
+
+Equivalencia y compatibilidad de tipos
+--------------------------------------
+
+Tajada soporta compatibilidad de los tipos `int` y `float` para los operadores aritméticos y las asignaciones.
+
+`float` opAritmetico `int` y `int` opAritmetico `float` devuelven un elemento del tipo `float`, donde los operadores aritméticos son:
+
+Una instrucción LVal=RVal; es válida cuando LVal es un expresión de tipo `float` y RVal es una expresión de tipo `int` (no viceversa) y el resultado 
+entero de la expresión RVal se transforma automaticamente en `float`.
+
+Tajada no tiene compatibilidad entre los tipos `char` e `int` ni tampoco entre `int` y `bool`.
+
+Asignación
+----------
+
+La aignación en Tajada es de la forma LVal:=RVal; donde LVal y RVal son expresiones del mismo tipo o compatibles.
+
+Estructuras de control
+----------------------
+
+Tajada tiene tres estructuras de control: una de selección, de iteración y de selección controlada.
+
+La sintaxis de la estructura de selección es de la siguiente forma:s
+
+Expresiones
+-----------
+
+Las expresiones en Tajada se clasifican en: aritméticas, Lógicas, de Algebra Lineal (tuplas).
+
+Las expresiones aritméticas estan definidas recursivamente de la siguiente manera:
+
+Si x es una variable de tipo `int` o `float`, entonces x es una expresión aritmética.
+
+Si c es una constante númerica, entonces c es una expresión aritmética
+
+Si e1 y e2 son expresiones aritméticas, entonces también lo son: e1+e2, e1*e2, e1/e2, e1-e2, -e1, (e1). (falta arreglo y registro)
+
+
+Las expresiones lógicas estan definidas recursivamente de la siguiente manera:
+
+Si x es una variable de tipo `bool`, entonces x es una expresión lógica.
+
+True y false son expresiónes lógicas.
+
+Si e1 y e2 son expresiones aritméticas, entonces son expresiones lógicas: e1<e2, e1<=e2, e1>e2, e1>=e2, e1==e2 y e1!=e2.
+
+Si e1 y e2 son caracteres, entonces es una expresión lógica: e1==e2 y e1!=e2.
+
+Si e1 y e2 son expresiones lógicas, entonces lo son también: e1==e2, e1!=e2, !e1, e1&&e2, e1||e2, (e1). (falta arreglo y registro)
+
+
+Definir las expresiones de Algebra Lineal.
+
+Chequeos en tiempo de ejecución
+-------------------------------
+
 
 
 Estructura

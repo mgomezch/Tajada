@@ -45,11 +45,6 @@ Tajada soporta varios tipos de tipos:
 
 *   Definición de operadores
 
-Variables
----------
-
-Las variables
-
 Funciones
 ---------
 
@@ -64,9 +59,9 @@ Escribir como es el paso de parámetros de las funciones importante.
 Equivalencia y compatibilidad de tipos
 --------------------------------------
 
-Tajada soporta compatibilidad de los tipos `int` y `float` para los operadores aritméticos y las asignaciones.
+Tajada soporta compatibilidad de `int` a `float` para los operadores aritméticos y las asignaciones.
 
-`float` opAritmetico `int` y `int` opAritmetico `float` devuelven un elemento del tipo `float`, donde los operadores aritméticos son:
+`float` opAritmetico `int` y `int` opAritmetico `float` devuelven un elemento del tipo `float`, automáticamente:
 
 Una instrucción LVal=RVal; es válida cuando LVal es un expresión de tipo `float` y RVal es una expresión de tipo `int` (no viceversa) y el resultado 
 entero de la expresión RVal se transforma automaticamente en `float`.
@@ -81,22 +76,37 @@ La aignación en Tajada es de la forma LVal:=RVal; donde LVal y RVal son expresi
 Estructuras de control
 ----------------------
 
-Tajada tiene tres estructuras de control: una de selección, de iteración y de selección controlada.
+Tajada tiene tres estructuras de control: una de selección, de iteración y de iteración controlada.
 
-La sintaxis de la estructura de selección es de la siguiente forma:s
+La sintaxis de la estructura de selección es de la siguiente forma:
 
 Expresiones
 -----------
 
-Las expresiones en Tajada se clasifican en: aritméticas, Lógicas, de Algebra Lineal (tuplas).
+Las expresiones en Tajada se clasifican en: aritméticas, de punto flotante, lógicas, de Algebra Lineal (tuplas).
 
 Las expresiones aritméticas estan definidas recursivamente de la siguiente manera:
 
-Si x es una variable de tipo `int` o `float`, entonces x es una expresión aritmética.
+Si x es una variable de tipo `int`, entonces x es una expresión aritmética.
 
-Si c es una constante númerica, entonces c es una expresión aritmética
+Si c es una constante entera, entonces c es una expresión aritmética
 
-Si e1 y e2 son expresiones aritméticas, entonces también lo son: e1+e2, e1*e2, e1/e2, e1-e2, -e1, (e1). (falta arreglo y registro)
+Si e1 y e2 son expresiones aritméticas, entonces también lo son: e1+e2, e1*e2, e1/e2, e1-e2, -e1, (e1).
+
+Si e1 es una expresión aritmética y a es un arreglo de `int`, entonces a[e1] es una expresión aritmética. (no se si esta bien)
+
+
+Las expresiones de punto flotante estan definidas recursivamente de la siguiente manera:
+
+Si x es una variable de tipo `float`, entonces x es una expresión de punto flotante.
+
+Si c es una constante real, entonces c es una expresión de punto flotante.
+
+Si e1 y e2 son expresiones de punto flotante o una de ellas es aritmética y la otra de punto flotante, entonces también 
+son expresiones de punto flotante las siguientes: e1+e2, e1*e2, e1/e2, e1-e2, -e1, (e1).
+
+Si e1 es una expresión aritmética y a es un arreglo de `float`, entonces a[e1] es una expresión de punto flotante.
+
 
 
 Las expresiones lógicas estan definidas recursivamente de la siguiente manera:
@@ -111,13 +121,23 @@ Si e1 y e2 son caracteres, entonces es una expresión lógica: e1==e2 y e1!=e2.
 
 Si e1 y e2 son expresiones lógicas, entonces lo son también: e1==e2, e1!=e2, !e1, e1&&e2, e1||e2, (e1). (falta arreglo y registro)
 
+Si e1 es una expresión aritmética y a es un arreglo de `bool`, entonces a[e1] es una expresión booleana.
 
-Definir las expresiones de Algebra Lineal.
+
+Si t1 y t2 son tuplas entonces t1+t2, t1-t2, t1*t2, t1/t2 son expresiones de álgebra lineal
 
 Chequeos en tiempo de ejecución
 -------------------------------
 
+Cuando se accede a un elemento de un arreglo en cierta posición i, Tajada verifica en tiempo de ejecución si este indice i esta 
+fuera del rango del arreglo.
 
+Cuando se hace una conversión automática de un elemento del tipo int en float, Tajada verifica en tiempo de ejecución si este 
+entero no es lo suficientemente grande como para que no pueda representarce en un float de 32 bits.
+
+Cuando se evalua una división, Tajada verifica en tiempo de ejecución si el denominador es cero.
+
+En cualquiera de los tres casos anteriores Tajada aborta la ejecución del programa.
 
 Estructura
 ----------

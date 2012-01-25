@@ -41,8 +41,6 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         Un **literal de cadena de caracteres** es un fragmento de literal de cadena de caracteres que no es una subsecuencia de ningún *otro* fragmento de literal de cadena de caracteres.   Los literales de cadena de caracteres son símbolos reservados.
 
-        Una tajada nunca contiene un inicio de literal de cadena de caracteres que no forme parte de un literal de cadena de caracteres.
-
     2.  ### Espacio en blanco
 
         Un **espacio en blanco** es un símbolo reservado que no tiene efecto otro que delimitar símbolos y otros símbolos reservados.
@@ -58,6 +56,8 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
             Un comentario de bloque es un espacio en blanco.
 
             Una tajada nunca contiene un inicio de un comentario de bloque que no forme parte ni de un comentario de bloque ni de un literal de cadena de caracteres.
+
+            Una tajada nunca contiene un inicio de literal de cadena de caracteres que no forme parte de un literal de cadena de caracteres, un comentario de línea, o un comentario de bloque.
 
         2.  #### Comentarios de línea
 
@@ -125,7 +125,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Punto flotante
 
-            Un **literal de punto flotante** es un símbolo compuesto de una secuencia de uno o más dígitos, seguido de un punto de código “COMMA” (U+002C, ,), seguido de una secuencia de uno o más dígitos.  La primera secuencia de dígitos se interpreta como si fuera un literal entero y especifica la parte entera del número de punto flotante que el literal de punto flotante representa.  La segunda secuencia de dígitos especifica la parte fraccional del número de punto flotante que el literal de punto flotante representa.  Ambas secuencias se interpretan como números en notación posicional en base decimal con la correspondencia obvia entre dígitos decimales y puntos de código.
+            Un **literal de punto flotante** es un símbolo compuesto de una secuencia de uno o más dígitos, seguido de un punto de código “MIDDLE DOT” (U+00B7, ·), seguido de una secuencia de uno o más dígitos.  La primera secuencia de dígitos se interpreta como si fuera un literal entero y especifica la parte entera del número de punto flotante que el literal de punto flotante representa.  La segunda secuencia de dígitos especifica la parte fraccional del número de punto flotante que el literal de punto flotante representa.  Ambas secuencias se interpretan como números en notación posicional en base decimal con la correspondencia obvia entre dígitos decimales y puntos de código.
 
             TODO: overflow, underflow, NaN, infinitos, etc
 
@@ -137,19 +137,26 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
 2.  ## Tipos de datos
 
+    Cada tipo de datos tiene asociada una **especificación de tipo**.
+
     1.  ### Escalares
 
         1.  #### Café
 
-            El **café** es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: la palabra reservada `tetero` representa un valor “verdadero”, y la palabra reservada `negrito` representa un valor “falso”.  El tipo se especifica con la palabra reservada `café`.
+            El **café** es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: la palabra reservada `tetero` representa un valor “verdadero”, y la palabra reservada `negrito` representa un valor “falso”.  La especificación para el tipo café es la palabra reservada `café`.
+            `tetero` y `negrito` son literales de café.
 
         2.  #### Caraota
 
-            La **caraota** es un tipo que almacena exactamente un punto de código Unicode cualquiera.  El tipo se especifica con la palabra reservada `caraota`.
+            La **caraota** es un tipo que almacena exactamente un punto de código Unicode cualquiera.  La especificación para la caraota es la palabra reservada `caraota`.
+
+            Una **caraota literal** es un escapado de literal de cadena de caracteres tal que ninguno de los dos puntos de código formen parte de un literal de cadena de caracteres, ni de un comentario de línea, ni de un comentario de bloque.
+
+            TODO: literales de caraota
 
         3.  #### Queso
 
-            El **queso** es un tipo que almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque ese es el rango de un entero de 32 bits en C, y C nos gusta).  El tipo se especifica con la palabra reservada `queso`.
+            El **queso** es un tipo que almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque ese es el rango de un entero de 32 bits en C, y C nos gusta).  La especificación para el queso es la palabra reservada `queso`.
 
             Un literal entero especifica un valor de tipo queso.  Una tajada no tiene literales enteros cuyo correspondiente número natural no esté dentro del rango del queso.
 
@@ -163,13 +170,55 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             TODO: overflow, underflow, NaN, infinitos, etc; y si el valor del literal se sale del rango del tipo?  Se toma el valor máximo finito, o infinito, o qué?  Es un error?  Un warning?
 
-    2.  ### Pabellón
+    2.  ### Arepa
 
-        El **pabellón** es un tipo de tipos estructurado que asocia en un mismo objeto una cantidad *fija* de valores de otros tipos.
+        La **arepa** es un tipo de tipos estructurados que asocian en un mismo ente a una cantidad *fija* de valores de otros tipos particulares en un orden específico.  Los tipos asociados por una arepa son sus **ingredientes**.  Los ingredientes de una arepa están implícitamente enumerados desde el cero en el órden en el que se especifican, y pueden tener opcionalmente un identificador asociado.  Una arepa puede tener cualquier cantidad de ingredientes del mismo tipo, y cada uno es independiente de los demás.  Ningún par de ingredientes con nombre en una arepa puede compartir un mismo nombre.
 
-        TODO: sintaxis, « y » como símbolos reservados si ocurren fuera de blahblah, quizás una definición recursiva
+        Un **literal de ingrediente** es una especificación de tipo seguida opcionalmente de un identificador.
 
-        TODO: preguntar si es tipo polimórfico, tipo parametrizado, tipo de tipos, clase, o qué
+        `arepa` es una palabra reservada.
+
+        `sola` es una palabra reservada.
+
+        `de` es una palabra reservada.
+
+        `con` es una palabra reservada.
+
+        La especificación de tipo correspondiente a una arepa con cero ingredientes es `arepa` seguida de `sola`.
+
+        La especificación de tipo correspondiente a una arepa con exactamente un ingrediente es `arepa` seguida de `de`, a su vez seguida del literal de ingrediente correspondiente a su único ingrediente.
+
+        Un **separador de lista** es un punto de código “COMMA” (U+002C).  Un separador de lista es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+
+        `y` es una palabra reservada.
+
+        La especificación de tipo correspondiente a una arepa con más de un ingrediente es `arepa` seguida de `con`, a su vez seguida de cada uno de los literales de ingrediente correspondientes a los ingredientes de la arepa desde el primero y exceptuando el último, siendo seguido cada literal de ingrediente por un separador de lista salvo por el penúltimo ingrediente de la arepa, todo seguido de `y` seguida del literal de ingrediente correspondiente al último ingrediente de la arepa.
+
+        Por ejemplo, cada una de las siguientes líneas contiene una especificación de tipo válida para una arepa:
+
+            arepa sola
+
+            arepa de queso
+
+            arepa con queso y café
+
+            arepa con papelón, café, café marrón, queso guayanés, arepa de caraota, arepa con papelón, café marrón y queso y queso
+
+        TODO: ver definición de tuplas en Haskell
+
+        Un **inicio de literal estructurado** es un punto de código “LEFT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00AB).  Un inicio de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+
+        Un **fin de literal estructurado** es un punto de código “RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00BB).  Un fin de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+
+        TODO: literales de arepa — mejor meterlos en las expresiones, no?
+
+    3.  ### Cachapa
+
+        La **cachapa** es un tipo de tipos unión que asocian en un mismo ente a exactamente un valor cuyo tipo puede ser alguno de un cierto conjunto de al menos dos elementos.  Los tipos asociados por una cachapa son sus **ingredientes**.  Los ingredientes de una cachapa están implícitamente enumerados desde el cero en el órden en el que se especifican, y pueden tener opcionalmente un identificador asociado.
+
+        Una tajada no especifica cachapas donde exista algún par de tipos enumerados en su especificación que sean equivalentes.  Ningún par de ingredientes con nombre en una cachapa puede compartir un mismo nombre.
+
+        TODO: leer del scott, preguntar y refinar.
 
 3.  ## Estructura
 
@@ -184,8 +233,6 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
             `es` es una palabra reservada.
 
             `dulce` es una palabra reservada.
-
-            `de` es una palabra reservada.
 
             Un **terminador de frase** es un punto de código “FULL STOP” (U+002E, .).  Un terminador de frase es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
 
@@ -203,9 +250,13 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         1.  #### Variables
 
-            Para crear una variable, se escribe su tipo seguido del nombre de la variable.  Por ejemplo,
+            Una **definición de variable** es una secuencia compuesta por un identificador, una `de`, una especificación de tipo y un terminador de frase.  Por ejemplo,
 
-                queso guayanés.
+                foo es queso.
+
+            define una variable llamada `guayanés` de tipo `queso`.  La variable es un ente del tipo especificado y puede ser referida por el identificador usado en su definición.
+
+            TODO: alcance y tiempo de vida
 
         2.  #### Funciones
 

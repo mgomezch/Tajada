@@ -80,6 +80,17 @@ Tajada tiene tres estructuras de control: una de selección, de iteración y de 
 
 La sintaxis de la estructura de selección es de la siguiente forma:
 
+if(expresión booleana){instrucciones}
+
+La sintaxis de la estructura de iteración es de la siguiente forma:
+
+while(expresión booleana){instrucciones}
+
+La sintaxis de la estructura de iteración controlada es de la siguiente forma:
+
+for(i=j...n){instrucciones}
+
+
 Expresiones
 -----------
 

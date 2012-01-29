@@ -178,13 +178,11 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         `arepa` es una palabra reservada.
 
-        `sola` es una palabra reservada.
-
         `de` es una palabra reservada.
 
         `con` es una palabra reservada.
 
-        La especificación de tipo correspondiente a una arepa con cero ingredientes es `arepa` seguida de `sola`.
+        La especificación de tipo correspondiente a una arepa con cero ingredientes es `arepa`.
 
         La especificación de tipo correspondiente a una arepa con exactamente un ingrediente es `arepa` seguida de `de`, a su vez seguida del literal de ingrediente correspondiente a su único ingrediente.
 
@@ -196,7 +194,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         Por ejemplo, cada una de las siguientes líneas contiene una especificación de tipo válida para una arepa:
 
-            arepa sola
+            arepa
 
             arepa de queso
 
@@ -216,7 +214,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         La **cachapa** es un tipo de tipos unión que asocian en un mismo ente a exactamente un valor cuyo tipo puede ser alguno de un cierto conjunto de al menos dos elementos.  Los tipos asociados por una cachapa son sus **ingredientes**.  Los ingredientes de una cachapa están implícitamente enumerados desde el cero en el órden en el que se especifican, y pueden tener opcionalmente un identificador asociado.
 
-        Una tajada no especifica cachapas donde exista algún par de tipos enumerados en su especificación que sean equivalentes.  Ningún par de ingredientes con nombre en una cachapa puede compartir un mismo nombre.
+        Una tajada no especifica cachapas donde exista algún par de ingredientes enumerados en su especificación que sean equivalentes.  Ningún par de ingredientes con nombre en una cachapa puede compartir un mismo nombre.
+
+        Una cachapa tiene a lo sumo 256 ingredientes.
 
         TODO: leer del scott, preguntar y refinar.
 

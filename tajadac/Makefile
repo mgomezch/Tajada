@@ -1,7 +1,7 @@
 CC      = gcc
-CCOPTS  = -g -Wall -D_GNU_SOURCE -Iinclude
+CCOPTS  = -g -Wall -D_GNU_SOURCE
 CXX     = g++
-CXXOPTS = -g -Wall --std=gnu++0x
+CXXOPTS = -g -Wall -D_GNU_SOURCE --std=gnu++0x
 LDLIBS  = -lre2
 
 all: tajadac

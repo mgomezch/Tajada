@@ -8,7 +8,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
 # Tajada: Un lenguaje sabroso
 
-*Tajada* es un lenguaje imperativo con un sistema de tipos estático, delicioso y nutritivo.  Está principalmente basado en la sintaxis de C con algunas variaciones para hacerlo más ameno.  Soporta la sobrecarga de operadores para manipular objetos de todos sus tipos, incluyendo los definidos por el programador, y todo siempre promoviendo una alimentación balanceada y tradicional.
+*Tajada* es un lenguaje imperativo con un sistema de tipos estático, delicioso y nutritivo.  Está principalmente basado en la sintaxis de C con algunas variaciones para hacerlo más ameno.  Soporta la sobrecarga de operadores para manipular entes de todos sus tipos, incluyendo los definidos por el programador, y todo siempre promoviendo una alimentación balanceada y tradicional.
 
 1.  ## Símbolos
 
@@ -25,19 +25,19 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     1.  ### Literales de cadena de caracteres
 
+        [Nota: Cuando se hace referencia por primera vez en este documento a un punto de código particular de Unicode, normalmente se escribe entre un inicio de literal de cadena de caracteres y un final de literal de cadena de caracteres el valor de la propiedad “Name” del punto de código, seguido de un punto de código “SPACE” (U+0020,  ), luego un punto de código “LEFT PARENTHESIS” (U+0028, (), luego la expresión del punto de código de interés en el formato especificado por la primera sección del apéndice A del [estándar Unicode 6.0.0], luego un punto de código “COMMA” (U+002C, ,), luego otro punto de código “SPACE” (U+0020,  ), luego el punto de código de interés y finalmente un punto de código “RIGHT PARENTHESIS” (U+0029, )).  Si para el punto de código de interés la propiedad “Name” se define como la cadena vacía, se usará algún otro nombre para el punto de código.  Si el punto de código no representa por sí solo a un grafema, se podría omitir junto con la coma y el espacio que le preceden. —fin de la nota más inútil jamás escrita en una especificación de un lenguaje]
+
         Un **inicio de literal de cadena de caracteres** es un punto de código “LEFT DOUBLE QUOTATION MARK” (U+201C, “).
 
         Un **fin de literal de cadena de caracteres** es un punto de código “RIGHT DOUBLE QUOTATION MARK” (U+201D, ”).
 
-        Un **escapador de literal de cadena de caracteres** es un punto de código “REVERSE SOLIDUS” (U+005C, \).
+        Un **escapador de caracter** es un punto de código “REVERSE SOLIDUS” (U+005C, \).
 
-        [Nota: Cuando se hace referencia por primera vez en este documento a un punto de código particular de Unicode, normalmente se escribe entre un inicio de literal de cadena de caracteres y un final de literal de cadena de caracteres el valor de la propiedad “Name” del punto de código, seguido de un punto de código “SPACE” (U+0020,  ), luego un punto de código “LEFT PARENTHESIS” (U+0028, (), luego la expresión del punto de código de interés en el formato especificado por la primera sección del apéndice A del [estándar Unicode 6.0.0], luego un punto de código “COMMA” (U+002C, ,), luego otro punto de código “SPACE” (U+0020,  ), luego el punto de código de interés y finalmente un punto de código “RIGHT PARENTHESIS” (U+0029, )).  Si para el punto de código de interés la propiedad “Name” se define como la cadena vacía, se usará algún otro nombre para el punto de código.  Si el punto de código no representa por sí solo a un glifo, se podría omite junto con la coma y el espacio que le preceden. —fin de la nota más inútil jamás escrita en una especificación de un lenguaje]
+        Un **escapado de caracter** es una secuencia de dos puntos de código en la que el primero es un escapador de caracter, y si le precede (no inclusive) alguna secuencia consecutiva de escapadores de caracteres, la secuencia tiene un número par de puntos de código (y podría, por lo tanto, ser vacía).
 
-        Un **escapado de literal de cadena de caracteres** es una secuencia de dos puntos de código en la que el primero es un escapador de literal de cadena de caracteres.
+        Un **elemento de literal de cadena de caracteres** es un escapado de caracter, o un punto de código distinto de un fin de literal de cadena de caracteres y de un escapador de caracter.
 
-        Un **elemento de literal de cadena de caracteres** es un escapado de literal de cadena de caracteres, o un punto de código distinto de un fin de literal de cadena de caracteres y de un escapador de literal de cadena de caracteres.
-
-        Un **fragmento de literal de cadena de caracteres** es una secuencia de puntos de código que comienza con un inicio de literal de cadena de caracteres, seguido de cero o más elementos de literal de cadena de caracteres, seguido de un fin de literal de cadena de caracteres.
+        Un **fragmento de literal de cadena de caracteres** es una secuencia de puntos de código que comienza con un inicio de literal de cadena de caracteres que no forme parte de un escapado de caracter, seguido de cero o más elementos de literal de cadena de caracteres, seguido de un fin de literal de cadena de caracteres.
 
         Un **literal de cadena de caracteres** es un fragmento de literal de cadena de caracteres que no es una subsecuencia de ningún *otro* fragmento de literal de cadena de caracteres.   Los literales de cadena de caracteres son símbolos reservados.
 
@@ -51,13 +51,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **fin de comentario de bloque** es un punto de código “SINGLE RIGHT-POINTING ANGLE QUOTATION MARK” (U+203A, ›).
 
-            Un **comentario de bloque** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de bloque que no ocurra dentro de un literal de cadena de caracteres, seguido de cualquier secuencia de cero o más puntos de código que no sean un fin de comentario de bloque, seguida de un punto de código como el último nombrado.
+            Un **fragmento de comentario de bloque** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de bloque que no ocurra dentro de un literal de cadena de caracteres, seguido de cualquier secuencia de cero o más puntos de código que no sean un fin de comentario de bloque, seguida de un fin de comentario de bloque.
 
-            Un comentario de bloque es un espacio en blanco.
-
-            Una tajada nunca contiene un inicio de un comentario de bloque que no forme parte ni de un comentario de bloque ni de un literal de cadena de caracteres.
-
-            Una tajada nunca contiene un inicio de literal de cadena de caracteres que no forme parte de un literal de cadena de caracteres, un comentario de línea, o un comentario de bloque.
+            Un **comentario de bloque** es un fragmento de comentario de bloque que no es una subsecuencia de ningún *otro* fragmento de comentario de bloque.  Un comentario de bloque es un espacio en blanco.
 
         2.  #### Comentarios de línea
 
@@ -81,17 +77,21 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **inicio de comentario de línea** es un punto de código “DOUBLE SOLIDUS OPERATOR” (U+2AFD, ⫽).
 
-            Un **comentario de línea** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de línea que no forme parte de un literal de cadena de caracteres, seguido de una secuencia de cero o más puntos de código que no sean fines de línea, seguido de un fin de línea o del final del documento.
+            Un **comentario de línea** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de línea que no forme parte de un literal de cadena de caracteres ni de un comentario de bloque, seguido de una secuencia de cero o más puntos de código que no sean fines de línea, seguido de un fin de línea o del final del documento.
 
             Un comentario de línea es un espacio en blanco.
 
-            Un fin de línea es un espacio en blanco si ocurre fuera de un comentario de bloque y fuera de un literal de cadena de caracteres.
+            Un fin de línea es un espacio en blanco si ocurre fuera de un comentario de bloque, fuera de un comentario de línea, y fuera de un literal de cadena de caracteres.
+
+            Una tajada nunca contiene un inicio de comentario de bloque que no forme parte ni de un comentario de bloque, ni de un literal de cadena de caracteres, ni de un comentario de línea.
+
+            Una tajada nunca contiene un inicio de literal de cadena de caracteres que no forme parte de un literal de cadena de caracteres, un comentario de línea, o un comentario de bloque.
 
 [UNL]: <http://www.unicode.org/versions/Unicode6.0.0/ch05.pdf> (Sección 5.8 (Newline Guidelines) del capítulo 5 (Implementation Guidelines) de la versión 6.0.0 del estándar Unicode (PDF))
 
         3.  #### Espacio en blanco individual
 
-            [Todo punto de código Unicode que tenga la propiedad “White\_Space”][UWS] es un espacio en blanco si ocurre fuera de un literal de cadena de caracteres, fuera de un comentario de línea y fuera de un comentario de bloque.
+            [Todo punto de código Unicode que tenga la propiedad “White\_Space”][UWS] es un espacio en blanco si ocurre fuera de un literal de cadena de caracteres, fuera de un comentario de línea, fuera de un comentario de bloque y fuera de un fin de línea.
 
 [UWS]: <http://www.unicode.org/Public/6.0.0/ucd/PropList.txt>  (Base de datos de caracteres Unicode 6.0.0: lista de propiedades de caracteres (líneas 11–22))
 
@@ -150,9 +150,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             La **caraota** es un tipo que almacena exactamente un punto de código Unicode cualquiera.  La especificación para la caraota es la palabra reservada `caraota`.
 
-            Una **caraota literal** es un escapado de literal de cadena de caracteres tal que ninguno de los dos puntos de código formen parte de un literal de cadena de caracteres, ni de un comentario de línea, ni de un comentario de bloque.
-
-            TODO: literales de caraota
+            Un **literal de caraota** es un escapado de caracter tal que ninguno de sus dos puntos de código formen parte de un literal de cadena de caracteres, ni de un comentario de línea, ni de un comentario de bloque.
 
         3.  #### Queso
 
@@ -172,7 +170,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     2.  ### Arepa
 
-        La **arepa** es un tipo de tipos estructurados que asocian en un mismo ente a una cantidad *fija* de valores de otros tipos particulares en un orden específico.  Los tipos asociados por una arepa son sus **ingredientes**.  Los ingredientes de una arepa están implícitamente enumerados desde el cero en el órden en el que se especifican, y pueden tener opcionalmente un identificador asociado.  Una arepa puede tener cualquier cantidad de ingredientes del mismo tipo, y cada uno es independiente de los demás.  Ningún par de ingredientes con nombre en una arepa puede compartir un mismo nombre.
+        La **arepa** es un tipo de tipos estructurados que asocian en un mismo ente a una cantidad *fija* de valores de otros tipos particulares en un orden específico.  Los tipos asociados por una arepa son sus **ingredientes**.  Los ingredientes de una arepa están implícitamente enumerados por enteros desde el cero en el orden en el que se especifican, y pueden tener opcionalmente un identificador asociado.  Una arepa puede tener cualquier cantidad de ingredientes del mismo tipo, y cada uno es independiente de los demás.  Ningún par de ingredientes con nombre en una arepa puede compartir un mismo nombre.
 
         Un **literal de ingrediente** es una especificación de tipo seguida opcionalmente de un identificador.
 
@@ -186,7 +184,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         La especificación de tipo correspondiente a una arepa con exactamente un ingrediente es `arepa` seguida de `de`, a su vez seguida del literal de ingrediente correspondiente a su único ingrediente.
 
-        Un **separador de lista** es un punto de código “COMMA” (U+002C).  Un separador de lista es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+        Un **separador de lista** es un punto de código “COMMA” (U+002C, ,).  Un separador de lista es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
 
         `y` es una palabra reservada.
 
@@ -202,23 +200,27 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             arepa con papelón, café, café marrón, queso guayanés, arepa de caraota, arepa con papelón, café marrón y queso y queso
 
+        TODO: literales de arepa — mejor meterlos en las expresiones, no?
+
         TODO: ver definición de tuplas en Haskell
 
         Un **inicio de literal estructurado** es un punto de código “LEFT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00AB).  Un inicio de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
 
         Un **fin de literal estructurado** es un punto de código “RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00BB).  Un fin de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
 
-        TODO: literales de arepa — mejor meterlos en las expresiones, no?
-
     3.  ### Cachapa
 
-        La **cachapa** es un tipo de tipos unión que asocian en un mismo ente a exactamente un valor cuyo tipo puede ser alguno de un cierto conjunto de al menos dos elementos.  Los tipos asociados por una cachapa son sus **ingredientes**.  Los ingredientes de una cachapa están implícitamente enumerados desde el cero en el órden en el que se especifican, y pueden tener opcionalmente un identificador asociado.
+        La **cachapa** es un tipo de tipos unión que asocian en un mismo ente a exactamente *un* valor cuyo tipo puede ser alguno de un cierto conjunto de al menos dos elementos.  Los tipos asociados por una cachapa son sus **ingredientes**.  Los ingredientes de una cachapa están implícitamente enumerados por enteros desde el cero en el órden en el que se especifican, y pueden tener opcionalmente un identificador asociado.
 
         Una tajada no especifica cachapas donde exista algún par de ingredientes enumerados en su especificación que sean equivalentes.  Ningún par de ingredientes con nombre en una cachapa puede compartir un mismo nombre.
 
         Una cachapa tiene a lo sumo 256 ingredientes.
 
-        TODO: leer del scott, preguntar y refinar.
+        `cachapa` es una palabra reservada.
+
+        `o` es una palabra reservada.
+
+        La especificación de tipo correspondiente a una cachapa es `cachapa` seguida de `con`, a su vez seguida de cada uno de los literales de ingrediente correspondientes a los ingredientes de la cachapa desde el primero y exceptuando el último, siendo seguido cada literal de ingrediente por un separador de lista salvo por el penúltimo ingrediente de la cachapa, todo seguido de `o` seguida del literal de ingrediente correspondiente al último ingrediente de la cachapa.
 
 3.  ## Estructura
 
@@ -242,29 +244,49 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Una tajada nunca tiene dos declaraciones de dulces para el mismo identificador.
 
-        2.  #### Funciones
+        2.  #### Platos
 
-        3.  #### Operadores
+            Un **plato** es una función que tiene asociado un identificador específico, recibe entes de algún tipo específico, ejecuta una secuencia de instrucciones en orden, y produce un resultado de un tipo específico.  Una tajada no tiene más de un plato asociado a un mismo identificador y a tipos equivalentes de entes recibidos y producidos.
+
+            `un` es una palabra reservada.
+
+            `plato` es una palabra reservada.
+
+            `jugo` es una palabra reservada.
+
+            Una **declaración de plato** es una secuencia compuesta por un identificador, una `es`, una `un`, una `plato`, una `de`, una especificación de tipo, una `con`, una `jugo`, una `de`, una especificación de tipo, y un terminador de frase.
+
+            Una declaración de plato hace que ese plato se considere declarado desde el punto en el que aparece en la tajada con el identificador y los tipos usados en ella.
+
+        3.  #### Cubiertos
+
+            Un **cubierto** es una función que tiene asociado un símbolo reservado específico, recibe entes de algún tipo específico, ejecuta una secuencia de instrucciones en orden, y produce un resultado de un tipo específico.  Una tajada no tiene más de un cubierto asociado a un mismo símbolo reservado y a tipos equivalentes de entes recibidos y producidos.
+
+            `el` es una palabra reservada.
+
+            Un **operador sobrecargable** es alguno de ciertos símbolos reservados con ciertas propiedades especiales en Tajada.
+
+            Una **declaración de plato** es una secuencia compuesta por un identificador, una `es`, una `el`, una `cubierto`, un operador sobrecargable, una `con`, una especificación de tipo, una `y`, una `jugo`, una `de`, una especificación de tipo, y un terminador de frase.
 
     2.  ### Definiciones
 
         1.  #### Variables
 
-            Una **definición de variable** es una secuencia compuesta por un identificador, una `de`, una especificación de tipo y un terminador de frase.  Por ejemplo,
+            Una **definición de variable** es una secuencia compuesta por un identificador, una `es`, una especificación de tipo y un terminador de frase.  Por ejemplo,
 
-                foo es queso.
+                telita es queso.
 
-            define una variable llamada `guayanés` de tipo `queso`.  La variable es un ente del tipo especificado y puede ser referida por el identificador usado en su definición.
+            define una variable llamada `telita` de tipo `queso`.  La variable es un ente del tipo especificado y puede ser referida por el identificador usado en su definición.
 
             TODO: alcance y tiempo de vida
 
-        2.  #### Funciones
+        2.  #### Platos
 
-        3.  #### Operadores
+        3.  #### Cubiertos
 
-    3.  ### Instrucciones
+    3.  ### Expresiones
 
-    4.  ### Expresiones
+    4.  ### Instrucciones
 
 * * *
 
@@ -292,8 +314,9 @@ Agregar ejemplos a todo.
 Términos asignados:
 
 *   arroz → arreglo
-*   arepa → void
 
 Términos por asignar:
 
 *   carne mechada
+
+Una **flecha** es un punto de código “RIGHTWARDS ARROW” (U+2192, →).  Una flecha es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.

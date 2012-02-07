@@ -366,7 +366,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 4.  Un **operador de división**, que es un punto de código “DIVISION SIGN” (U+00F7, **÷**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                5.  Un **operador de módulo**, que es un punto de código “TILDE” (U+007E, **~**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+                5.  Un **operador de módulo**, que es un punto de código “TILDE” (U+007E, **\~**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
                 6.  Un **operador de igualdad**, que es un punto de código “EQUALS SIGN” (U+003D, **=**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 

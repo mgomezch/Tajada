@@ -25,7 +25,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     1.  ### Literales de cadena de caracteres
 
-        [Nota: Cuando se hace referencia por primera vez en este documento a un punto de código particular de Unicode, normalmente se escribe entre un inicio de literal de cadena de caracteres y un final de literal de cadena de caracteres el valor de la propiedad “Name” del punto de código, seguido de un punto de código “SPACE” (U+0020,  ), luego un punto de código “LEFT PARENTHESIS” (U+0028, (), luego la expresión del punto de código de interés en el formato especificado por la primera sección del apéndice A del [estándar Unicode 6.0.0], luego un punto de código “COMMA” (U+002C, ,), luego otro punto de código “SPACE” (U+0020,  ), luego el punto de código de interés y finalmente un punto de código “RIGHT PARENTHESIS” (U+0029, )).  Si para el punto de código de interés la propiedad “Name” se define como la cadena vacía, se usará algún otro nombre para el punto de código.  Si el punto de código no representa por sí solo a un grafema, se podría omitir junto con la coma y el espacio que le preceden. —fin de la nota más inútil jamás escrita en una especificación de un lenguaje]
+        [Nota: Cuando se hace referencia por primera vez en este documento a un punto de código particular de Unicode, normalmente se escribe entre un inicio de literal de cadena de caracteres y un fin de literal de cadena de caracteres el valor de la propiedad “Name” del punto de código, seguido de un punto de código “SPACE” (U+0020,  ), luego un punto de código “LEFT PARENTHESIS” (U+0028, (), luego la expresión del punto de código de interés en el formato especificado por la primera sección del apéndice A del [estándar Unicode 6.0.0], luego un punto de código “COMMA” (U+002C, ,), luego otro punto de código “SPACE” (U+0020,  ), luego el punto de código de interés y finalmente un punto de código “RIGHT PARENTHESIS” (U+0029, )).  Si para el punto de código de interés la propiedad “Name” se define como la cadena vacía, se usará algún otro nombre para el punto de código.  Si el punto de código no representa por sí solo a un grafema, se podría omitir junto con la coma y el espacio que le preceden. —fin de la nota más inútil jamás escrita en una especificación de un lenguaje]
 
         Un **inicio de literal de cadena de caracteres** es un punto de código “LEFT DOUBLE QUOTATION MARK” (U+201C, “).
 
@@ -37,7 +37,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         Un **elemento de literal de cadena de caracteres** es un escapado de caracter, o un punto de código distinto de un fin de literal de cadena de caracteres y de un escapador de caracter.
 
-        Un **fragmento de literal de cadena de caracteres** es una secuencia de puntos de código que comienza con un inicio de literal de cadena de caracteres que no forme parte de un escapado de caracter, seguido de cero o más elementos de literal de cadena de caracteres, seguido de un fin de literal de cadena de caracteres.
+        Un **fragmento de literal de cadena de caracteres** es una secuencia de puntos de código que comienza con un inicio de literal de cadena de caracteres que no forme parte de un escapado de caracter, ni de un comentario de línea, ni de un comentario de bloque, seguido de cero o más elementos de literal de cadena de caracteres, seguido de un fin de literal de cadena de caracteres.
 
         Un **literal de cadena de caracteres** es un fragmento de literal de cadena de caracteres que no es una subsecuencia de ningún *otro* fragmento de literal de cadena de caracteres.   Los literales de cadena de caracteres son símbolos reservados.
 
@@ -51,7 +51,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **fin de comentario de bloque** es un punto de código “SINGLE RIGHT-POINTING ANGLE QUOTATION MARK” (U+203A, ›).
 
-            Un **fragmento de comentario de bloque** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de bloque que no ocurra dentro de un literal de cadena de caracteres, seguido de cualquier secuencia de cero o más puntos de código que no sean un fin de comentario de bloque, seguida de un fin de comentario de bloque.
+            Un **fragmento de comentario de bloque** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de bloque que no ocurra dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de línea, seguido de cualquier secuencia de cero o más puntos de código que no sean un fin de comentario de bloque, seguida de un fin de comentario de bloque.
 
             Un **comentario de bloque** es un fragmento de comentario de bloque que no es una subsecuencia de ningún *otro* fragmento de comentario de bloque.  Un comentario de bloque es un espacio en blanco.
 
@@ -77,13 +77,13 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **inicio de comentario de línea** es un punto de código “DOUBLE SOLIDUS OPERATOR” (U+2AFD, ⫽).
 
-            Un **comentario de línea** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de línea que no forme parte de un literal de cadena de caracteres ni de un comentario de bloque, seguido de una secuencia de cero o más puntos de código que no sean fines de línea, seguido de un fin de línea o del final del documento.
+            Un **comentario de línea** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de línea que no forme parte de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de bloque, seguido de una secuencia de cero o más puntos de código que no sean fines de línea, seguido de un fin de línea o del final del documento.
 
             Un comentario de línea es un espacio en blanco.
 
-            Un fin de línea es un espacio en blanco si ocurre fuera de un comentario de bloque, fuera de un comentario de línea, y fuera de un literal de cadena de caracteres.
+            Un fin de línea es un espacio en blanco si ocurre fuera de un comentario de bloque, fuera de un comentario de línea, fuera de un literal de cadena de caracteres y fuera de un escapado de caracter.
 
-            Una tajada nunca contiene un inicio de comentario de bloque que no forme parte ni de un comentario de bloque, ni de un literal de cadena de caracteres, ni de un comentario de línea.
+            Una tajada nunca contiene un inicio de comentario de bloque que no forme parte ni de un comentario de bloque, ni de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de línea.
 
             Una tajada nunca contiene un inicio de literal de cadena de caracteres que no forme parte de un literal de cadena de caracteres, un comentario de línea, o un comentario de bloque.
 
@@ -91,7 +91,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         3.  #### Espacio en blanco individual
 
-            [Todo punto de código Unicode que tenga la propiedad “White\_Space”][UWS] es un espacio en blanco si ocurre fuera de un literal de cadena de caracteres, fuera de un comentario de línea, fuera de un comentario de bloque y fuera de un fin de línea.
+            [Todo punto de código Unicode que tenga la propiedad “White\_Space”][UWS] es un espacio en blanco si ocurre fuera de un literal de cadena de caracteres, fuera de un escapado de caracter, fuera de un comentario de línea, fuera de un comentario de bloque y fuera de un fin de línea.
 
 [UWS]: <http://www.unicode.org/Public/6.0.0/ucd/PropList.txt>  (Base de datos de caracteres Unicode 6.0.0: lista de propiedades de caracteres (líneas 11–22))
 
@@ -125,7 +125,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Punto flotante
 
-            Un **literal de punto flotante** es un símbolo compuesto de una secuencia de uno o más dígitos, seguido de un punto de código “MIDDLE DOT” (U+00B7, ·), seguido de una secuencia de uno o más dígitos.  La primera secuencia de dígitos se interpreta como si fuera un literal entero y especifica la parte entera del número de punto flotante que el literal de punto flotante representa.  La segunda secuencia de dígitos especifica la parte fraccional del número de punto flotante que el literal de punto flotante representa.  Ambas secuencias se interpretan como números en notación posicional en base decimal con la correspondencia obvia entre dígitos decimales y puntos de código.
+            Un **separador de literal de punto flotante** es un punto de código “MIDDLE DOT” (U+00B7, ·) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un separador de literal de punto flotante es un símbolo reservado.
+
+            Un **literal de punto flotante** es una secuencia compuesta de un literal entero seguido de un separador de literal de punto flotante, seguido de otro literal entero.  Un literal de punto flotante representa un valor numérico de punto flotante.  El primer literal entero especifica la parte entera del valor representado.  El valor del segundo literal entero es igual a la parte fraccional del número de punto flotante representado multiplicada por 10ⁿ⁺¹, donde `n` es el número de dígitos que componen a ese literal entero.
 
             TODO: overflow, underflow, NaN, infinitos, etc
 
@@ -164,7 +166,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un literal de punto flotante especifica un valor de tipo papelón.  El valor de tipo papelón correspondiente a un literal de punto flotante es el valor más cercano representable en la implementación de valores de punto flotante, y si hay más de uno igualmente cercano, se toma el de menor valor absoluto.
 
-            TODO: especificar mejor la precisión.
+            TODO: especificar mejor la precisión; hablar, quizás, de ISO/IEC/IEEE 60559:2011
 
             TODO: overflow, underflow, NaN, infinitos, etc; y si el valor del literal se sale del rango del tipo?  Se toma el valor máximo finito, o infinito, o qué?  Es un error?  Un warning?
 
@@ -176,11 +178,13 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         `arepa` es una palabra reservada.
 
+        `sola` es una palabra reservada.
+
         `de` es una palabra reservada.
 
         `con` es una palabra reservada.
 
-        La especificación de tipo correspondiente a una arepa con cero ingredientes es `arepa`.
+        La especificación de tipo correspondiente a una arepa con cero ingredientes es `arepa` seguida de `sola`.
 
         La especificación de tipo correspondiente a una arepa con exactamente un ingrediente es `arepa` seguida de `de`, a su vez seguida del literal de ingrediente correspondiente a su único ingrediente.
 
@@ -214,7 +218,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         Una tajada no especifica cachapas donde exista algún par de ingredientes enumerados en su especificación que sean equivalentes.  Ningún par de ingredientes con nombre en una cachapa puede compartir un mismo nombre.
 
-        Una cachapa tiene a lo sumo 256 ingredientes.
+        La implementación puede definir un límite superior para el número de ingredientes de una cachapa; éste no debe ser menor a 256.
 
         `cachapa` es una palabra reservada.
 
@@ -222,9 +226,17 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         La especificación de tipo correspondiente a una cachapa es `cachapa` seguida de `con`, a su vez seguida de cada uno de los literales de ingrediente correspondientes a los ingredientes de la cachapa desde el primero y exceptuando el último, siendo seguido cada literal de ingrediente por un separador de lista salvo por el penúltimo ingrediente de la cachapa, todo seguido de `o` seguida del literal de ingrediente correspondiente al último ingrediente de la cachapa.
 
+    4.  ### Arroz
+
+        El **arroz** es un tipo de tipos de colección que asocian en un mismo ente a una cantidad acotada de valores, todos de un mismo tipo: el tipo del *contenido* del arroz.  Dos tipos de arroz son equivalentes si sus tipos de contenido son equivalentes.
+
+        `arroz` es una palabra reservada.
+
+        La especificación de tipo correspondiente a un arroz es `arroz` seguida de `con`, a su vez seguida de la especificación de tipo correspondiente a su tipo de contenido.
+
 3.  ## Estructura
 
-    Las tajadas son una secuencia de declaraciones de dulces, definiciones de variables, y declaraciones y definiciones de operadores y funciones.
+    Una tajada es una secuencia compuesta de una secuencia de cero o más declaraciones de dulces, seguida de una secuencia de cero o más definiciones de variables, seguida de una secuencia de cero o más declaraciones de platos o cubiertos, seguida de una secuencia de cero o más definiciones de platos o cubiertos, seguida de un bloque.
 
     1.  ### Declaraciones
 
@@ -246,7 +258,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Platos
 
-            Un **plato** es una función que tiene asociado un identificador específico, recibe entes de algún tipo específico, ejecuta una secuencia de instrucciones en orden, y produce un resultado de un tipo específico.  Una tajada no tiene más de un plato asociado a un mismo identificador y a tipos equivalentes de entes recibidos y producidos.
+            Un **plato** es una función que tiene asociado un identificador específico, recibe entes de algún tipo específico, ejecuta una secuencia de instrucciones en orden, y produce un resultado de un tipo específico.  Una tajada no tiene más de un plato asociado a un mismo identificador y a tipos equivalentes de entes recibidos y producidos, pero puede tener más de un plato asociado a un mismo identificador, o más de un plato asociado a tipos equivalentes de entes recibidos y/o producidos.
 
             `un` es una palabra reservada.
 
@@ -254,25 +266,35 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `jugo` es una palabra reservada.
 
-            Una **declaración de plato** es una secuencia compuesta por un identificador, una `es`, una `un`, una `plato`, una `de`, una especificación de tipo, una `con`, una `jugo`, una `de`, una especificación de tipo, y un terminador de frase.
+            Una **especificación de plato** es una secuencia compuesta por un identificador (el *nombre*), una `es`, una `un`, una `plato`, una `de`, una especificación de tipo opcionalmente seguida de un identificador (el *dominio* del plato), una `con`, una `jugo`, una `de`, y una especificación de tipo (el *rango* del plato).
 
-            Una declaración de plato hace que ese plato se considere declarado desde el punto en el que aparece en la tajada con el identificador y los tipos usados en ella.
+            Una **declaración de plato** es una especificación de plato seguida de un terminador de frase.  Una declaración de plato hace que ese plato se considere declarado desde el punto en el que aparece en la tajada con el identificador y los tipos usados en su especificación de plato.
 
         3.  #### Cubiertos
 
-            Un **cubierto** es una función que tiene asociado un símbolo reservado específico, recibe entes de algún tipo específico, ejecuta una secuencia de instrucciones en orden, y produce un resultado de un tipo específico.  Una tajada no tiene más de un cubierto asociado a un mismo símbolo reservado y a tipos equivalentes de entes recibidos y producidos.
+            Un **cubierto** es una función que tiene asociado un operador específico, recibe entes de algún tipo específico, ejecuta una secuencia de instrucciones en orden, y produce un resultado de un tipo específico.  Una tajada no tiene más de un cubierto asociado a un mismo símbolo reservado y a tipos equivalentes de entes recibidos y producidos, pero puede tener más de un cubierto asociado a un mismo identificador, o más de un cubierto asociado a tipos equivalentes de entes recibidos y/o producidos.
 
             `el` es una palabra reservada.
 
-            Un **operador sobrecargable** es alguno de ciertos símbolos reservados con ciertas propiedades especiales en Tajada.
+            `cubierto` es una palabra reservada.
 
-            Una **declaración de plato** es una secuencia compuesta por un identificador, una `es`, una `el`, una `cubierto`, un operador sobrecargable, una `con`, una especificación de tipo, una `y`, una `jugo`, una `de`, una especificación de tipo, y un terminador de frase.
+            Una **especificación de cubierto** es una secuencia compuesta por un identificador, una `es`, una `el`, una `cubierto`, un operador, una `con`, una especificación de tipo (el *dominio* del cubierto), una `y`, una `jugo`, una `de`, y una especificación de tipo (el *rango* del cubierto).
+
+            Una **declaración de cubierto** es una especificación de cubierto seguida de un terminador de frase.  Una declaración de cubierto hace que ese cubierto se considere declarado desde el punto en el que aparece en la tajada con el operador y los tipos usados en su especificación de cubierto.
+
+            Si a un cubierto se le asocia un operador y su dominio es una arepa con un solo ingrediente, el operador debe ser unario, y se dice que el cubierto es unario.  Si a un cubierto se le asocia un operador y su dominio es una arepa con exactamente dos ingredientes, el operador debe ser binario, y se dice que el cubierto es binario.  Una tajada no define cubiertos cuyo dominio no sea una arepa con exactamente uno o dos ingredientes.
 
     2.  ### Definiciones
 
         1.  #### Variables
 
-            Una **definición de variable** es una secuencia compuesta por un identificador, una `es`, una especificación de tipo y un terminador de frase.  Por ejemplo,
+            `tazas` es una palabra reservada.
+
+            La **especificación completa de tipo** para un arroz es un literal entero seguido de `tazas`, seguida de `de`, seguida de `arroz`, seguida de `con`, seguida de la especificación completa del tipo de contenido del arroz.
+
+            La especificación completa de tipo de cualquier tipo que no haga referencia a otros tipos es su especificación de tipo.  La especificación completa de tipo de una arepa o cachapa es de la misma forma que su especificación de tipo, pero en vez de escribirse la especificación de tipo de sus ingredientes, se escriben sus especificaciones completas de tipo.
+
+            Una **definición de variable** es una secuencia compuesta por un identificador, una `es`, una especificación completa de tipo y un terminador de frase.  Por ejemplo,
 
                 telita es queso.
 
@@ -282,9 +304,67 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Platos
 
+            Un **inicio de bloque** es un punto de código “LEFT CURLY BRACKET” (U+007B, {).  Un inicio de bloque es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de línea, ni de un comentario de bloque.
+
+            Un **fin de bloque** es un punto de código “RIGHT CURLY BRACKET” (U+007D, }).  Un fin de bloque es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de línea, ni de un comentario de bloque.
+
+            Un **bloque** es un inicio de bloque, seguido de una secuencia de cero o más definiciones de variables, seguida de una secuencia de cero o más instrucciones o bloques, seguida de un fin de bloque.
+
+            Una **definición de plato** es una especificación de plato seguida de un bloque.
+
+            Si una tajada contiene una declaración de plato, debe contener también una definición para ese mismo plato (con el mismo nombre y dominios y rangos equivalentes pero ignorando el identificador opcional asociado al dominio).
+
+            Un plato se puede definir a lo sumo una vez en una tajada.
+
         3.  #### Cubiertos
 
+            Una **definición de cubierto** es una especificación de cubierto seguida de un bloque.
+
+            Si una tajada contiene una declaración de cubierto, debe contener también una definición para ese mismo cubierto (con el mismo operador y dominio y rango equivalentes pero ignorando el identificador opcional asociado al dominio).
+
+            Un cubierto se puede definir a lo sumo una vez en una tajada.
+
     3.  ### Expresiones
+
+        Una **expresión** es una secuencia de símbolos y símbolos reservados que representa el cálculo de un valor y tiene una cierta estructura.  Una expresión tiene asociado un tipo que se infiere de su estructura.
+
+        1.  #### Literales
+
+            Un literal de cadena de caracteres es una expresión, y su tipo es el especificado por `arroz con caraota`.
+
+            Un literal de caraota es una expresión cuyo tipo es la caraota.
+
+        2.  #### Operadores
+
+            TODO: más operadores!  Pero ¿cuáles?  Algún otro unario, al menos!
+
+            1. ##### Unarios
+
+                Un **operador unario** es cualquiera de los siguientes símbolos reservados.
+
+                1.  Un **operador de resta** es un punto de código “MINUS SIGN” (U+2212, −) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+
+                Si existe un cubierto declarado para un cierto operador unario, entonces se puede construir una expresión con el operador seguido de una expresión cuyo tipo sea equivalente al del ingrediente de la arepa del operador.  El tipo de la expresión resultante es el tipo del rango del cubierto.
+
+            2. ##### Binarios
+
+                Un **operador binario** es cualquiera de los siguientes símbolos reservados.
+
+                1.  Un operador de resta.
+
+                2.  Un **operador de suma**, que es un punto de código “PLUS SIGN” (U+002B, +) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+
+                3.  Un **operador de multiplicación**, que es un punto de código “MULTIPLICATION SIGN” (U+00D7, ×) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+
+                4.  Un **operador de división**, que es un punto de código “DIVISION SIGN” (U+00F7, ÷) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+
+                5.  Un **operador de módulo**, que es un punto de código “TILDE” (U+007E, ~) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+
+                6.  Un **operador de igualdad**, que es un punto de código “EQUALS SIGN” (U+003D, =) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+
+                7.  Un **operador de no‐igualdad**, que es un punto de código “NOT EQUAL TO” (U+2260, ≠) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+
+                Si existe un cubierto declarado para un cierto operador binario, entonces se puede construir una expresión con una expresión cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguida del operador, seguido de una expresión cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.  El tipo de la expresión resultante es el tipo del rango del cubierto.
 
     4.  ### Instrucciones
 
@@ -293,7 +373,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 Nota histórica
 --------------
 
-La idea original era hacer un lenguaje con operaciones relacionales y salió de [las observaciones de Matthew Might sobre la similitud de muchos componentes de scripts de UNIX con operadores relacionales][L1].  Sin embargo, esto requeriría manejar memoria dinámicamente y eso escapa el alcance y los objetivos del curso.  La sintaxis relacional estaba ~~siendo copiada descaradamente de~~inspirada en [esta información sobre un lenguaje de consultas llamado ISBL][L2].  Escribimos algunos [trozos de código][L3] basados en esa idea.
+La idea original era hacer un lenguaje con operaciones relacionales y salió de [las observaciones de Matthew Might sobre la similitud de muchos componentes de scripts de UNIX con operadores relacionales][L1].  Sin embargo, esto requeriría manejar memoria dinámicamente y eso escapa el alcance y los objetivos del curso, así que simplificamos el alcance de nuestra idea al manejo de tuplas individuales.  La sintaxis relacional estaba ~~siendo copiada descaradamente de~~inspirada en [esta información sobre un lenguaje de consultas llamado ISBL][L2].  Escribimos algunos [trozos de código][L3] basados en esa idea.
 
 La estructura de este documento está basada en [la especificación del lenguaje Decaf][L4] del [curso CS143 (Compilers)][L5] de la [Universidad Stanford][L6].
 
@@ -319,4 +399,4 @@ Términos por asignar:
 
 *   carne mechada
 
-Una **flecha** es un punto de código “RIGHTWARDS ARROW” (U+2192, →).  Una flecha es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+Una **flecha** es un punto de código “RIGHTWARDS ARROW” (U+2192, →).  Una flecha es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de línea, ni de un comentario de bloque.

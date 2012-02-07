@@ -7,14 +7,14 @@
 
 #define TOKEN_TUPLE_TYPES Token, char const *, char const *, char const *, re2::RE2 *
 
-#define   TOKEN_TAGS(tag, description, regex) tag,
-#define TOKEN_TUPLES(tag, description, regex) std::make_tuple<TOKEN_TUPLE_TYPES>(Token :: tag, #tag, description, regex, NULL),
-
 #define        TOKEN_ENUM(t) std::get<0>(t)
 #define         TOKEN_TAG(t) std::get<1>(t)
 #define TOKEN_DESCRIPTION(t) std::get<2>(t)
 #define       TOKEN_REGEX(t) std::get<3>(t)
 #define         TOKEN_RE2(t) std::get<4>(t)
+
+#define   TOKEN_TAGS(tag, description, regex) tag,
+#define TOKEN_TUPLES(tag, description, regex) std::make_tuple<TOKEN_TUPLE_TYPES>(Token :: tag, #tag, description, regex, NULL),
 
 #define RESERVED_WORD(TOKEN, tag, word)                                                                                         \
         TOKEN(                                                                                                                  \
@@ -57,18 +57,18 @@
                 u8")"                                                                                                           \
         )                                                                                                                       \
                                                                                                                                 \
-        /* §1.3.1p2 */                                                                                                          \
-        TOKEN(                                                                                                                  \
-                LIT_INT,                                                                                                        \
-                u8"literal entero",                                                                                             \
-                u8R"#(([0-9]+))#"                                                                                               \
-        )                                                                                                                       \
-                                                                                                                                \
         /* §1.3.2p1 */                                                                                                          \
         TOKEN(                                                                                                                  \
                 LIT_FLOAT,                                                                                                      \
                 u8"literal de punto flotante",                                                                                  \
                 u8R"#(([0-9]+·[0-9]+))#"                                                                                        \
+        )                                                                                                                       \
+                                                                                                                                \
+        /* §1.3.1p2 */                                                                                                          \
+        TOKEN(                                                                                                                  \
+                LIT_INT,                                                                                                        \
+                u8"literal entero",                                                                                             \
+                u8R"#(([0-9]+))#"                                                                                               \
         )                                                                                                                       \
                                                                                                                                 \
         /* §2.1.1p1 */                                                                                                          \
@@ -91,6 +91,34 @@
                 PAREN_CL,                                                                                                       \
                 u8"fin de paréntesis",                                                                                          \
                 u8R"#((\)))#"                                                                                                   \
+        )                                                                                                                       \
+                                                                                                                                \
+        /* TODO: sección */                                                                                                     \
+        TOKEN(                                                                                                                  \
+                PLUS,                                                                                                           \
+                u8"operador de suma",                                                                                           \
+                u8R"#((\+))#"                                                                                                   \
+        )                                                                                                                       \
+                                                                                                                                \
+        /* TODO: sección */                                                                                                     \
+        TOKEN(                                                                                                                  \
+                MINUS,                                                                                                          \
+                u8"operador de resta",                                                                                          \
+                u8R"#((−))#"                                                                                                    \
+        )                                                                                                                       \
+                                                                                                                                \
+        /* TODO: sección */                                                                                                     \
+        TOKEN(                                                                                                                  \
+                MULT,                                                                                                           \
+                u8"operador de multiplicación",                                                                                 \
+                u8R"#((×))#"                                                                                                    \
+        )                                                                                                                       \
+                                                                                                                                \
+        /* TODO: sección */                                                                                                     \
+        TOKEN(                                                                                                                  \
+                DIV,                                                                                                            \
+                u8"operador de división",                                                                                       \
+                u8R"#((÷))#"                                                                                                    \
         )                                                                                                                       \
 
 enum class Token : unsigned int { TOKEN_DATA(TOKEN_TAGS) };
@@ -156,7 +184,6 @@ int main(int argc, char * argv[]) {
                 }
                 if (!advanced) {
                         for (bytes = 1; bytes < 8; ++bytes) {
-                                std::cout << u8"El bit " << bytes << " es " << ((in[0] >> (8 - bytes)) & 1) << std::endl;
                                 if (!((in[0] >> (8 - bytes)) & 1)) {
                                         if (bytes > 1) --bytes;
                                         break;

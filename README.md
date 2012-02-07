@@ -25,13 +25,13 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     1.  ### Literales de cadena de caracteres
 
-        [Nota: Cuando se hace referencia por primera vez en este documento a un punto de código particular de Unicode, normalmente se escribe entre un inicio de literal de cadena de caracteres y un fin de literal de cadena de caracteres el valor de la propiedad “Name” del punto de código, seguido de un punto de código “SPACE” (U+0020,  ), luego un punto de código “LEFT PARENTHESIS” (U+0028, (), luego la expresión del punto de código de interés en el formato especificado por la primera sección del apéndice A del [estándar Unicode 6.0.0], luego un punto de código “COMMA” (U+002C, ,), luego otro punto de código “SPACE” (U+0020,  ), luego el punto de código de interés y finalmente un punto de código “RIGHT PARENTHESIS” (U+0029, )).  Si para el punto de código de interés la propiedad “Name” se define como la cadena vacía, se usará algún otro nombre para el punto de código.  Si el punto de código no representa por sí solo a un grafema, se podría omitir junto con la coma y el espacio que le preceden. —fin de la nota más inútil jamás escrita en una especificación de un lenguaje]
+        [Nota: Cuando se hace referencia por primera vez en este documento a un punto de código particular de Unicode, normalmente se escribe entre un inicio de literal de cadena de caracteres y un fin de literal de cadena de caracteres el valor de la propiedad “Name” del punto de código, seguido de un punto de código “SPACE” (U+0020, ** **), luego un punto de código “LEFT PARENTHESIS” (U+0028, **(**), luego la expresión del punto de código de interés en el formato especificado por la primera sección del apéndice A del [estándar Unicode 6.0.0], luego un punto de código “COMMA” (U+002C, **,**), luego otro punto de código “SPACE” (U+0020, ** **), luego el punto de código de interés en letra negrilla, y finalmente un punto de código “RIGHT PARENTHESIS” (U+0029, **)**).  Si para el punto de código de interés la propiedad “Name” se define como la cadena vacía, se usará algún otro nombre para el punto de código.  Si el punto de código no representa por sí solo a un grafema, se podría omitir junto con la coma y el espacio que le preceden. —fin de la nota más inútil jamás escrita en una especificación de un lenguaje]
 
-        Un **inicio de literal de cadena de caracteres** es un punto de código “LEFT DOUBLE QUOTATION MARK” (U+201C, “).
+        Un **inicio de literal de cadena de caracteres** es un punto de código “LEFT DOUBLE QUOTATION MARK” (U+201C, **“**).
 
-        Un **fin de literal de cadena de caracteres** es un punto de código “RIGHT DOUBLE QUOTATION MARK” (U+201D, ”).
+        Un **fin de literal de cadena de caracteres** es un punto de código “RIGHT DOUBLE QUOTATION MARK” (U+201D, **”**).
 
-        Un **escapador de caracter** es un punto de código “REVERSE SOLIDUS” (U+005C, \).
+        Un **escapador de caracter** es un punto de código “REVERSE SOLIDUS” (U+005C, **\\**).
 
         Un **escapado de caracter** es una secuencia de dos puntos de código en la que el primero es un escapador de caracter, y si le precede (no inclusive) alguna secuencia consecutiva de escapadores de caracteres, la secuencia tiene un número par de puntos de código (y podría, por lo tanto, ser vacía).
 
@@ -49,7 +49,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **inicio de comentario de bloque** es un punto de código “SINGLE LEFT-POINTING ANGLE QUOTATION MARK” (U+2039: ‹).
 
-            Un **fin de comentario de bloque** es un punto de código “SINGLE RIGHT-POINTING ANGLE QUOTATION MARK” (U+203A, ›).
+            Un **fin de comentario de bloque** es un punto de código “SINGLE RIGHT-POINTING ANGLE QUOTATION MARK” (U+203A, **›**).
 
             Un **fragmento de comentario de bloque** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de bloque que no ocurra dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de línea, seguido de cualquier secuencia de cero o más puntos de código que no sean un fin de comentario de bloque, seguida de un fin de comentario de bloque.
 
@@ -75,7 +75,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             [Nota: Los nombres mostrados para los puntos de código anteriormente enumerados, exceptuando a los dos últimos, no corresponden a la propiedad “Name” (que es vacía para todos ellos) sino a la propiedad “Unicode\_1\_Name”. —fin de la nota]
 
-            Un **inicio de comentario de línea** es un punto de código “DOUBLE SOLIDUS OPERATOR” (U+2AFD, ⫽).
+            Un **inicio de comentario de línea** es un punto de código “DOUBLE SOLIDUS OPERATOR” (U+2AFD, **⫽**).
 
             Un **comentario de línea** es una secuencia de puntos de código que comienza con la ocurrencia de un inicio de comentario de línea que no forme parte de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de bloque, seguido de una secuencia de cero o más puntos de código que no sean fines de línea, seguido de un fin de línea o del final del documento.
 
@@ -101,31 +101,31 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **dígito** es cualquiera de los siguientes puntos de código:
 
-            *   “DIGIT ZERO”  (U+0030, 0)
+            *   “DIGIT ZERO”  (U+0030, **0**)
 
-            *   “DIGIT ONE”   (U+0031, 1)
+            *   “DIGIT ONE”   (U+0031, **1**)
 
-            *   “DIGIT TWO”   (U+0032, 2)
+            *   “DIGIT TWO”   (U+0032, **2**)
 
-            *   “DIGIT THREE” (U+0033, 3)
+            *   “DIGIT THREE” (U+0033, **3**)
 
-            *   “DIGIT FOUR”  (U+0034, 4)
+            *   “DIGIT FOUR”  (U+0034, **4**)
 
-            *   “DIGIT FIVE”  (U+0035, 5)
+            *   “DIGIT FIVE”  (U+0035, **5**)
 
-            *   “DIGIT SIX”   (U+0036, 6)
+            *   “DIGIT SIX”   (U+0036, **6**)
 
-            *   “DIGIT SEVEN” (U+0037, 7)
+            *   “DIGIT SEVEN” (U+0037, **7**)
 
-            *   “DIGIT EIGHT” (U+0038, 8)
+            *   “DIGIT EIGHT” (U+0038, **8**)
 
-            *   “DIGIT NINE”  (U+0039, 9)
+            *   “DIGIT NINE”  (U+0039, **9**)
 
             Un **literal entero** es un símbolo compuesto de una secuencia de uno o más dígitos.  Se interpreta como un número natural escrito en notación posicional en base decimal.
 
         2.  #### Punto flotante
 
-            Un **separador de literal de punto flotante** es un punto de código “MIDDLE DOT” (U+00B7, ·) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un separador de literal de punto flotante es un símbolo reservado.
+            Un **separador de literal de punto flotante** es un punto de código “MIDDLE DOT” (U+00B7, **·**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un separador de literal de punto flotante es un símbolo reservado.
 
             Un **literal de punto flotante** es una secuencia compuesta de un literal entero seguido de un separador de literal de punto flotante, seguido de otro literal entero.  Un literal de punto flotante representa un valor numérico de punto flotante.  El primer literal entero especifica la parte entera del valor representado.  El valor del segundo literal entero es igual a la parte fraccional del número de punto flotante representado multiplicada por 10ⁿ⁺¹, donde `n` es el número de dígitos que componen a ese literal entero.
 
@@ -188,7 +188,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         La especificación de tipo correspondiente a una arepa con exactamente un ingrediente es `arepa` seguida de `de`, a su vez seguida del literal de ingrediente correspondiente a su único ingrediente.
 
-        Un **separador de lista** es un punto de código “COMMA” (U+002C, ,).  Un separador de lista es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+        Un **separador de lista** es un punto de código “COMMA” (U+002C, **,**).  Un separador de lista es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
 
         `y` es una palabra reservada.
 
@@ -208,9 +208,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         TODO: ver definición de tuplas en Haskell
 
-        Un **inicio de literal estructurado** es un punto de código “LEFT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00AB).  Un inicio de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+        Un **inicio de literal estructurado** es un punto de código “LEFT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00AB, **«**).  Un inicio de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
 
-        Un **fin de literal estructurado** es un punto de código “RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00BB).  Un fin de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+        Un **fin de literal estructurado** es un punto de código “RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00BB, **»**).  Un fin de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
 
     3.  ### Cachapa
 
@@ -248,7 +248,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `dulce` es una palabra reservada.
 
-            Un **terminador de frase** es un punto de código “FULL STOP” (U+002E, .).  Un terminador de frase es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+            Un **terminador de frase** es un punto de código “FULL STOP” (U+002E, **.**) que no ocurra dentro de un literal de cadena de caracteres, ni dentro de un escapado de caracter, ni de un espacio en blanco.  Un terminador de frase es un símbolo reservado.
 
             Una **declaración de dulce** es una especificación de tipo seguida de `es`, seguida de `dulce`, seguida de `de`, seguida de un identificador, seguido de un terminador de frase.
 
@@ -304,9 +304,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Platos
 
-            Un **inicio de bloque** es un punto de código “LEFT CURLY BRACKET” (U+007B, {).  Un inicio de bloque es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de línea, ni de un comentario de bloque.
+            Un **inicio de bloque** es un punto de código “LEFT CURLY BRACKET” (U+007B, **{**) que no ocurra dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un espacio en blanco.  Un inicio de bloque es un símbolo reservado.
 
-            Un **fin de bloque** es un punto de código “RIGHT CURLY BRACKET” (U+007D, }).  Un fin de bloque es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de línea, ni de un comentario de bloque.
+            Un **fin de bloque** es un punto de código “RIGHT CURLY BRACKET” (U+007D, **{**) que no ocurra dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un espacio en blanco.  Un fin de bloque es un símbolo reservado.
 
             Un **bloque** es un inicio de bloque, seguido de una secuencia de cero o más definiciones de variables, seguida de una secuencia de cero o más instrucciones o bloques, seguida de un fin de bloque.
 
@@ -334,6 +334,14 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un literal de caraota es una expresión cuyo tipo es la caraota.
 
+        2.  #### Paréntesis
+
+            Un **inicio de paréntesis** es un punto de código “LEFT PARENTHESIS” (U+0028, **(**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de paréntesis es un símbolo reservado.
+
+            Un **fin de paréntesis** es un punto de código “RIGHT PARENTHESIS” (U+0029, **(**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un fin de paréntesis es un símbolo reservado.
+
+            Se puede construir una expresión con un inicio de paréntesis, seguido de una expresión, seguida de un fin de paréntesis.
+
         2.  #### Operadores
 
             TODO: más operadores!  Pero ¿cuáles?  Algún otro unario, al menos!
@@ -342,7 +350,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 Un **operador unario** es cualquiera de los siguientes símbolos reservados.
 
-                1.  Un **operador de resta** es un punto de código “MINUS SIGN” (U+2212, −) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+                1.  Un **operador de resta** es un punto de código “MINUS SIGN” (U+2212, **−**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
                 Si existe un cubierto declarado para un cierto operador unario, entonces se puede construir una expresión con el operador seguido de una expresión cuyo tipo sea equivalente al del ingrediente de la arepa del operador.  El tipo de la expresión resultante es el tipo del rango del cubierto.
 
@@ -352,19 +360,21 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 1.  Un operador de resta.
 
-                2.  Un **operador de suma**, que es un punto de código “PLUS SIGN” (U+002B, +) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+                2.  Un **operador de suma**, que es un punto de código “PLUS SIGN” (U+002B, **+**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                3.  Un **operador de multiplicación**, que es un punto de código “MULTIPLICATION SIGN” (U+00D7, ×) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+                3.  Un **operador de multiplicación**, que es un punto de código “MULTIPLICATION SIGN” (U+00D7, **×**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                4.  Un **operador de división**, que es un punto de código “DIVISION SIGN” (U+00F7, ÷) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+                4.  Un **operador de división**, que es un punto de código “DIVISION SIGN” (U+00F7, **÷**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                5.  Un **operador de módulo**, que es un punto de código “TILDE” (U+007E, ~) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+                5.  Un **operador de módulo**, que es un punto de código “TILDE” (U+007E, **~**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                6.  Un **operador de igualdad**, que es un punto de código “EQUALS SIGN” (U+003D, =) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+                6.  Un **operador de igualdad**, que es un punto de código “EQUALS SIGN” (U+003D, **=**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                7.  Un **operador de no‐igualdad**, que es un punto de código “NOT EQUAL TO” (U+2260, ≠) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+                7.  Un **operador de no‐igualdad**, que es un punto de código “NOT EQUAL TO” (U+2260, **≠**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
                 Si existe un cubierto declarado para un cierto operador binario, entonces se puede construir una expresión con una expresión cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguida del operador, seguido de una expresión cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.  El tipo de la expresión resultante es el tipo del rango del cubierto.
+
+                Si existe un cubierto declarado para un cierto operador binario, entonces se puede construir una expresión con un inicio de paréntesis, seguido por el operador, seguido por un fin de paréntesis, seguido por una expresión cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido de una expresión cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.  El tipo de la expresión resultante es el tipo del rango del cubierto.
 
     4.  ### Instrucciones
 
@@ -389,14 +399,12 @@ La estructura de este documento está basada en [la especificación del lenguaje
 Cosas por hacer
 ---------------
 
+Hacer consistente la definición de símbolos reservados que no estén en espacios en blanco ni escapados ni strings.
+
 Agregar ejemplos a todo.
-
-Términos asignados:
-
-*   arroz → arreglo
 
 Términos por asignar:
 
 *   carne mechada
 
-Una **flecha** es un punto de código “RIGHTWARDS ARROW” (U+2192, →).  Una flecha es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de línea, ni de un comentario de bloque.
+Una **flecha** es un punto de código “RIGHTWARDS ARROW” (U+2192, **→**).  Una flecha es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de línea, ni de un comentario de bloque.

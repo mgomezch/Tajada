@@ -177,7 +177,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         La **arepa** es un tipo de tipos estructurados que asocian en un mismo ente a una cantidad *fija* de valores de otros tipos particulares en un orden específico.  Los tipos asociados por una arepa son sus **ingredientes**.  Los ingredientes de una arepa están implícitamente enumerados por enteros desde el cero en el orden en el que se especifican, y pueden tener opcionalmente un identificador asociado.  Una arepa puede tener cualquier cantidad de ingredientes del mismo tipo, y cada uno es independiente de los demás.  Ningún par de ingredientes con nombre en una arepa puede compartir un mismo nombre.
 
-        Una **arepa rellena** es un valor de cualquier tipo de arepa.
+        Una **arepa rellena** es un valor de algún tipo de arepa.
 
         Un **literal de ingrediente** es una especificación de tipo seguida opcionalmente de un identificador.
 
@@ -329,33 +329,39 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         Una **expresión** es una secuencia de símbolos y símbolos reservados que representa el cálculo de un valor y tiene una cierta estructura.  Una expresión tiene asociado un tipo que se infiere de su estructura, y es el mismo tipo del valor asociado a la expresión.
 
-        TODO: literales de arepa — mejor meterlos en las expresiones, no?
+        Un **inicio de paréntesis** es un punto de código “LEFT PARENTHESIS” (U+0028, **(**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de paréntesis es un símbolo reservado.
 
-        Un **inicio de literal estructurado** es un punto de código “LEFT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00AB, **«**).  Un inicio de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+        Un **fin de paréntesis** es un punto de código “RIGHT PARENTHESIS” (U+0029, **)**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un fin de paréntesis es un símbolo reservado.
 
-        Un **fin de literal estructurado** es un punto de código “RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00BB, **»**).  Un fin de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+        Se puede construir una expresión con un inicio de paréntesis, seguido de una expresión, seguida de un fin de paréntesis.  El tipo de la expresión es el tipo de la expresión y el valor de la expresión es el valor de la expresión [Nota: Tenga cuidado de no confundir a la expresión con la expresión —fin de la nota].
 
         1.  #### Literales
 
-            Un literal de cadena de caracteres es una expresión, y su tipo es el especificado por `arroz con caraota`.  Por esto, también se denominarán **literales de arroz con caraota**.  El valor de un literal de arroz con caraota es un arroz cuyo tipo de contenido es la caraota y cuyo tamaño no es menor que el número de puntos de código especificados por el literal de arroz con caraota.
+            1.  ##### Escalares
 
-            Un literal de café es una expresión cuyo tipo es el café y cuyo valor es aquel que el literal de café representa.
+                Un literal de cadena de caracteres es una expresión, y su tipo es el especificado por `arroz con caraota`.  Por esto, también se denominarán **literales de arroz con caraota**.  El valor de un literal de arroz con caraota es un arroz cuyo tipo de contenido es la caraota y cuyo tamaño no es menor que el número de puntos de código especificados por el literal de arroz con caraota.
 
-            Un literal de caraota es una expresión cuyo tipo es la caraota y cuyo valor es el último punto de código que conforma al literal de caraota.
+                Un literal de café es una expresión cuyo tipo es el café y cuyo valor es aquel que el literal de café representa.
 
-            Un literal entero es una expresión cuyo tipo es el queso y cuyo valor es el valor de tipo queso especificado por el literal entero.
+                Un literal de caraota es una expresión cuyo tipo es la caraota y cuyo valor es el último punto de código que conforma al literal de caraota.
 
-            Un literal de papelón es una expresión cuyo tipo es el papelón y cuyo valor es el especificado por el literal de papelón.
+                Un literal entero es una expresión cuyo tipo es el queso y cuyo valor es el valor de tipo queso especificado por el literal entero.
 
-        2.  #### Paréntesis
+                Un literal de papelón es una expresión cuyo tipo es el papelón y cuyo valor es el especificado por el literal de papelón.
 
-            Un **inicio de paréntesis** es un punto de código “LEFT PARENTHESIS” (U+0028, **(**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de paréntesis es un símbolo reservado.
+            2.  ##### Estructurados
 
-            Un **fin de paréntesis** es un punto de código “RIGHT PARENTHESIS” (U+0029, **)**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un fin de paréntesis es un símbolo reservado.
+                TODO: literales de arepa
 
-            Se puede construir una expresión con un inicio de paréntesis, seguido de una expresión, seguida de un fin de paréntesis.
+                Un **inicio de literal estructurado** es un punto de código “LEFT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00AB, **«**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de literal estructurado es un símbolo reservado.
 
-        2.  #### Operadores
+                Un **fin de literal estructurado** es un punto de código “RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00BB, **»**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un fin de literal estructurado es un símbolo reservado.
+
+        2.  #### Platos
+
+                Con cada plato declarado se puede construir una **expresión de plato**, que es una expresión, con el identificador del plato seguido de una expresión cuyo tipo sea equivalente al del dominio del plato.
+
+        3.  #### Cubiertos
 
             TODO: más operadores!  Pero ¿cuáles?  Algún otro unario, al menos!
 
@@ -365,7 +371,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 1.  Un **operador de resta** es un punto de código “MINUS SIGN” (U+2212, **−**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                Si existe un cubierto declarado para un cierto operador unario, entonces se puede construir una expresión con el operador seguido de una expresión cuyo tipo sea equivalente al del ingrediente de la arepa del dominio del operador.  El tipo de la expresión resultante es el tipo del rango del cubierto.  El valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena con el valor de la expresión.
+                Si existe un cubierto declarado para un cierto operador unario, entonces se puede construir una expresión con el operador seguido de una expresión cuyo tipo sea equivalente al del ingrediente de la arepa del dominio del operador.  El tipo de la expresión resultante es el tipo del rango del cubierto.  El valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena cuyo único relleno sea el valor de la expresión.
 
             2. ##### Binarios
 
@@ -389,7 +395,15 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 Si existe un cubierto declarado para un cierto operador binario, entonces se puede construir una **expresión de operador binario prefijo**, que es una expresión, con un inicio de paréntesis, seguido por el operador, seguido por un fin de paréntesis, seguido por una expresión cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido de una expresión cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
 
-                En ambos casos, el tipo de la expresión resultante es el tipo del rango del cubierto, y el valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena con el valor de la primera expresión y el valor de la segunda expresión.
+                En ambos casos, el tipo de la expresión resultante es el tipo del rango del cubierto, y el valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena cuyo primer y segundo relleno sean el valor de la primera y la segunda expresión, respectivamente.
+
+        4.  #### Otras
+
+            TODO: inline if
+
+            TODO: Acceso a estructurados
+
+            Una **flecha** es un punto de código “RIGHTWARDS ARROW” (U+2192, **→**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Una flecha es un símbolo reservado.
 
     4.  ### Instrucciones
 
@@ -421,5 +435,3 @@ Agregar ejemplos a todo.
 Términos por asignar:
 
 *   carne mechada
-
-Una **flecha** es un punto de código “RIGHTWARDS ARROW” (U+2192, **→**).  Una flecha es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un comentario de línea, ni de un comentario de bloque.

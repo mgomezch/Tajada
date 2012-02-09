@@ -33,13 +33,15 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         Un **escapador de caracter** es un punto de código “REVERSE SOLIDUS” (U+005C, **\\**).
 
-        Un **escapado de caracter** es una secuencia de dos puntos de código en la que el primero es un escapador de caracter, y si le precede (no inclusive) alguna secuencia consecutiva de escapadores de caracteres, la secuencia tiene un número par de puntos de código (y podría, por lo tanto, ser vacía).
+        Un **escapado de caracter** es una secuencia de dos puntos de código en la que el primero es un escapador de caracter, y si le precede (no inclusive) alguna secuencia consecutiva de escapadores de caracteres, la secuencia tiene un número par de puntos de código (y podría, por lo tanto, ser vacía).  El último punto de código de un escapado de caracter se denomina su **caracter escapado**.
 
         Un **elemento de literal de cadena de caracteres** es un escapado de caracter, o un punto de código distinto de un fin de literal de cadena de caracteres y de un escapador de caracter.
 
         Un **fragmento de literal de cadena de caracteres** es una secuencia de puntos de código que comienza con un inicio de literal de cadena de caracteres que no forme parte de un escapado de caracter, ni de un comentario de línea, ni de un comentario de bloque, seguido de cero o más elementos de literal de cadena de caracteres, seguido de un fin de literal de cadena de caracteres.
 
         Un **literal de cadena de caracteres** es un fragmento de literal de cadena de caracteres que no es una subsecuencia de ningún *otro* fragmento de literal de cadena de caracteres.   Los literales de cadena de caracteres son símbolos reservados.
+
+        Un literal de cadena de caracteres especifica o representa a la secuencia de puntos de código obtenida por la concatenación de todos los caracteres representados por sus elementos de literal de cadena de caracteres en el mismo orden en que éstos aparecen en el literal de cadena de caracteres.  El punto de código representado por un elemento de literal de cadena de caracteres es el último de los que lo componen.
 
     2.  ### Espacio en blanco
 
@@ -127,7 +129,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **separador de literal de punto flotante** es un punto de código “MIDDLE DOT” (U+00B7, **·**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un separador de literal de punto flotante es un símbolo reservado.
 
-            Un **literal de punto flotante** es una secuencia compuesta de un literal entero seguido de un separador de literal de punto flotante, seguido de otro literal entero.  Un literal de punto flotante representa un valor numérico de punto flotante.  El primer literal entero especifica la parte entera del valor representado.  El valor del segundo literal entero es igual a la parte fraccional del número de punto flotante representado multiplicada por 10ⁿ⁺¹, donde `n` es el número de dígitos que componen a ese literal entero.
+            Un **literal de punto flotante** es una secuencia compuesta de un literal entero, seguido de un separador de literal de punto flotante, seguido de otro literal entero.  Un literal de punto flotante representa un valor numérico de punto flotante.  El primer literal entero especifica la parte entera del valor representado.  El valor del segundo literal entero es igual a la parte fraccional del número de punto flotante representado multiplicada por 10ⁿ⁺¹, donde `n` es el número de dígitos que componen a ese literal entero.
 
             TODO: overflow, underflow, NaN, infinitos, etc
 
@@ -146,6 +148,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
         1.  #### Café
 
             El **café** es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: la palabra reservada `tetero` representa un valor “verdadero”, y la palabra reservada `negrito` representa un valor “falso”.  La especificación para el tipo café es la palabra reservada `café`.
+
             `tetero` y `negrito` son literales de café.
 
         2.  #### Caraota
@@ -168,11 +171,13 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             TODO: especificar mejor la precisión; hablar, quizás, de ISO/IEC/IEEE 60559:2011
 
-            TODO: overflow, underflow, NaN, infinitos, etc; y si el valor del literal se sale del rango del tipo?  Se toma el valor máximo finito, o infinito, o qué?  Es un error?  Un warning?
+            TODO: overflow, underflow, NaN, infinitos, etc; y si el valor del literal se sale del rango del tipo?  Se toma el valor máximo finito, o infinito, o qué?  Es un error?  Un warning?  Nada?
 
     2.  ### Arepa
 
         La **arepa** es un tipo de tipos estructurados que asocian en un mismo ente a una cantidad *fija* de valores de otros tipos particulares en un orden específico.  Los tipos asociados por una arepa son sus **ingredientes**.  Los ingredientes de una arepa están implícitamente enumerados por enteros desde el cero en el orden en el que se especifican, y pueden tener opcionalmente un identificador asociado.  Una arepa puede tener cualquier cantidad de ingredientes del mismo tipo, y cada uno es independiente de los demás.  Ningún par de ingredientes con nombre en una arepa puede compartir un mismo nombre.
+
+        Una **arepa rellena** es un valor de cualquier tipo de arepa.
 
         Un **literal de ingrediente** es una especificación de tipo seguida opcionalmente de un identificador.
 
@@ -202,15 +207,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             arepa con queso y café
 
-            arepa con papelón, café, café marrón, queso guayanés, arepa de caraota, arepa con papelón, café marrón y queso y queso
-
-        TODO: literales de arepa — mejor meterlos en las expresiones, no?
-
-        TODO: ver definición de tuplas en Haskell
-
-        Un **inicio de literal estructurado** es un punto de código “LEFT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00AB, **«**).  Un inicio de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
-
-        Un **fin de literal estructurado** es un punto de código “RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00BB, **»**).  Un fin de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+            arepa con papelón, queso, café, café, café marrón, queso guayanés, arepa de caraota, arepa con papelón, café marrón y queso y queso
 
     3.  ### Cachapa
 
@@ -218,7 +215,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         Una tajada no especifica cachapas donde exista algún par de ingredientes enumerados en su especificación que sean equivalentes.  Ningún par de ingredientes con nombre en una cachapa puede compartir un mismo nombre.
 
-        La implementación puede definir un límite superior para el número de ingredientes de una cachapa; éste no debe ser menor a 256.
+        La implementación puede definir un límite superior para el número de ingredientes de una cachapa; éste no debe ser menor que 256.
 
         `cachapa` es una palabra reservada.
 
@@ -228,15 +225,17 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     4.  ### Arroz
 
-        El **arroz** es un tipo de tipos de colección que asocian en un mismo ente a una cantidad acotada de valores, todos de un mismo tipo: el tipo del *contenido* del arroz.  Dos tipos de arroz son equivalentes si sus tipos de contenido son equivalentes.
+        El **arroz** es un tipo de tipos de colección que asocian en un mismo ente a una cantidad acotada de valores, todos de un mismo tipo: el tipo del *contenido* del arroz.  Dos arroces son equivalentes si sus tipos de contenido son equivalentes.
 
         `arroz` es una palabra reservada.
 
         La especificación de tipo correspondiente a un arroz es `arroz` seguida de `con`, a su vez seguida de la especificación de tipo correspondiente a su tipo de contenido.
 
+        La cota de la cantidad de valores asociados por un arroz no es parte de su definición ni está asociada a él.  El número de entes de su tipo de contenido que un valor de un arroz asocia es su **tamaño**.  El tamaño de un valor de un arroz es inmutable.
+
 3.  ## Estructura
 
-    Una tajada es una secuencia compuesta de una secuencia de cero o más declaraciones de dulces, seguida de una secuencia de cero o más definiciones de variables, seguida de una secuencia de cero o más declaraciones de platos o cubiertos, seguida de una secuencia de cero o más definiciones de platos o cubiertos, seguida de un bloque.
+    Una tajada es una secuencia compuesta de una secuencia de cero o más declaraciones de dulces, seguida de una secuencia de cero o más declaraciones de platos o cubiertos, seguida de una secuencia de cero o más definiciones de variables, seguida de una secuencia de cero o más definiciones de platos o cubiertos, seguida de un bloque.
 
     1.  ### Declaraciones
 
@@ -264,9 +263,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `plato` es una palabra reservada.
 
-            `jugo` es una palabra reservada.
+            `salsa` es una palabra reservada.
 
-            Una **especificación de plato** es una secuencia compuesta por un identificador (el *nombre*), una `es`, una `un`, una `plato`, una `de`, una especificación de tipo opcionalmente seguida de un identificador (el *dominio* del plato), una `con`, una `jugo`, una `de`, y una especificación de tipo (el *rango* del plato).
+            Una **especificación de plato** es una secuencia compuesta por un identificador (el *nombre*), una `es`, una `un`, una `plato`, una `de`, una especificación de tipo opcionalmente seguida de un identificador (el *dominio* del plato), una `con`, una `salsa`, una `de`, y una especificación de tipo (el *rango* del plato).
 
             Una **declaración de plato** es una especificación de plato seguida de un terminador de frase.  Una declaración de plato hace que ese plato se considere declarado desde el punto en el que aparece en la tajada con el identificador y los tipos usados en su especificación de plato.
 
@@ -278,7 +277,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `cubierto` es una palabra reservada.
 
-            Una **especificación de cubierto** es una secuencia compuesta por un identificador, una `es`, una `el`, una `cubierto`, un operador, una `con`, una especificación de tipo (el *dominio* del cubierto), una `y`, una `jugo`, una `de`, y una especificación de tipo (el *rango* del cubierto).
+            `para` es una palabra reservada.
+
+            Una **especificación de cubierto** es una secuencia compuesta por una `el`, una `cubierto`, un operador, una `para`, una especificación de tipo (el *dominio* del cubierto), una `y`, una `salsa`, una `de`, y una especificación de tipo (el *rango* del cubierto).
 
             Una **declaración de cubierto** es una especificación de cubierto seguida de un terminador de frase.  Una declaración de cubierto hace que ese cubierto se considere declarado desde el punto en el que aparece en la tajada con el operador y los tipos usados en su especificación de cubierto.
 
@@ -326,19 +327,31 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     3.  ### Expresiones
 
-        Una **expresión** es una secuencia de símbolos y símbolos reservados que representa el cálculo de un valor y tiene una cierta estructura.  Una expresión tiene asociado un tipo que se infiere de su estructura.
+        Una **expresión** es una secuencia de símbolos y símbolos reservados que representa el cálculo de un valor y tiene una cierta estructura.  Una expresión tiene asociado un tipo que se infiere de su estructura, y es el mismo tipo del valor asociado a la expresión.
+
+        TODO: literales de arepa — mejor meterlos en las expresiones, no?
+
+        Un **inicio de literal estructurado** es un punto de código “LEFT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00AB, **«**).  Un inicio de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+
+        Un **fin de literal estructurado** es un punto de código “RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00BB, **»**).  Un fin de literal estructurado es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
 
         1.  #### Literales
 
-            Un literal de cadena de caracteres es una expresión, y su tipo es el especificado por `arroz con caraota`.
+            Un literal de cadena de caracteres es una expresión, y su tipo es el especificado por `arroz con caraota`.  Por esto, también se denominarán **literales de arroz con caraota**.  El valor de un literal de arroz con caraota es un arroz cuyo tipo de contenido es la caraota y cuyo tamaño no es menor que el número de puntos de código especificados por el literal de arroz con caraota.
 
-            Un literal de caraota es una expresión cuyo tipo es la caraota.
+            Un literal de café es una expresión cuyo tipo es el café y cuyo valor es aquel que el literal de café representa.
+
+            Un literal de caraota es una expresión cuyo tipo es la caraota y cuyo valor es el último punto de código que conforma al literal de caraota.
+
+            Un literal entero es una expresión cuyo tipo es el queso y cuyo valor es el valor de tipo queso especificado por el literal entero.
+
+            Un literal de papelón es una expresión cuyo tipo es el papelón y cuyo valor es el especificado por el literal de papelón.
 
         2.  #### Paréntesis
 
             Un **inicio de paréntesis** es un punto de código “LEFT PARENTHESIS” (U+0028, **(**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de paréntesis es un símbolo reservado.
 
-            Un **fin de paréntesis** es un punto de código “RIGHT PARENTHESIS” (U+0029, **(**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un fin de paréntesis es un símbolo reservado.
+            Un **fin de paréntesis** es un punto de código “RIGHT PARENTHESIS” (U+0029, **)**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un fin de paréntesis es un símbolo reservado.
 
             Se puede construir una expresión con un inicio de paréntesis, seguido de una expresión, seguida de un fin de paréntesis.
 
@@ -352,7 +365,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 1.  Un **operador de resta** es un punto de código “MINUS SIGN” (U+2212, **−**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                Si existe un cubierto declarado para un cierto operador unario, entonces se puede construir una expresión con el operador seguido de una expresión cuyo tipo sea equivalente al del ingrediente de la arepa del operador.  El tipo de la expresión resultante es el tipo del rango del cubierto.
+                Si existe un cubierto declarado para un cierto operador unario, entonces se puede construir una expresión con el operador seguido de una expresión cuyo tipo sea equivalente al del ingrediente de la arepa del dominio del operador.  El tipo de la expresión resultante es el tipo del rango del cubierto.  El valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena con el valor de la expresión.
 
             2. ##### Binarios
 
@@ -372,9 +385,11 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 7.  Un **operador de no‐igualdad**, que es un punto de código “NOT EQUAL TO” (U+2260, **≠**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                Si existe un cubierto declarado para un cierto operador binario, entonces se puede construir una expresión con una expresión cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguida del operador, seguido de una expresión cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.  El tipo de la expresión resultante es el tipo del rango del cubierto.
+                Si existe un cubierto declarado para un cierto operador binario, entonces se puede construir una **expresión de operador binario infijo**, que es una expresión, con una expresión cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguida del operador, seguido de una expresión cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
 
-                Si existe un cubierto declarado para un cierto operador binario, entonces se puede construir una expresión con un inicio de paréntesis, seguido por el operador, seguido por un fin de paréntesis, seguido por una expresión cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido de una expresión cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.  El tipo de la expresión resultante es el tipo del rango del cubierto.
+                Si existe un cubierto declarado para un cierto operador binario, entonces se puede construir una **expresión de operador binario prefijo**, que es una expresión, con un inicio de paréntesis, seguido por el operador, seguido por un fin de paréntesis, seguido por una expresión cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido de una expresión cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
+
+                En ambos casos, el tipo de la expresión resultante es el tipo del rango del cubierto, y el valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena con el valor de la primera expresión y el valor de la segunda expresión.
 
     4.  ### Instrucciones
 

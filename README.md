@@ -175,9 +175,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     2.  ### Arepa
 
-        La **arepa** es un tipo de tipos estructurados que asocian en un mismo ente a una cantidad *fija* de valores de otros tipos particulares en un orden específico.  Los tipos asociados por una arepa son sus **ingredientes**.  Los ingredientes de una arepa están implícitamente enumerados por enteros desde el cero en el orden en el que se especifican, y pueden tener opcionalmente un identificador asociado.  Una arepa puede tener cualquier cantidad de ingredientes del mismo tipo, y cada uno es independiente de los demás.  Ningún par de ingredientes con nombre en una arepa puede compartir un mismo nombre.
-
-        Una **arepa rellena** es un valor de algún tipo de arepa.
+        La **arepa** es un tipo de tipos estructurados que asocian en un mismo ente a una cantidad *fija* de valores de otros tipos particulares en un orden específico.  Los tipos asociados por una arepa son sus **ingredientes**.  Los ingredientes de una arepa están implícitamente enumerados por enteros desde el cero en el orden en el que se especifican, y pueden tener opcionalmente un identificador asociado (su **nombre**).  Una arepa puede tener cualquier cantidad de ingredientes del mismo tipo, y cada uno es independiente de los demás.  Ningún par de ingredientes con nombre en una arepa puede compartir un mismo nombre.
 
         Un **literal de ingrediente** es una especificación de tipo seguida opcionalmente de un identificador.
 
@@ -208,6 +206,8 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
             arepa con queso y café
 
             arepa con papelón, queso, café, café, café marrón, queso guayanés, arepa de caraota, arepa con papelón, café marrón y queso y queso
+
+        Una **arepa rellena** es un valor de algún tipo de arepa.  Un **relleno** de una arepa rellena es cualquiera de los valores asociados por la arepa rellena.  Cada relleno de una arepa rellena corresponde a exactamente un ingrediente de la arepa correspondiente a la arepa rellena, y se puede identificar por el índice de su ingrediente correspondiente, o por su nombre, si existe.
 
     3.  ### Cachapa
 
@@ -357,9 +357,25 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 Un **fin de literal estructurado** es un punto de código “RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00BB, **»**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un fin de literal estructurado es un símbolo reservado.
 
+                Un **indicador de etiqueta** es un punto de código “LEFTWARDS ARROW” (U+2190, **←**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un indicador de etiqueta es un símbolo reservado.
+
+                Un **literal de arepa rellena** es una secuencia compuesta de un inicio de literal estructurado, seguido de una lista de cero o más expresiones separadas por separadores de lista, cada una de las cuales puede opcionalmente estar seguida de un indicador de etiqueta seguido de un identificador, y todo finalizado con un fin de literal estructurado.
+
+                Un literal de arepa rellena es una expresión cuyo tipo es una arepa cuyos ingredientes son los tipos de las expresiones sucesivas del literal de arepa rellena en el mismo orden de aparición y, si en alguna de ellas ocurre el identificador opcional, su correspondiente ingrediente tendrá ese identificador como nombre.
+
         2.  #### Platos
 
-                Con cada plato declarado se puede construir una **expresión de plato**, que es una expresión, con el identificador del plato seguido de una expresión cuyo tipo sea equivalente al del dominio del plato.
+            Un **indicador de referencia** es un punto de código “AMPERSAND” (U+0026, **&**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un indicador de referencia es un símbolo reservado.
+
+            Un **literal condimentado de arepa rellena** es una secuencia compuesta de un inicio de literal estructurado, seguido de una lista de cero o más expresiones separadas por separadores de lista, cada una de las cuales puede opcionalmente estar seguida de un indicador de etiqueta seguido de un identificador, y también puede opcionalmente estar precedida de un indicador de referencia, y todo finalizado con un fin de literal estructurado.
+
+            Con cada plato declarado se pueden construir **expresiones de plato**, que son expresiones, con el identificador del plato seguido de alguna expresión, opcionalmente precedida por un indicador de referencia, cuyo tipo sea equivalente al del dominio del plato.
+
+            Con cada plato declarado cuyo dominio sea una arepa, se pueden construir expresiones de plato con el identificador del plato seguido de un literal condimentado de arepa que corresponda a un tipo de arepa equivalente al dominio del plato.
+
+            El tipo de una expresión de plato es el rango del plato.
+
+            TODO: ¿cuál es el valor?  ¿cómo se evalúa un plato?  ¿cómo se describe formalmente la ejecución de un procedimiento que toma parámetros (por valor y/o por referencia) y produce un resultado? :(
 
         3.  #### Cubiertos
 
@@ -372,6 +388,8 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
                 1.  Un **operador de resta** es un punto de código “MINUS SIGN” (U+2212, **−**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
                 Si existe un cubierto declarado para un cierto operador unario, entonces se puede construir una expresión con el operador seguido de una expresión cuyo tipo sea equivalente al del ingrediente de la arepa del dominio del operador.  El tipo de la expresión resultante es el tipo del rango del cubierto.  El valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena cuyo único relleno sea el valor de la expresión.
+
+                TODO: ¿cuál es el valor?  ¿cómo se evalúa un cubierto?  ¿cómo se describe formalmente la ejecución de un procedimiento que toma parámetros (por valor y/o por referencia) y produce un resultado? :(
 
             2. ##### Binarios
 
@@ -396,6 +414,8 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
                 Si existe un cubierto declarado para un cierto operador binario, entonces se puede construir una **expresión de operador binario prefijo**, que es una expresión, con un inicio de paréntesis, seguido por el operador, seguido por un fin de paréntesis, seguido por una expresión cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido de una expresión cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
 
                 En ambos casos, el tipo de la expresión resultante es el tipo del rango del cubierto, y el valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena cuyo primer y segundo relleno sean el valor de la primera y la segunda expresión, respectivamente.
+
+                TODO: pasaje por referencia
 
         4.  #### Otras
 
@@ -427,6 +447,10 @@ La estructura de este documento está basada en [la especificación del lenguaje
 
 Cosas por hacer
 ---------------
+
+¿En algún momento se definió lo que son “valores” y un “tipos”?
+¿Debería también definir lo que es un lenguaje, un número, una palabra, definir, existir?
+¿Cómo se describe algo formalmente sin excesos absurdos de formalidad?  Los del JTC1/SC22 saben… ☹
 
 Hacer consistente la definición de símbolos reservados que no estén en espacios en blanco ni escapados ni strings.
 

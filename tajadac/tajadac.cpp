@@ -1,11 +1,14 @@
 #include <cstdlib>
+#include <cstring>
+#include <fstream>
 #include <iostream>
-#include <re2/re2.h>
-#include <sysexits.h>
+#include <streambuf>
 #include <tuple>
 #include <vector>
 
-#include "macros.hpp"
+#include <sysexits.h>
+#include <re2/re2.h>
+
 #include "tokens.hpp"
 
 #define TOKEN_TAGS(tag, description, regex) tag,
@@ -26,9 +29,33 @@ std::vector<std::tuple<TOKEN_TUPLE_TYPES>> ts = { TOKEN_DATA(TOKEN_TUPLES) };
 int main(int argc, char * argv[]) {
         re2::RE2 * re_line;
 
-        if (argc < 2) exit(EX_USAGE);
+        if (argc != 2) {
+                std::cerr
+                        << u8"Uso: " << (argc > 0 ? argv[0] : u8"tajadac") << u8" entrada\n"
+                        << u8"• entrada: el nombre del programa a analizar.  Si es “-”, se leerá de la entrada estándar."
+                        << std::endl;
+                std::exit(EX_USAGE);
+        }
 
-        {
+        std::istream * in_file;
+        if (std::string("-") == argv[1]) in_file = &std::cin;
+        else {
+                in_file = new std::ifstream(argv[1], std::ifstream::in);
+                if (in_file->fail()) {
+                        std::cerr << "No se pudo abrir el archivo a analizar." << std::endl;
+                        std::exit(EX_NOINPUT);
+                }
+        }
+
+        // http://stackoverflow.com/a/2602060
+        std::string in_s(
+                (std::istreambuf_iterator<char>(*in_file)),
+                (std::istreambuf_iterator<char>())
+        );
+
+        re2::StringPiece in(in_s);
+
+        {}{
                 re2::RE2::Options o;
                 o.set_encoding      (re2::RE2::Options::Encoding::EncodingUTF8);
                 o.set_posix_syntax  (false);
@@ -62,10 +89,9 @@ int main(int argc, char * argv[]) {
                         TOKEN_RE2(*it) = r;
                 }
 
-                re_line = new re2::RE2(std::string(u8"[" STRINGIFY(ENDLINES) "]"), o);
+                re_line = new re2::RE2(std::string(u8"[" ENDLINES "]"), o);
         }
 
-        re2::StringPiece in(argv[1]);
         std::string text;
         std::string text_line;
         bool advanced;
@@ -73,7 +99,10 @@ int main(int argc, char * argv[]) {
         unsigned int endline, endcol;
         int bytes;
         while (true) {
-                if (in.length() <= 0 || in[0] == '\0') break;
+                if (in.length() <= 0 || in[0] == '\0') {
+                        std::cerr << "Done." << std::endl;
+                        return 0;
+                }
                 advanced = false;
                 for (auto it = ts.begin(); it != ts.end(); ++it) {
                         if (TOKEN_RE2(*it) == NULL || !re2::RE2::Consume(&in, *TOKEN_RE2(*it), &text)) continue;
@@ -82,7 +111,7 @@ int main(int argc, char * argv[]) {
                         endline = line;
                         endcol = col;
 
-                        {
+                        {}{
                                 re2::StringPiece textpiece(text);
                                 while (re2::RE2::FindAndConsume(&textpiece, *re_line)) {
                                         ++endline;
@@ -143,9 +172,7 @@ int main(int argc, char * argv[]) {
                                 << line
                                 << u8", column "
                                 << col
-                                << u8"; remaining input is “"
-                                << in
-                                << u8"”"
+                                << u8"."
                                 << std::endl;
                         ++col;
                 }

@@ -5,6 +5,10 @@
 #include <tuple>
 #include <vector>
 
+#define ENDLINES \u000A\u000B\u000C\u000D\u0085\u2028\u2029
+#define STRINGIFY(X) STRINGIFY_(X)
+#define STRINGIFY_(X) #X
+
 #define TOKEN_TUPLE_TYPES Token, char const *, char const *, char const *, re2::RE2 *
 
 #define        TOKEN_ENUM(t) std::get<0>(t)
@@ -35,12 +39,12 @@
         TOKEN(                                                                                                                  \
                 IGNORE,                                                                                                         \
                 u8"espacio en blanco",                                                                                          \
-                u8"("                                                                                                           \
+                u8"(("                                                                                                           \
                         /* §1.2.1p4 */                                                                                          \
                         u8"‹[^›]*›|"                                                                                            \
                                                                                                                                 \
                         /* §1.2.2p4 */                                                                                          \
-                        u8"⫽[^\u000A\u000B\u000C\u000D\u0085\u2028\u2029]*[\u000A\u000B\u000C\u000D\u0085\u2028\u2029]|"        \
+                        u8"⫽[^" STRINGIFY(ENDLINES) u8"]*[" STRINGIFY(ENDLINES) u8"]|"        \
                                                                                                                                 \
                         /* §1.2.2p5 */                                                                                          \
                         u8"\u000A|"                                                                                             \
@@ -54,7 +58,7 @@
                         /* §1.2.3p1 */                                                                                          \
                         /* re2 does not currently support the White_Space property, so "\\p{WS}" won’t work. :( */              \
                         u8"[\u0009-\u000D\u0020\u0085\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]"            \
-                u8")"                                                                                                           \
+                u8")+)"                                                                                                           \
         )                                                                                                                       \
                                                                                                                                 \
         /* §1.3.2p1 */                                                                                                          \
@@ -125,6 +129,7 @@ enum class Token : unsigned int { TOKEN_DATA(TOKEN_TAGS) };
 
 int main(int argc, char * argv[]) {
         std::vector<std::tuple<TOKEN_TUPLE_TYPES>> ts = { TOKEN_DATA(TOKEN_TUPLES) };
+        re2::RE2 * re_line;
 
         if (argc < 2) exit(EX_USAGE);
 
@@ -151,20 +156,26 @@ int main(int argc, char * argv[]) {
                                 delete r;
                                 r = NULL;
                         } else {
+#ifdef DEBUG_LEXER
                                 std::cerr
                                         << u8"Parsed regexp for token “"
                                         << TOKEN_TAG(*it)
                                         << u8"”"
                                         << std::endl;
+#endif
                         }
                         TOKEN_RE2(*it) = r;
                 }
+
+                re_line = new re2::RE2(std::string(u8"[" STRINGIFY(ENDLINES) "]"), o);
         }
 
         re2::StringPiece in(argv[1]);
         std::string text;
+        std::string text_line;
         bool advanced;
-        unsigned int pos = 0, line = 1, col = 1;
+        unsigned int line = 1, col = 1;
+        unsigned int endline, endcol;
         int bytes;
         while (true) {
                 if (in.length() <= 0 || in[0] == '\0') break;
@@ -172,14 +183,51 @@ int main(int argc, char * argv[]) {
                 for (auto it = ts.begin(); it != ts.end(); ++it) {
                         if (TOKEN_RE2(*it) == NULL || !re2::RE2::Consume(&in, *TOKEN_RE2(*it), &text)) continue;
                         advanced = true;
+
+                        endline = line;
+                        endcol = col;
+
+                        {
+                                re2::StringPiece textpiece(text);
+                                while (re2::RE2::FindAndConsume(&textpiece, *re_line)) {
+                                        ++endline;
+                                        endcol = 0;
+                                }
+                                for (auto it = textpiece.begin(); it != textpiece.end(); ++it) {
+                                        if ((1 << 7) & *it) continue;
+                                        ++endcol;
+                                }
+                        }
+
                         std::cout
                                 << u8"Found token “"
                                 << TOKEN_TAG(*it)
                                 << u8"” matching text “"
                                 << text
-                                << "”"
-                                << std::endl;
-                        // TODO: increment line/col!
+                                << u8"” ";
+                        if (line == endline && col == endcol - 1) {
+                                std::cout
+                                        << u8"at line "
+                                        << line
+                                        << u8", column "
+                                        << col
+                                        << std::endl;
+                        } else {
+                                std::cout
+                                        << u8"spanning range ("
+                                        << line
+                                        << u8", "
+                                        << col
+                                        << u8")–("
+                                        << endline
+                                        << u8", "
+                                        << endcol - 1
+                                        << u8")"
+                                        << std::endl;
+                        }
+
+                        line = endline;
+                        col = endcol;
                         break;
                 }
                 if (!advanced) {
@@ -192,17 +240,19 @@ int main(int argc, char * argv[]) {
                         std::cerr
                                 << u8"Skipping unrecognized "
                                 << bytes
-                                << "‐byte character ‘";
+                                << u8"‐byte character ‘";
                         for (int i = 0; i < bytes; ++i) std::cerr << in.data()[i];
+                        in.remove_prefix(bytes);
                         std::cerr
-                                << u8"’ at position "
-                                << pos
+                                << u8"’ at line "
+                                << line
+                                << u8", column "
+                                << col
                                 << u8"; remaining input is “"
-                                << ((char const *)in.data() + bytes)
+                                << in
                                 << u8"”"
                                 << std::endl;
-                        in.remove_prefix(bytes);
-                        ++pos;
+                        ++col;
                 }
         }
 }

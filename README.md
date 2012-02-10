@@ -25,7 +25,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     1.  ### Literales de cadena de caracteres
 
-        [Nota: Cuando se hace referencia por primera vez en este documento a un punto de código particular de Unicode, normalmente se escribe entre un inicio de literal de cadena de caracteres y un fin de literal de cadena de caracteres el valor de la propiedad “Name” del punto de código, seguido de un punto de código “SPACE” (U+0020, ** **), luego un punto de código “LEFT PARENTHESIS” (U+0028, **(**), luego la expresión del punto de código de interés en el formato especificado por la primera sección del apéndice A del [estándar Unicode 6.0.0], luego un punto de código “COMMA” (U+002C, **,**), luego otro punto de código “SPACE” (U+0020, ** **), luego el punto de código de interés en letra negrilla, y finalmente un punto de código “RIGHT PARENTHESIS” (U+0029, **)**).  Si para el punto de código de interés la propiedad “Name” se define como la cadena vacía, se usará algún otro nombre para el punto de código.  Si el punto de código no representa por sí solo a un grafema, se podría omitir junto con la coma y el espacio que le preceden. —fin de la nota más inútil jamás escrita en una especificación de un lenguaje]
+        [Nota: Cuando se hace referencia por primera vez en este documento a un punto de código particular de Unicode, normalmente se escribe entre un inicio de literal de cadena de caracteres y un fin de literal de cadena de caracteres el valor de la propiedad “Name” del punto de código, seguido de un punto de código “SPACE” (U+0020,  ), luego un punto de código “LEFT PARENTHESIS” (U+0028, **(**), luego la expresión del punto de código de interés en el formato especificado por la primera sección del apéndice A del [estándar Unicode 6.0.0], luego un punto de código “COMMA” (U+002C, **,**), luego otro punto de código “SPACE” (U+0020,  ), luego el punto de código de interés en letra negrilla, y finalmente un punto de código “RIGHT PARENTHESIS” (U+0029, **)**).  Si para el punto de código de interés la propiedad “Name” se define como la cadena vacía, se usará algún otro nombre para el punto de código.  Si el punto de código no representa por sí solo a un grafema, se podría omitir junto con la coma y el espacio que le preceden. —fin de la nota más inútil jamás escrita en una especificación de un lenguaje]
 
         Un **inicio de literal de cadena de caracteres** es un punto de código “LEFT DOUBLE QUOTATION MARK” (U+201C, **“**).
 
@@ -59,7 +59,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Comentarios de línea
 
-            Un **fin de línea** es [cualquiera de los siguientes puntos de código:][UNL].
+            Un **fin de línea** es [cualquiera de los siguientes puntos de código][UNL].
 
             *   “LINE FEED (LF)”       (U+000A)
 
@@ -205,7 +205,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             arepa con queso y café
 
-            arepa con papelón, queso, café, café, café marrón, queso guayanés, arepa de caraota, arepa con papelón, café marrón y queso y queso
+            arepa con papelón, queso, café, café, café marrón, queso guayanés, arepa ‹arepaception!› de caraota, arepa con papelón, café marrón y queso y queso
 
         Una **arepa rellena** es un valor de algún tipo de arepa.  Un **relleno** de una arepa rellena es cualquiera de los valores asociados por la arepa rellena.  Cada relleno de una arepa rellena corresponde a exactamente un ingrediente de la arepa correspondiente a la arepa rellena, y se puede identificar por el índice de su ingrediente correspondiente, o por su nombre, si existe.
 
@@ -351,8 +351,6 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             2.  ##### Estructurados
 
-                TODO: literales de arepa
-
                 Un **inicio de literal estructurado** es un punto de código “LEFT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00AB, **«**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de literal estructurado es un símbolo reservado.
 
                 Un **fin de literal estructurado** es un punto de código “RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK” (U+00BB, **»**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un fin de literal estructurado es un símbolo reservado.
@@ -367,11 +365,11 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **indicador de referencia** es un punto de código “AMPERSAND” (U+0026, **&**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un indicador de referencia es un símbolo reservado.
 
-            Un **literal condimentado de arepa rellena** es una secuencia compuesta de un inicio de literal estructurado, seguido de una lista de cero o más expresiones separadas por separadores de lista, cada una de las cuales puede opcionalmente estar seguida de un indicador de etiqueta seguido de un identificador, y también puede opcionalmente estar precedida de un indicador de referencia, y todo finalizado con un fin de literal estructurado.
+            Un **literal condimentado de arepa rellena** es una secuencia compuesta de un inicio de literal estructurado, seguido de una lista de cero o más expresiones separadas por separadores de lista, cada una de las cuales puede opcionalmente estar seguida de un indicador de etiqueta seguido de un identificador, y también puede opcionalmente estar precedida de un indicador de referencia, y todo finalizado con un fin de literal estructurado.  La **arepa asociada** a un literal condimentado de arepa rellena es el tipo de la arepa rellena que resultaría de escribir el literal condimentado de arepa rellena sin indicadores de referencia.
 
-            Con cada plato declarado se pueden construir **expresiones de plato**, que son expresiones, con el identificador del plato seguido de alguna expresión, opcionalmente precedida por un indicador de referencia, cuyo tipo sea equivalente al del dominio del plato.
+            Un **argumento** es una secuencia compuesta de una expresión opcionalmente precedida de un indicador de referencia (en cuyo caso su **tipo** es el tipo de la expresión), o un literal condimentado de arepa rellena (en cuyo caso su tipo es la arepa asociada al literal condimentado de arepa rellena).
 
-            Con cada plato declarado cuyo dominio sea una arepa, se pueden construir expresiones de plato con el identificador del plato seguido de un literal condimentado de arepa que corresponda a un tipo de arepa equivalente al dominio del plato.
+            Con cada plato declarado se pueden construir **expresiones de plato**, que son expresiones, con el identificador del plato seguido de un argumento cuyo tipo sea equivalente al del dominio del plato.
 
             El tipo de una expresión de plato es el rango del plato.
 
@@ -409,23 +407,37 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 7.  Un **operador de no‐igualdad**, que es un punto de código “NOT EQUAL TO” (U+2260, **≠**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                Si existe un cubierto declarado para un cierto operador binario, entonces se puede construir una **expresión de operador binario infijo**, que es una expresión, con una expresión cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguida del operador, seguido de una expresión cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
+                Con cada cubierto declarado para un operador binario se pueden construir **expresiones de operador binario infijo**, que son expresiones, con un argumento cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido del operador del cubierto, seguido de un argumento cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
 
-                Si existe un cubierto declarado para un cierto operador binario, entonces se puede construir una **expresión de operador binario prefijo**, que es una expresión, con un inicio de paréntesis, seguido por el operador, seguido por un fin de paréntesis, seguido por una expresión cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido de una expresión cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
+                Con cada cubierto declarado para un operador binario se pueden construir **expresiones de operador binario prefijo**, que son expresiones, con un inicio de paréntesis, seguido por el operador del cubierto, seguido por un fin de paréntesis, seguido por un argumento cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido de un argumento cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
 
-                En ambos casos, el tipo de la expresión resultante es el tipo del rango del cubierto, y el valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena cuyo primer y segundo relleno sean el valor de la primera y la segunda expresión, respectivamente.
+                En ambos casos, el tipo de la expresión resultante es el tipo del rango del cubierto, y el valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena cuyos primer y segundo rellenos sean los valores del primero y el segundo argumento, respectivamente.
 
                 TODO: pasaje por referencia
+
+                TODO: ¿cuál es el valor?  ¿cómo se evalúa un cubierto?  ¿cómo se describe formalmente la ejecución de un procedimiento que toma parámetros (por valor y/o por referencia) y produce un resultado? :(
 
         4.  #### Otras
 
             TODO: inline if
 
-            TODO: Acceso a estructurados
+            TODO: acceso a arroz
 
             Una **flecha** es un punto de código “RIGHTWARDS ARROW” (U+2192, **→**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Una flecha es un símbolo reservado.
 
+            Un **acceso a arepa** es una expresión compuesta de una expresión, la **fuente**, cuyo tipo sea una arepa, seguida de una flecha, seguida de un literal entero que corresponda al número o un identificador que corresponda al nombre de algún ingrediente, el **ingrediente accedido**, del tipo de la expresión.  El tipo de un acceso a arepa es el ingrediente accedido de su fuente.  El valor de un acceso a arepa es el relleno del valor de la fuente identificado por el literal entero o el identificador usado en el acceso a arepa.
+
     4.  ### Instrucciones
+
+        Una **instrucción** es una secuencia de símbolos y símbolos reservados que representa una acción y tiene una cierta estructura.  Las instrucciones se ejecutan en secuencia, y al ejecutarse tienen ciertos efectos sobre el estado manejado por la ejecución de una tajada.
+
+        TODO: organizar
+
+        TODO: asignaciones
+
+        TODO: estructuras de control
+
+        Una expresión seguida de un terminador de frase es una instrucción.
 
 * * *
 

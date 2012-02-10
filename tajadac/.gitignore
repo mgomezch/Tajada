@@ -1,5 +1,9 @@
 *~
 .*.swp*
 *.o
+*.gch
+*.yy
+*.out
 tags
 tajadac
+token-bison-defs

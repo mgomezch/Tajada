@@ -5,130 +5,25 @@
 #include <tuple>
 #include <vector>
 
-#define ENDLINES \u000A\u000B\u000C\u000D\u0085\u2028\u2029
-#define STRINGIFY(X) STRINGIFY_(X)
-#define STRINGIFY_(X) #X
+#include "macros.hpp"
+#include "tokens.hpp"
+
+#define TOKEN_TAGS(tag, description, regex) tag,
+enum class Token : unsigned int { TOKEN_DATA(TOKEN_TAGS) };
+#undef TOKEN_TAGS
 
 #define TOKEN_TUPLE_TYPES Token, char const *, char const *, char const *, re2::RE2 *
-
 #define        TOKEN_ENUM(t) std::get<0>(t)
 #define         TOKEN_TAG(t) std::get<1>(t)
 #define TOKEN_DESCRIPTION(t) std::get<2>(t)
 #define       TOKEN_REGEX(t) std::get<3>(t)
 #define         TOKEN_RE2(t) std::get<4>(t)
 
-#define   TOKEN_TAGS(tag, description, regex) tag,
 #define TOKEN_TUPLES(tag, description, regex) std::make_tuple<TOKEN_TUPLE_TYPES>(Token :: tag, #tag, description, regex, NULL),
-
-#define RESERVED_WORD(TOKEN, tag, word)                                                                                         \
-        TOKEN(                                                                                                                  \
-                tag,                                                                                                            \
-                u8"palabra reservada “" word u8"”",                                                                             \
-                u8"(" word u8")"                                                                                                \
-        )
-
-#define TOKEN_DATA(TOKEN)                                                                                                       \
-        /* §1.1 */                                                                                                              \
-        TOKEN(                                                                                                                  \
-                LIT_STR,                                                                                                        \
-                u8"literal de cadena de caracteres",                                                                            \
-                u8R"#((“([^”\\]|\\.)*”))#"                                                                                      \
-        )                                                                                                                       \
-                                                                                                                                \
-        /* §1.2 */                                                                                                              \
-        TOKEN(                                                                                                                  \
-                IGNORE,                                                                                                         \
-                u8"espacio en blanco",                                                                                          \
-                u8"(("                                                                                                           \
-                        /* §1.2.1p4 */                                                                                          \
-                        u8"‹[^›]*›|"                                                                                            \
-                                                                                                                                \
-                        /* §1.2.2p4 */                                                                                          \
-                        u8"⫽[^" STRINGIFY(ENDLINES) u8"]*[" STRINGIFY(ENDLINES) u8"]|"        \
-                                                                                                                                \
-                        /* §1.2.2p5 */                                                                                          \
-                        u8"\u000A|"                                                                                             \
-                        u8"\u000B|"                                                                                             \
-                        u8"\u000C|"                                                                                             \
-                        u8"\u000D|"                                                                                             \
-                        u8"\u0085|"                                                                                             \
-                        u8"\u2028|"                                                                                             \
-                        u8"\u2029|"                                                                                             \
-                                                                                                                                \
-                        /* §1.2.3p1 */                                                                                          \
-                        /* re2 does not currently support the White_Space property, so "\\p{WS}" won’t work. :( */              \
-                        u8"[\u0009-\u000D\u0020\u0085\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]"            \
-                u8")+)"                                                                                                           \
-        )                                                                                                                       \
-                                                                                                                                \
-        /* §1.3.2p1 */                                                                                                          \
-        TOKEN(                                                                                                                  \
-                LIT_FLOAT,                                                                                                      \
-                u8"literal de punto flotante",                                                                                  \
-                u8R"#(([0-9]+·[0-9]+))#"                                                                                        \
-        )                                                                                                                       \
-                                                                                                                                \
-        /* §1.3.1p2 */                                                                                                          \
-        TOKEN(                                                                                                                  \
-                LIT_INT,                                                                                                        \
-                u8"literal entero",                                                                                             \
-                u8R"#(([0-9]+))#"                                                                                               \
-        )                                                                                                                       \
-                                                                                                                                \
-        /* §2.1.1p1 */                                                                                                          \
-        RESERVED_WORD(TOKEN, BOOL , u8"café"   )                                                                                \
-        RESERVED_WORD(TOKEN, TRUE , u8"tetero" )                                                                                \
-        RESERVED_WORD(TOKEN, FALSE, u8"negrito")                                                                                \
-                                                                                                                                \
-        /* §2.1.2p1 */                                                                                                          \
-        RESERVED_WORD(TOKEN, CHAR , u8"caraota")                                                                                \
-                                                                                                                                \
-        /* TODO: sección */                                                                                                     \
-        TOKEN(                                                                                                                  \
-                PAREN_OP,                                                                                                       \
-                u8"inicio de paréntesis",                                                                                       \
-                u8R"#((\())#"                                                                                                   \
-        )                                                                                                                       \
-                                                                                                                                \
-        /* TODO: sección */                                                                                                     \
-        TOKEN(                                                                                                                  \
-                PAREN_CL,                                                                                                       \
-                u8"fin de paréntesis",                                                                                          \
-                u8R"#((\)))#"                                                                                                   \
-        )                                                                                                                       \
-                                                                                                                                \
-        /* TODO: sección */                                                                                                     \
-        TOKEN(                                                                                                                  \
-                PLUS,                                                                                                           \
-                u8"operador de suma",                                                                                           \
-                u8R"#((\+))#"                                                                                                   \
-        )                                                                                                                       \
-                                                                                                                                \
-        /* TODO: sección */                                                                                                     \
-        TOKEN(                                                                                                                  \
-                MINUS,                                                                                                          \
-                u8"operador de resta",                                                                                          \
-                u8R"#((−))#"                                                                                                    \
-        )                                                                                                                       \
-                                                                                                                                \
-        /* TODO: sección */                                                                                                     \
-        TOKEN(                                                                                                                  \
-                MULT,                                                                                                           \
-                u8"operador de multiplicación",                                                                                 \
-                u8R"#((×))#"                                                                                                    \
-        )                                                                                                                       \
-                                                                                                                                \
-        /* TODO: sección */                                                                                                     \
-        TOKEN(                                                                                                                  \
-                DIV,                                                                                                            \
-                u8"operador de división",                                                                                       \
-                u8R"#((÷))#"                                                                                                    \
-        )                                                                                                                       \
-
-enum class Token : unsigned int { TOKEN_DATA(TOKEN_TAGS) };
+std::vector<std::tuple<TOKEN_TUPLE_TYPES>> ts = { TOKEN_DATA(TOKEN_TUPLES) };
+#undef TOKEN_TUPLES
 
 int main(int argc, char * argv[]) {
-        std::vector<std::tuple<TOKEN_TUPLE_TYPES>> ts = { TOKEN_DATA(TOKEN_TUPLES) };
         re2::RE2 * re_line;
 
         if (argc < 2) exit(EX_USAGE);

@@ -93,7 +93,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         3.  #### Espacio en blanco individual
 
-            [Todo punto de código Unicode que tenga la propiedad “White\_Space”][UWS] es un espacio en blanco si ocurre fuera de un literal de cadena de caracteres, fuera de un escapado de caracter, fuera de un comentario de línea, fuera de un comentario de bloque y fuera de un fin de línea.
+            [Todo punto de código Unicode que tenga la propiedad “White\_Space”][UWS] es un **espacio en blanco individual**, que es un espacio en blanco, si ocurre fuera de un literal de cadena de caracteres, fuera de un escapado de caracter, fuera de un comentario de línea, fuera de un comentario de bloque y fuera de un fin de línea.
 
 [UWS]: <http://www.unicode.org/Public/6.0.0/ucd/PropList.txt>  (Base de datos de caracteres Unicode 6.0.0: lista de propiedades de caracteres (líneas 11–22))
 

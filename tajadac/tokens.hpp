@@ -11,7 +11,7 @@
         )
 
 #define TOKEN_DATA(TOKEN)                                                      \
-        /* §1.1 */                                                             \
+        /* §1.1p7 */                                                           \
         TOKEN(                                                                 \
                 LIT_STR,                                                       \
                 u8"literal de cadena de caracteres",                           \
@@ -61,13 +61,6 @@
                 u8")+)"                                                        \
         )                                                                      \
                                                                                \
-        /* §1.3.2p1 */                                                         \
-        TOKEN(                                                                 \
-                LIT_FLOAT,                                                     \
-                u8"literal de punto flotante",                                 \
-                u8R"#(([0-9]+·[0-9]+))#"                                       \
-        )                                                                      \
-                                                                               \
         /* §1.3.1p2 */                                                         \
         TOKEN(                                                                 \
                 LIT_INT,                                                       \
@@ -75,54 +68,213 @@
                 u8R"#(([0-9]+))#"                                              \
         )                                                                      \
                                                                                \
+        /* §1.3.2p1 */                                                         \
+        TOKEN(                                                                 \
+                FLOAT_SEP,                                                     \
+                u8"separador de literal de punto flotante",                    \
+                u8R"#((·))#"                                                   \
+        )                                                                      \
+                                                                               \
         /* §2.1.1p1 */                                                         \
-        RESERVED_WORD(TOKEN, BOOL , u8"café"   )                               \
-        RESERVED_WORD(TOKEN, TRUE , u8"tetero" )                               \
-        RESERVED_WORD(TOKEN, FALSE, u8"negrito")                               \
+        RESERVED_WORD(TOKEN, TETERO , u8"tetero" )                             \
+                                                                               \
+        /* §2.1.1p2 */                                                         \
+        RESERVED_WORD(TOKEN, NEGRITO, u8"negrito")                             \
+                                                                               \
+        /* §2.1.1p3 */                                                         \
+        RESERVED_WORD(TOKEN, CAFE   , u8"café"   )                             \
                                                                                \
         /* §2.1.2p1 */                                                         \
-        RESERVED_WORD(TOKEN, CHAR , u8"caraota")                               \
+        RESERVED_WORD(TOKEN, CARAOTA, u8"caraota")                             \
                                                                                \
-        /* TODO: sección */                                                    \
+        /* §1.1p4, §2.1.2p3 */                                                 \
+        TOKEN(                                                                 \
+                LIT_CHR,                                                       \
+                u8"literal de caraota",                                        \
+                u8R"#((\\.))#"                                                 \
+        )                                                                      \
+                                                                               \
+        /* §2.1.3p1 */                                                         \
+        RESERVED_WORD(TOKEN, QUESO, u8"queso")                                 \
+                                                                               \
+        /* §2.2p3 */                                                           \
+        RESERVED_WORD(TOKEN, AREPA, u8"arepa")                                 \
+                                                                               \
+        /* §2.2p4 */                                                           \
+        RESERVED_WORD(TOKEN, SOLA , u8"sola" )                                 \
+                                                                               \
+        /* §2.2p5 */                                                           \
+        RESERVED_WORD(TOKEN, DE   , u8"de"   )                                 \
+                                                                               \
+        /* §2.2p6 */                                                           \
+        RESERVED_WORD(TOKEN, CON  , u8"con"  )                                 \
+                                                                               \
+        /* §2.2p9 */                                                           \
+        TOKEN(                                                                 \
+                SEP_LIST,                                                      \
+                u8"separador de lista",                                        \
+                u8R"#((,))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §2.2p10 */                                                          \
+        RESERVED_WORD(TOKEN, Y      , u8"y"      )                             \
+                                                                               \
+        /* §2.3p4 */                                                           \
+        RESERVED_WORD(TOKEN, CACHAPA, u8"cachapa")                             \
+                                                                               \
+        /* §2.3p5 */                                                           \
+        RESERVED_WORD(TOKEN, O      , u8"o"      )                             \
+                                                                               \
+        /* §2.4p2 */                                                           \
+        RESERVED_WORD(TOKEN, ARROZ  , u8"arroz"  )                             \
+                                                                               \
+        /* §3.1.1p1 */                                                         \
+        RESERVED_WORD(TOKEN, ES     , u8"es"     )                             \
+                                                                               \
+        /* §3.1.1p2 */                                                         \
+        RESERVED_WORD(TOKEN, DULCE  , u8"dulce"  )                             \
+                                                                               \
+        /* §3.1.1p3 */                                                         \
+        TOKEN(                                                                 \
+                END_STMT,                                                      \
+                u8"terminador de frase",                                       \
+                u8R"#((.))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §3.1.2p2 */                                                         \
+        RESERVED_WORD(TOKEN, UN      , u8"un"      )                           \
+                                                                               \
+        /* §3.1.2p3 */                                                         \
+        RESERVED_WORD(TOKEN, PLATO   , u8"plato"   )                           \
+                                                                               \
+        /* §3.1.2p4 */                                                         \
+        RESERVED_WORD(TOKEN, SALSA   , u8"salsa"   )                           \
+                                                                               \
+        /* §3.1.2p2 */                                                         \
+        RESERVED_WORD(TOKEN, HAY     , u8"salsa"   )                           \
+                                                                               \
+        /* §3.1.2p3 */                                                         \
+        RESERVED_WORD(TOKEN, UN      , u8"salsa"   )                           \
+                                                                               \
+        /* §3.1.2p4 */                                                         \
+        RESERVED_WORD(TOKEN, CUBIERTO, u8"cubierto")                           \
+                                                                               \
+        /* §3.1.2p5 */                                                         \
+        RESERVED_WORD(TOKEN, PARA    , u8"para"    )                           \
+                                                                               \
+        /* §3.2.1p1 */                                                         \
+        RESERVED_WORD(TOKEN, TAZAS   , u8"tazas"   )                           \
+                                                                               \
+        /* §3.2.2p1 */                                                         \
+        TOKEN(                                                                 \
+                BLOCK_OP,                                                      \
+                u8"inicio de bloque",                                          \
+                u8R"#((\{))#"                                                  \
+        )                                                                      \
+                                                                               \
+        /* §3.2.2p2 */                                                         \
+        TOKEN(                                                                 \
+                BLOCK_CL,                                                      \
+                u8"fin de bloque",                                             \
+                u8R"#((\}))#"                                                  \
+        )                                                                      \
+                                                                               \
+        /* §3.3.1.2p1 */                                                       \
+        TOKEN(                                                                 \
+                TUPLE_OP,                                                      \
+                u8"inicio de literal estructurado",                            \
+                u8R"#((«))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §3.3.1.2p2 */                                                       \
+        TOKEN(                                                                 \
+                TUPLE_CL,                                                      \
+                u8"fin de literal estructurado",                               \
+                u8R"#((»))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §3.3.1.2p3 */                                                       \
+        TOKEN(                                                                 \
+                LABEL_ARROW,                                                   \
+                u8"indicador de etiqueta",                                     \
+                u8R"#((←))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §3.3.2p1 */                                                         \
+        TOKEN(                                                                 \
+                REF_MARK,                                                      \
+                u8"indicador de referencia",                                   \
+                u8R"#((&))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §3.3.3.1l1.1p1 */                                                   \
+        TOKEN(                                                                 \
+                OP_MINUS,                                                      \
+                u8"operador de resta",                                         \
+                u8R"#((−))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §3.3.3.2l1.2p1 */                                                   \
+        TOKEN(                                                                 \
+                OP_PLUS,                                                       \
+                u8"operador de suma",                                          \
+                u8R"#((\+))#"                                                  \
+        )                                                                      \
+                                                                               \
+        /* §3.3.3.2l1.3p1 */                                                   \
+        TOKEN(                                                                 \
+                OP_MULT,                                                       \
+                u8"operador de multiplicación",                                \
+                u8R"#((×))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §3.3.3.2l1.4p1 */                                                   \
+        TOKEN(                                                                 \
+                OP_DIV,                                                        \
+                u8"operador de división",                                      \
+                u8R"#((÷))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §3.3.3.2l1.4p1 */                                                   \
+        TOKEN(                                                                 \
+                OP_MOD,                                                        \
+                u8"operador de módulo",                                        \
+                u8R"#((~))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §3.3.3.2l1.5p1 */                                                   \
+        TOKEN(                                                                 \
+                OP_EQ,                                                         \
+                u8"operador de igualdad",                                      \
+                u8R"#((=))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §3.3.3.2l1.6p1 */                                                   \
+        TOKEN(                                                                 \
+                OP_NEQ,                                                        \
+                u8"operador de no‐igualdad",                                   \
+                u8R"#((≠))#"                                                   \
+        )                                                                      \
+                                                                               \
+        /* §3.3.4p1 */                                                         \
         TOKEN(                                                                 \
                 PAREN_OP,                                                      \
                 u8"inicio de paréntesis",                                      \
                 u8R"#((\())#"                                                  \
         )                                                                      \
                                                                                \
-        /* TODO: sección */                                                    \
+        /* §3.3.4p2 */                                                         \
         TOKEN(                                                                 \
                 PAREN_CL,                                                      \
                 u8"fin de paréntesis",                                         \
                 u8R"#((\)))#"                                                  \
         )                                                                      \
                                                                                \
-        /* TODO: sección */                                                    \
+        /* §3.3.4p4 */                                                         \
         TOKEN(                                                                 \
-                PLUS,                                                          \
-                u8"operador de suma",                                          \
-                u8R"#((\+))#"                                                  \
-        )                                                                      \
-                                                                               \
-        /* TODO: sección */                                                    \
-        TOKEN(                                                                 \
-                MINUS,                                                         \
-                u8"operador de resta",                                         \
-                u8R"#((−))#"                                                   \
-        )                                                                      \
-                                                                               \
-        /* TODO: sección */                                                    \
-        TOKEN(                                                                 \
-                MULT,                                                          \
-                u8"operador de multiplicación",                                \
-                u8R"#((×))#"                                                   \
-        )                                                                      \
-                                                                               \
-        /* TODO: sección */                                                    \
-        TOKEN(                                                                 \
-                DIV,                                                           \
-                u8"operador de división",                                      \
-                u8R"#((÷))#"                                                   \
+                TUPLE_ARROW,                                                   \
+                u8"indicador de acceso a arepa",                               \
+                u8R"#((→))#"                                                   \
         )                                                                      \
 
 #endif

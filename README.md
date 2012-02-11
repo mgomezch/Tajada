@@ -137,7 +137,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         Las **palabras reservadas** del lenguaje son ciertos símbolos usados por el lenguaje como parte de su sintaxis.
 
-        Un **identificador** es un símbolo que no es una palabra reservada ni un literal de ningún tipo.
+        Un **identificador** es un símbolo que no es una palabra reservada ni un literal entero.
 
 2.  ## Tipos de datos
 
@@ -147,19 +147,29 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         1.  #### Café
 
-            El **café** es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: la palabra reservada `tetero` representa un valor “verdadero”, y la palabra reservada `negrito` representa un valor “falso”.  La especificación para el tipo café es la palabra reservada `café`.
+            `tetero` es una palabra reservada.
+
+            `negrito` es una palabra reservada.
+
+            `café` es una palabra reservada.
+
+            El **café** es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: `tetero` representa un valor “verdadero”, y `negrito` representa un valor “falso”.  La especificación para el tipo café es la palabra reservada `café`.
 
             `tetero` y `negrito` son literales de café.
 
         2.  #### Caraota
 
-            La **caraota** es un tipo que almacena exactamente un punto de código Unicode cualquiera.  La especificación para la caraota es la palabra reservada `caraota`.
+            `caraota` es una palabra reservada.
+
+            La **caraota** es un tipo que almacena exactamente un punto de código Unicode cualquiera.  La especificación para la caraota es `caraota`.
 
             Un **literal de caraota** es un escapado de caracter tal que ninguno de sus dos puntos de código formen parte de un literal de cadena de caracteres, ni de un comentario de línea, ni de un comentario de bloque.
 
         3.  #### Queso
 
-            El **queso** es un tipo que almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque ese es el rango de un entero de 32 bits en C, y C nos gusta).  La especificación para el queso es la palabra reservada `queso`.
+            `queso` es una palabra reservada.
+
+            El **queso** es un tipo que almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque ese es el rango de un entero de 32 bits en C, y C nos gusta).  La especificación para el queso es `queso`.
 
             Un literal entero especifica un valor de tipo queso.  Una tajada no tiene literales enteros cuyo correspondiente número natural no esté dentro del rango del queso.
 
@@ -169,7 +179,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un literal de punto flotante especifica un valor de tipo papelón.  El valor de tipo papelón correspondiente a un literal de punto flotante es el valor más cercano representable en la implementación de valores de punto flotante, y si hay más de uno igualmente cercano, se toma el de menor valor absoluto.
 
-            TODO: especificar mejor la precisión; hablar, quizás, de ISO/IEC/IEEE 60559:2011
+            TODO: especificar bien la precisión (“hazlo como C” en este caso probablemente tiene tanto contenido semántico como “purple monkey dishwasher”); hablar, quizás, de ISO/IEC/IEEE 60559:2011
 
             TODO: overflow, underflow, NaN, infinitos, etc; y si el valor del literal se sale del rango del tipo?  Se toma el valor máximo finito, o infinito, o qué?  Es un error?  Un warning?  Nada?
 
@@ -205,7 +215,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             arepa con queso y café
 
-            arepa con papelón, queso, café, café, café marrón, queso guayanés, arepa ‹arepaception!› de caraota, arepa con papelón, café marrón y queso y queso
+            arepa con papelón, queso, café, café, café marrón, queso guayanés, arepa de arepa con arepa con arepa con arepa sola ‹arepaception!›, caraota, arepa con papelón, café marrón y queso y queso
 
         Una **arepa rellena** es un valor de algún tipo de arepa.  Un **relleno** de una arepa rellena es cualquiera de los valores asociados por la arepa rellena.  Cada relleno de una arepa rellena corresponde a exactamente un ingrediente de la arepa correspondiente a la arepa rellena, y se puede identificar por el índice de su ingrediente correspondiente, o por su nombre, si existe.
 
@@ -273,13 +283,15 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **cubierto** es una función que tiene asociado un operador específico, recibe entes de algún tipo específico, ejecuta una secuencia de instrucciones en orden, y produce un resultado de un tipo específico.  Una tajada no tiene más de un cubierto asociado a un mismo símbolo reservado y a tipos equivalentes de entes recibidos y producidos, pero puede tener más de un cubierto asociado a un mismo identificador, o más de un cubierto asociado a tipos equivalentes de entes recibidos y/o producidos.
 
-            `el` es una palabra reservada.
+            `hay` es una palabra reservada.
+
+            `un` es una palabra reservada.
 
             `cubierto` es una palabra reservada.
 
             `para` es una palabra reservada.
 
-            Una **especificación de cubierto** es una secuencia compuesta por una `el`, una `cubierto`, un operador, una `para`, una especificación de tipo (el *dominio* del cubierto), una `y`, una `salsa`, una `de`, y una especificación de tipo (el *rango* del cubierto).
+            Una **especificación de cubierto** es una secuencia compuesta por una `hay`, una `un`, una `cubierto`, un operador, una `para`, una especificación de tipo (el *dominio* del cubierto), una `y`, una `salsa`, una `de`, y una especificación de tipo (el *rango* del cubierto).
 
             Una **declaración de cubierto** es una especificación de cubierto seguida de un terminador de frase.  Una declaración de cubierto hace que ese cubierto se considere declarado desde el punto en el que aparece en la tajada con el operador y los tipos usados en su especificación de cubierto.
 
@@ -328,12 +340,6 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
     3.  ### Expresiones
 
         Una **expresión** es una secuencia de símbolos y símbolos reservados que representa el cálculo de un valor y tiene una cierta estructura.  Una expresión tiene asociado un tipo que se infiere de su estructura, y es el mismo tipo del valor asociado a la expresión.
-
-        Un **inicio de paréntesis** es un punto de código “LEFT PARENTHESIS” (U+0028, **(**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de paréntesis es un símbolo reservado.
-
-        Un **fin de paréntesis** es un punto de código “RIGHT PARENTHESIS” (U+0029, **)**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un fin de paréntesis es un símbolo reservado.
-
-        Se puede construir una expresión con un inicio de paréntesis, seguido de una expresión, seguida de un fin de paréntesis.  El tipo de la expresión es el tipo de la expresión y el valor de la expresión es el valor de la expresión [Nota: Tenga cuidado de no confundir a la expresión con la expresión —fin de la nota].
 
         1.  #### Literales
 
@@ -419,13 +425,19 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         4.  #### Otras
 
-            TODO: inline if
+            Un **inicio de paréntesis** es un punto de código “LEFT PARENTHESIS” (U+0028, **(**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de paréntesis es un símbolo reservado.
+
+            Un **fin de paréntesis** es un punto de código “RIGHT PARENTHESIS” (U+0029, **)**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un fin de paréntesis es un símbolo reservado.
+
+            Se puede construir una expresión con un inicio de paréntesis, seguido de una expresión, seguida de un fin de paréntesis.  El tipo de la expresión es el tipo de la expresión y el valor de la expresión es el valor de la expresión. [Nota: Tenga cuidado de no confundir a la expresión con la expresión —fin de la nota]
+
+            Un **indicador de acceso a arepa** es un punto de código “RIGHTWARDS ARROW” (U+2192, **→**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Una flecha es un símbolo reservado.
+
+            Un **acceso a arepa** es una expresión compuesta de una expresión, la **fuente**, cuyo tipo sea una arepa, seguida de un indicador de acceso a arepa, seguido de un literal entero que corresponda al número o un identificador que corresponda al nombre de algún ingrediente, el **ingrediente accedido**, del tipo de la expresión.  El tipo de un acceso a arepa es el ingrediente accedido de su fuente.  El valor de un acceso a arepa es el relleno del valor de la fuente identificado por el literal entero o el identificador usado en el acceso a arepa.
 
             TODO: acceso a arroz
 
-            Una **flecha** es un punto de código “RIGHTWARDS ARROW” (U+2192, **→**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Una flecha es un símbolo reservado.
-
-            Un **acceso a arepa** es una expresión compuesta de una expresión, la **fuente**, cuyo tipo sea una arepa, seguida de una flecha, seguida de un literal entero que corresponda al número o un identificador que corresponda al nombre de algún ingrediente, el **ingrediente accedido**, del tipo de la expresión.  El tipo de un acceso a arepa es el ingrediente accedido de su fuente.  El valor de un acceso a arepa es el relleno del valor de la fuente identificado por el literal entero o el identificador usado en el acceso a arepa.
+            TODO: inline if
 
     4.  ### Instrucciones
 

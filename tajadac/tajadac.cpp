@@ -26,9 +26,100 @@ enum class Token : unsigned int { TOKEN_DATA(TOKEN_TAGS) };
 std::vector<std::tuple<TOKEN_TUPLE_TYPES>> ts = { TOKEN_DATA(TOKEN_TUPLES) };
 #undef TOKEN_TUPLES
 
-int main(int argc, char * argv[]) {
-        re2::RE2 * re_line;
+re2::RE2 * re_line;
 
+struct scan_state {
+        re2::StringPiece * in;
+        int line;
+        int col;
+};
+
+int yylex(YYSTYPE * s, YYLTYPE * l, struct scan_state * state) {
+        unsigned int endline, endcol;
+        std::string text_line;
+        std::string text;
+        int bytes;
+        bool advanced = false;
+
+        if (state->in->length() <= 0 || state->in->data()[0] == '\0') {
+                std::cerr << "Done." << std::endl;
+                return 0;
+        }
+        for (auto it = ts.begin(); it != ts.end(); ++it) {
+                if (TOKEN_RE2(*it) == NULL || !re2::RE2::Consume(state->in, *TOKEN_RE2(*it), &text)) continue;
+                advanced = true;
+
+                endline = state->line;
+                endcol  = state->col;
+
+                {}{
+                        re2::StringPiece textpiece(text);
+                        while (re2::RE2::FindAndConsume(&textpiece, *re_line)) {
+                                ++endline;
+                                endcol = 0;
+                        }
+                        for (auto it = textpiece.begin(); it != textpiece.end(); ++it) {
+                                if ((1 << 7) & *it) continue;
+                                ++endcol;
+                        }
+                }
+
+                std::cerr
+                        << u8"Found token “"
+                        << TOKEN_TAG(*it)
+                        << u8"” matching text “"
+                        << text
+                        << u8"” ";
+                if (state->line == endline && state->col == endcol - 1) {
+                        std::cerr
+                                << u8"at line "
+                                << state->line
+                                << u8", column "
+                                << state->col
+                                << std::endl;
+                } else {
+                        std::cerr
+                                << u8"spanning range ("
+                                << state->line
+                                << u8", "
+                                << state->col
+                                << u8")–("
+                                << endline
+                                << u8", "
+                                << endcol - 1
+                                << u8")"
+                                << std::endl;
+                }
+
+                state->line = endline;
+                state->col  = endcol;
+                break;
+        }
+        if (!advanced) {
+                for (bytes = 1; bytes < 8; ++bytes) {
+                        if (!((state->in->data()[0] >> (8 - bytes)) & 1)) {
+                                if (bytes > 1) --bytes;
+                                break;
+                        }
+                }
+                std::cerr
+                        << u8"Skipping unrecognized "
+                        << bytes
+                        << u8"‐byte character ‘";
+                for (int i = 0; i < bytes; ++i) std::cerr << state->in->data()[i];
+                in.remove_prefix(bytes);
+                std::cerr
+                        << u8"’ at line "
+                        << state->line
+                        << u8", column "
+                        << state->col
+                        << u8"."
+                        << std::endl;
+                ++(state->col);
+        }
+}
+
+int main(int argc, char * argv[]) {
         if (argc != 2) {
                 std::cerr
                         << u8"Uso: " << (argc > 0 ? argv[0] : u8"tajadac") << u8" entrada\n"
@@ -46,14 +137,6 @@ int main(int argc, char * argv[]) {
                         std::exit(EX_NOINPUT);
                 }
         }
-
-        // http://stackoverflow.com/a/2602060
-        std::string in_s(
-                (std::istreambuf_iterator<char>(*in_file)),
-                (std::istreambuf_iterator<char>())
-        );
-
-        re2::StringPiece in(in_s);
 
         {}{
                 re2::RE2::Options o;
@@ -92,89 +175,12 @@ int main(int argc, char * argv[]) {
                 re_line = new re2::RE2(std::string(u8"[" ENDLINES "]"), o);
         }
 
-        std::string text;
-        std::string text_line;
-        bool advanced;
-        unsigned int line = 1, col = 1;
-        unsigned int endline, endcol;
-        int bytes;
-        while (true) {
-                if (in.length() <= 0 || in[0] == '\0') {
-                        std::cerr << "Done." << std::endl;
-                        return 0;
-                }
-                advanced = false;
-                for (auto it = ts.begin(); it != ts.end(); ++it) {
-                        if (TOKEN_RE2(*it) == NULL || !re2::RE2::Consume(&in, *TOKEN_RE2(*it), &text)) continue;
-                        advanced = true;
+        // http://stackoverflow.com/a/2602060
+        std::string in_s(
+                (std::istreambuf_iterator<char>(*in_file)),
+                (std::istreambuf_iterator<char>())
+        );
 
-                        endline = line;
-                        endcol = col;
-
-                        {}{
-                                re2::StringPiece textpiece(text);
-                                while (re2::RE2::FindAndConsume(&textpiece, *re_line)) {
-                                        ++endline;
-                                        endcol = 0;
-                                }
-                                for (auto it = textpiece.begin(); it != textpiece.end(); ++it) {
-                                        if ((1 << 7) & *it) continue;
-                                        ++endcol;
-                                }
-                        }
-
-                        std::cout
-                                << u8"Found token “"
-                                << TOKEN_TAG(*it)
-                                << u8"” matching text “"
-                                << text
-                                << u8"” ";
-                        if (line == endline && col == endcol - 1) {
-                                std::cout
-                                        << u8"at line "
-                                        << line
-                                        << u8", column "
-                                        << col
-                                        << std::endl;
-                        } else {
-                                std::cout
-                                        << u8"spanning range ("
-                                        << line
-                                        << u8", "
-                                        << col
-                                        << u8")–("
-                                        << endline
-                                        << u8", "
-                                        << endcol - 1
-                                        << u8")"
-                                        << std::endl;
-                        }
-
-                        line = endline;
-                        col = endcol;
-                        break;
-                }
-                if (!advanced) {
-                        for (bytes = 1; bytes < 8; ++bytes) {
-                                if (!((in[0] >> (8 - bytes)) & 1)) {
-                                        if (bytes > 1) --bytes;
-                                        break;
-                                }
-                        }
-                        std::cerr
-                                << u8"Skipping unrecognized "
-                                << bytes
-                                << u8"‐byte character ‘";
-                        for (int i = 0; i < bytes; ++i) std::cerr << in.data()[i];
-                        in.remove_prefix(bytes);
-                        std::cerr
-                                << u8"’ at line "
-                                << line
-                                << u8", column "
-                                << col
-                                << u8"."
-                                << std::endl;
-                        ++col;
-                }
-        }
+        re2::StringPiece in(in_s);
+        struct scan_state state = { &in, 1, 1 };
 }

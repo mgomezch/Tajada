@@ -23,7 +23,24 @@ lex.o       : lex.cc         tokens.hh parser.tab.hh stack.hh location.hh positi
 parser.tab.o: parser.tab.cc            parser.tab.hh stack.hh location.hh position.hh
 
 location.hh parser.tab.cc parser.tab.hh position.hh stack.hh: parser.y tdefs.cc tokens.hh
-	$(CXX) $(CXXOPTS) -E -P tdefs.cc | sed 's/ \?\! \?/\n/g' | sed -e '/^UNION void|/d' -e 's/^TOKEN void|\(%token \)<[^>]*> \(.*\)/\1\2/' -e 's/^UNION [^|]*|/        /' -e 's/^[^|]*|//' -e '/^$$/d' > tdefs.out
-	printf '%s\n' '/^%tokens$$/r tdefs.out' '/^%tokens$$/d' 'w $<y' 'q' | ed -s $<
-	$(YACC) $(YACCOPTS) $<y
+	$(CXX) $(CXXOPTS) -E -P tdefs.cc                                              \
+                | sed 's/ \?! \?/\n/g'                                                \
+                | sed                                                                 \
+                        -e 's/^void|\(%token@\)<[^>]*>\(@[^ ]*@\)u8\(.*\)$$/\1 \2\3/' \
+                        -e 's/^[^|]*|\(%token@<[^>]*>@[^ ]*@\)u8\(.*\)$$/\1\2/'       \
+                        -e 's/" u8"//g'                                               \
+                | column -t -s @                                                      \
+                > token_data.out
+	printf '%s\n' '' '%union {' >> token_data.out
+	$(CXX) $(CXXOPTS) -E -P utypes.cc        \
+                | sed 's/ \?! \?/\n/g'           \
+                | sed                            \
+                        -e '/^void|/d'           \
+                        -e 's/^[^|]*|/        /' \
+                        -e '/^$$/d'              \
+                | column -t -s @                 \
+                >> token_data.out
+	printf '%s\n' '}' >> token_data.out
+	printf '%s\n' '/^%tokens$$/r token_data.out' '/^%tokens$$/d' 'w $<y' 'q' | ed -s ./$<
+	$(YACC) $(YACCOPTS) ./$<y
 	if [ "$$($(YACC) -V | head -n 1)" = 'bison (GNU Bison) 2.4.1' ]; then printf '%s\n' '/||\(.*\)/s//||(\1)/' wq | ed -s position.hh; fi

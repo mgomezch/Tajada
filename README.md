@@ -153,7 +153,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `café` es una palabra reservada.
 
-            El **café** es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: `tetero` representa un valor “verdadero”, y `negrito` representa un valor “falso”.  La especificación para el tipo café es `café`.
+            El **café** es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: `tetero` representa un valor “verdadero”, y `negrito` representa un valor “falso”.
+
+            La especificación de tipo del café es `café`.
 
             `tetero` y `negrito` son literales de café.
 
@@ -161,7 +163,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `caraota` es una palabra reservada.
 
-            La **caraota** es un tipo que almacena exactamente un punto de código Unicode cualquiera.  La especificación para la caraota es `caraota`.
+            La **caraota** es un tipo que almacena exactamente un punto de código Unicode cualquiera.
+
+            La especificación de tipo de la caraota es `caraota`.
 
             Un **literal de caraota** es un escapado de caracter tal que ninguno de sus dos puntos de código formen parte de un literal de cadena de caracteres, ni de un comentario de línea, ni de un comentario de bloque.
 
@@ -169,15 +173,19 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `queso` es una palabra reservada.
 
-            El **queso** es un tipo que almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque ese es el rango de un entero de 32 bits en C, y C nos gusta).  La especificación para el queso es `queso`.
+            El **queso** es un tipo que almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque ese es el rango de un entero de 32 bits en C, y C nos gusta).  El rango específico es definido por la implementación.
 
-            Un literal entero especifica un valor de tipo queso.  Una tajada no tiene literales enteros cuyo correspondiente número natural no esté dentro del rango del queso.
+            La especificación de tipo del queso es `queso`.
+
+            Un literal entero especifica un valor cuyo tipo es el queso.
 
         4.  #### Papelón
 
             `papelón` es una palabra reservada.
 
-            El **papelón** es un tipo que almacena un número de punto flotante con al menos la precisión y el rango de un `float` de 32 bits de C.  El tipo se especifica con `papelón`.
+            El **papelón** es un tipo que almacena un número de punto flotante con al menos la precisión y el rango de un `float` de 32 bits de C.  El rango específico es definido por la implementación.
+
+            La especificación de tipo del papelón es `papelón`.
 
             Un literal de punto flotante especifica un valor de tipo papelón.  El valor de tipo papelón correspondiente a un literal de punto flotante es el valor más cercano representable en la implementación de valores de punto flotante, y si hay más de uno igualmente cercano, se toma el de menor valor absoluto.
 
@@ -243,6 +251,8 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         La especificación de tipo correspondiente a un arroz es `arroz` seguida de `con`, a su vez seguida de la especificación de tipo correspondiente a su tipo de contenido.
 
+        La **especificación completa de tipo** para un arroz es un literal entero seguido de `tazas`, seguida de `de`, seguida de `arroz`, seguida de `con`, seguida de la especificación completa del tipo de contenido del arroz.
+
         La cota de la cantidad de valores asociados por un arroz no es parte de su definición ni está asociada a él.  El número de entes de su tipo de contenido que un valor de un arroz asocia es su **tamaño**.  El tamaño de un valor de un arroz es inmutable.
 
 3.  ## Estructura
@@ -261,7 +271,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **terminador de frase** es un punto de código “FULL STOP” (U+002E, **.**) que no ocurra dentro de un literal de cadena de caracteres, ni dentro de un escapado de caracter, ni de un espacio en blanco.  Un terminador de frase es un símbolo reservado.
 
-            Una **declaración de dulce** es una especificación de tipo seguida de `es`, seguida de `dulce`, seguida de `de`, seguida de un identificador, seguido de un terminador de frase.
+            Una **declaración de dulce** es una especificación de tipo (su **tipo**), seguida de `es`, seguida de `dulce`, seguida de `de`, seguida de un identificador (su **nombre**), seguido de un terminador de frase.
 
             Un **dulce** es una identificación entre un tipo y un identificador.  Cuando se ha declarado un dulce con un cierto tipo y un cierto identificador, puede sustituirse a partir de ese punto de la tajada cualquier ocurrencia de la especificación de ese tipo por el identificador asociado con el dulce.  En otras palabras, un dulce define un nombre alternativo para un tipo, y su único propósito es permitir al programador agregar a gusto azucar sintáctica a su tajada.
 
@@ -303,17 +313,23 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `tazas` es una palabra reservada.
 
-            La **especificación completa de tipo** para un arroz es un literal entero seguido de `tazas`, seguida de `de`, seguida de `arroz`, seguida de `con`, seguida de la especificación completa del tipo de contenido del arroz.
-
             La especificación completa de tipo de cualquier tipo que no haga referencia a otros tipos es su especificación de tipo.  La especificación completa de tipo de una arepa o cachapa es de la misma forma que su especificación de tipo, pero en vez de escribirse la especificación de tipo de sus ingredientes, se escriben sus especificaciones completas de tipo.
 
-            Una **definición de variable** es una secuencia compuesta por un identificador, una `es`, una especificación completa de tipo y un terminador de frase.  Por ejemplo,
+            Una **definición de variable** es una secuencia compuesta por un identificador (su **nombre**), una `es`, una especificación completa de tipo y un terminador de frase.  Por ejemplo,
 
                 telita es queso.
 
             define una variable llamada `telita` de tipo `queso`.  La variable es un ente del tipo especificado y puede ser referida por el identificador usado en su definición.
 
-            TODO: alcance y tiempo de vida
+            Una tajada no define más de una variable con un mismo nombre fuera de un bloque.
+
+            Una tajada no define ninguna variable cuyo nombre sea igual al de algún dulce.
+
+            TODO: mover a sección sobre bloques
+
+            Una tajada no define más de una variable con un mismo nombre en un mismo bloque.
+
+            [Nota: Es posible definir una variable en un bloque, y ese bloque puede contener a otro bloque que podría definir otra variable con el mismo nombre que la primera.  Decir que una variable se define en un bloque significa que la definición de esa variable está directamente en él, y no en algún otro bloque contenido en él directa o indirectamente. —fin de la nota]
 
         2.  #### Platos
 

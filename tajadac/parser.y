@@ -81,8 +81,57 @@ overload_spec
 : HAY UN CUBIERTO operator PARA typespec[dominio] Y SALSA DE typespec[rango]
 ;
 
+/* §3.2.1p4 */
 var_def
 : IDENT[nombre] ES typespec[tipo] STMT_END
+;
+
+
+
+typespec
+
+/* TODO: sección de dulces */
+: IDENT
+
+/* §2.1.1p5 */
+| CAFE
+
+/* §2.1.2p3 */
+| CARAOTA
+
+/* §2.1.3p3 */
+| QUESO
+
+/* §2.1.4p3 */
+| PAPELON
+
+/* §2.2p7 */
+| AREPA VIUDA
+
+/* §2.2p8 */
+| AREPA DE typespec
+
+/* §2.2p11 */
+| AREPA CON structure_typespecs Y typespec
+
+/* §2.3p6 */
+| CACHAPA CON structure_typespecs O typespec
+
+/* §2.4p3 */
+| ARROZ CON typespec
+
+/* §2.4p4 */
+| LIT_INT TAZAS DE ARROZ CON typespec
+
+;
+
+
+
+/* §2.2p11, §2.3p6 */
+structure_typespecs
+: structure_typespecs LIST_SEP typespec IDENT
+| structure_typespecs LIST_SEP typespec
+| typespec
 ;
 
 operator
@@ -93,26 +142,6 @@ operator
 | OP_MOD
 | OP_EQ
 | OP_NEQ
-;
-
-typespec
-: IDENT
-| CAFE
-| CARAOTA
-| QUESO
-| PAPELON
-| LIT_INT TAZAS DE ARROZ CON typespec
-|                  ARROZ CON typespec
-| AREPA VIUDA
-| AREPA DE typespec
-| AREPA   CON structure_typespecs Y typespec
-| CACHAPA CON structure_typespecs O typespec
-;
-
-structure_typespecs
-: structure_typespecs LIST_SEP typespec IDENT
-| structure_typespecs LIST_SEP typespec
-| typespec
 ;
 
 block

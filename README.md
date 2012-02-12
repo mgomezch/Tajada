@@ -153,7 +153,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `café` es una palabra reservada.
 
-            El **café** es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: `tetero` representa un valor “verdadero”, y `negrito` representa un valor “falso”.  La especificación para el tipo café es la palabra reservada `café`.
+            El **café** es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: `tetero` representa un valor “verdadero”, y `negrito` representa un valor “falso”.  La especificación para el tipo café es `café`.
 
             `tetero` y `negrito` son literales de café.
 
@@ -175,7 +175,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         4.  #### Papelón
 
-            El **papelón** es un tipo que almacena un número de punto flotante con al menos la precisión y el rango de un `float` de 32 bits de C.  El tipo se especifica con la palabra reservada `papelón`.
+            `papelón` es una palabra reservada.
+
+            El **papelón** es un tipo que almacena un número de punto flotante con al menos la precisión y el rango de un `float` de 32 bits de C.  El tipo se especifica con `papelón`.
 
             Un literal de punto flotante especifica un valor de tipo papelón.  El valor de tipo papelón correspondiente a un literal de punto flotante es el valor más cercano representable en la implementación de valores de punto flotante, y si hay más de uno igualmente cercano, se toma el de menor valor absoluto.
 
@@ -245,7 +247,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
 3.  ## Estructura
 
-    Una tajada es una secuencia compuesta de una secuencia de cero o más declaraciones de dulces, seguida de una secuencia de cero o más declaraciones de platos o cubiertos, seguida de una secuencia de cero o más definiciones de variables, seguida de una secuencia de cero o más definiciones de platos o cubiertos, seguida de un bloque.
+    Una tajada es una secuencia compuesta de una secuencia de cero o más declaraciones de dulces, definiciones de variables, y declaraciones y definiciones de platos y cubiertos, seguida de un bloque.
 
     1.  ### Declaraciones
 
@@ -284,8 +286,6 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
             Un **cubierto** es una función que tiene asociado un operador específico, recibe entes de algún tipo específico, ejecuta una secuencia de instrucciones en orden, y produce un resultado de un tipo específico.  Una tajada no tiene más de un cubierto asociado a un mismo símbolo reservado y a tipos equivalentes de entes recibidos y producidos, pero puede tener más de un cubierto asociado a un mismo identificador, o más de un cubierto asociado a tipos equivalentes de entes recibidos y/o producidos.
 
             `hay` es una palabra reservada.
-
-            `un` es una palabra reservada.
 
             `cubierto` es una palabra reservada.
 

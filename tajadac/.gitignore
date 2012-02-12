@@ -1,9 +1,14 @@
 *~
 .*.swp*
-*.o
+tags
 *.gch
+*.o
 *.yy
 *.out
-tags
+location.hh
+parser.output
+parser.tab.cc
+parser.tab.hh
+position.hh
+stack.hh
 tajadac
-token-bison-defs

@@ -95,7 +95,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             [Todo punto de código Unicode que tenga la propiedad “White\_Space”][UWS] es un **espacio en blanco individual**, que es un espacio en blanco, si ocurre fuera de un literal de cadena de caracteres, fuera de un escapado de caracter, fuera de un comentario de línea, fuera de un comentario de bloque y fuera de un fin de línea.
 
-[UWS]: <http://www.unicode.org/Public/6.0.0/ucd/PropList.txt>  (Base de datos de caracteres Unicode 6.0.0: lista de propiedades de caracteres (líneas 11–22))
+[UWS]: <http://www.unicode.org/Public/6.0.0/ucd/PropList.txt> (Base de datos de caracteres Unicode 6.0.0: lista de propiedades de caracteres (líneas 11–22))
 
     3.  ### Otros literales
 
@@ -123,7 +123,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             *   “DIGIT NINE”  (U+0039, **9**)
 
-            Un **literal entero** es un símbolo compuesto de una secuencia de uno o más dígitos.  Se interpreta como un número natural escrito en notación posicional en base decimal.
+            Un **fragmento de literal entero** es una secuencia de uno o más dígitos.  Un **literal entero** es un fragmento de literal entero que no es una subsecuencia de ningún *otro* fragmento de literal entero, ni de un literal de cadena de caracteres, ni de un espacio en blanco, y su primer punto de código sigue inmediatamente al último punto de código de algún símbolo reservado, o al inicio del documento.  Un literal entero es un símbolo reservado.  Se interpreta como un número natural escrito en notación posicional en base decimal.
 
         2.  #### Punto flotante
 
@@ -193,13 +193,13 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         `arepa` es una palabra reservada.
 
-        `sola` es una palabra reservada.
+        `viuda` es una palabra reservada.
 
         `de` es una palabra reservada.
 
         `con` es una palabra reservada.
 
-        La especificación de tipo correspondiente a una arepa con cero ingredientes es `arepa` seguida de `sola`.
+        La especificación de tipo correspondiente a una arepa con cero ingredientes es `arepa` seguida de `viuda`.
 
         La especificación de tipo correspondiente a una arepa con exactamente un ingrediente es `arepa` seguida de `de`, a su vez seguida del literal de ingrediente correspondiente a su único ingrediente.
 
@@ -217,7 +217,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             arepa con queso y café
 
-            arepa con papelón, queso, café, café, café marrón, queso guayanés, arepa de arepa con arepa con arepa con arepa sola ‹arepaception!›, caraota, arepa con papelón, café marrón y queso y queso
+            arepa con papelón, queso, café, café, café marrón, queso guayanés, arepa de arepa de arepa de arepa de arepa viuda ‹arepaception!›, caraota, arepa con papelón, café marrón y queso y queso
 
         Una **arepa rellena** es un valor de algún tipo de arepa.  Un **relleno** de una arepa rellena es cualquiera de los valores asociados por la arepa rellena.  Cada relleno de una arepa rellena corresponde a exactamente un ingrediente de la arepa correspondiente a la arepa rellena, y se puede identificar por el índice de su ingrediente correspondiente, o por su nombre, si existe.
 

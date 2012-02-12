@@ -20,6 +20,9 @@
 
 namespace tajada {
         namespace lex {
+                // Tamaño del arreglo de grupos de captura necesario para el conjunto de expresiones regulares usado.
+                extern int nmatch;
+
 #define TAJADA_TOKEN_TAGS(tag, description, regex, type) tag,
                 enum class Token : unsigned int { TAJADA_TOKEN_DATA(TAJADA_TOKEN_TAGS) };
 #undef TAJADA_TOKEN_TAGS
@@ -31,12 +34,14 @@ namespace tajada {
 
                 struct scanner {
                         re2::StringPiece * in;
+                        re2::StringPiece * match;
 
                         unsigned int line;
                         unsigned int col;
                         unsigned int errors;
 
                         scanner(re2::StringPiece * in);
+                        ~scanner();
                 };
 
                 int yylex(tajada::yy::parser::semantic_type * s, tajada::yy::parser::location_type * l, tajada::lex::scanner * state);

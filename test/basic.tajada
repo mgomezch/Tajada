@@ -1,0 +1,65 @@
+‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
+‹‹‹Comentario de bloque!‹‹‹
+‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹›
+
+naiboa es dulce de papelón.
+dominó es dulce de arepa con queso y caraota.
+
+complicada es arepa con
+        papelón,
+        queso,
+        café,
+        café,
+        café marrón,
+        queso guayanés,
+        arepa de arepa de arepa de arepa de arepa viuda ‹arepaception!›,
+        caraota,
+        dominó,
+        arepa con
+                naiboa,
+                café marrón
+                y queso
+        y queso.
+
+
+
+vector2 es dulce de arepa con papelón y papelón.
+
+⫽ TODO: definir todo esto.  Así como está debería haber error por declarar sin definir.
+hay un cubierto + para arepa con vector2 y vector2 y salsa de vector2. ⫽ Suma vectorial.
+hay un cubierto − para arepa con vector2 y vector2 y salsa de vector2. ⫽ Resta vectorial.
+hay un cubierto − para arepa de  vector2           y salsa de vector2. ⫽ Negativo de un vector.
+hay un cubierto × para arepa con vector2 y vector2 y salsa de vector2. ⫽ Producto cruz.
+hay un cubierto ÷ para arepa con vector2 y vector2 y salsa de papelón. ⫽ Producto punto.
+
+{
+        local es queso.
+        {
+                foo es arepa de arepa viuda.
+                local es caraota.
+                local ≔ \0.
+                foo ≔ ««»».
+                {{{{}}}{}{{}{{{}}}}}
+        }
+        queso ≔ 3.
+        complicada ≔ «
+                3·1415926535,
+                42,
+                negrito,
+                tetero,
+                negrito,
+                27,
+                «««««»»»»»,
+                \高,
+                «
+                        0,
+                        \œ
+                »,
+                «
+                        0·9999999999999999999,
+                        negrito,
+                        1337
+                »,
+                2 + 2
+        ».
+}

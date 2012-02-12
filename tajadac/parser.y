@@ -85,7 +85,7 @@ overload_spec
 ;
 
 var_def
-: IDENT[nombre] ES complete_typespec[tipo] STMT_END
+: IDENT[nombre] ES typespec[tipo] STMT_END
 ;
 
 operator
@@ -98,29 +98,23 @@ operator
 | OP_NEQ
 ;
 
-complete_typespec
-: simple_typespec
-| LIT_INT TAZAS DE ARROZ CON complete_typespec
-;
-
 typespec
-: simple_typespec
-| ARROZ CON typespec
-;
-
-simple_typespec
-: CAFE
+: IDENT
+| CAFE
 | CARAOTA
 | QUESO
 | PAPELON
-| AREPA SOLA
+| LIT_INT TAZAS DE ARROZ CON typespec
+|                  ARROZ CON typespec
+| AREPA VIUDA
 | AREPA DE typespec
-| AREPA CON structure_typespecs Y typespec
+| AREPA   CON structure_typespecs Y typespec
 | CACHAPA CON structure_typespecs O typespec
 ;
 
 structure_typespecs
-: structure_typespecs LIST_SEP typespec
+: structure_typespecs LIST_SEP typespec IDENT
+| structure_typespecs LIST_SEP typespec
 | typespec
 ;
 
@@ -135,7 +129,7 @@ blocklevels
 
 blocklevel
 : var_def
-| stmt    STMT_END
+| stmt STMT_END
 | block
 ;
 

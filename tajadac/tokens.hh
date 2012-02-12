@@ -152,7 +152,7 @@
         TAJADA_RESERVED_WORD(TOKEN, SALSA   , u8"salsa"   )                    \
                                                                                \
         /* §3.1.2p2 */                                                         \
-        TAJADA_RESERVED_WORD(TOKEN, HAY     , u8"HAY"     )                    \
+        TAJADA_RESERVED_WORD(TOKEN, HAY     , u8"hay"     )                    \
                                                                                \
         /* §3.1.2p3 */                                                         \
         TAJADA_RESERVED_WORD(TOKEN, CUBIERTO, u8"cubierto")                    \
@@ -288,6 +288,14 @@
                 TUPLE_ARROW,                                                   \
                 u8"indicador de acceso a arepa",                               \
                 u8"(→)",                                                       \
+                void                                                           \
+        )                                                                      \
+                                                                               \
+        /* TODO: sección */                                                    \
+        TOKEN(                                                                 \
+                ASSIGN,                                                        \
+                u8"indicador de asignación",                                   \
+                u8"(≔)",                                                       \
                 void                                                           \
         )                                                                      \
                                                                                \

@@ -41,7 +41,7 @@ hay un cubierto ÷ para arepa con vector2 y vector2 y salsa de papelón. ⫽ Pro
                 foo ≔ ««»».
                 {{{{}}}{}{{}{{{}}}}}
         }
-        queso ≔ 3.
+        local ≔ 3.
         complicada ≔ «
                 3·1415926535,
                 42,

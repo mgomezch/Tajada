@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <new>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -11,8 +12,17 @@
 #include "lex.hh"
 #include "parser.tab.hh"
 #include "tokens.hh"
+#include "debug.hh"
 
 #define TAJADA_DEBUG_LEXER 1
+
+#if TAJADA_DEBUG_LEXER
+#       define TAJADA_DEBUG_LEXER_PRINT(x) TAJADA_DEBUG_PRINT(LEXER, x)
+#       define TAJADA_DEBUG_LEXER_DO(x) TAJADA_DEBUG_DO(LEXER, x)
+#else
+#       define TAJADA_DEBUG_LEXER_PRINT(x)
+#       define TAJADA_DEBUG_LEXER_DO(x)
+#endif
 
 #define TAJADA_SCANNER_INIT_FIXED_REGEX(var, str)                                         \
         do {                                                                              \
@@ -56,8 +66,11 @@ namespace tajada {
                         errors(0)
                 {
                         if (nmatch > 0) {
-                                match = new re2::StringPiece[nmatch];
-                                // TODO: check for error
+                                match = new (std::nothrow) re2::StringPiece[nmatch + 1];
+                                if (match == NULL) {
+                                        std::cerr << "Coundn’t allocate memory for lexer." << std::endl;
+                                        std::exit(EX_OSERR);
+                                }
                         } else match = NULL;
                 }
 
@@ -67,14 +80,10 @@ namespace tajada {
 
                 int yylex(yy::parser::semantic_type * s, yy::parser::location_type * l, scanner * state) {
                         unsigned int endline, endcol;
-                        std::string text_line;
-                        std::string text;
                         int bytes;
 
                         if (state->in->length() <= 0 || state->in->data()[0] == '\0') {
-#if TAJADA_DEBUG_LEXER
-                                std::cerr << "Done." << std::endl;
-#endif
+                                TAJADA_DEBUG_LEXER_PRINT("Done.");
                                 return 0;
                         }
                         for (auto it = ts.begin(); it != ts.end(); ++it) {
@@ -86,7 +95,7 @@ namespace tajada {
                                                 state->in->length(),
                                                 re2::RE2::ANCHOR_START,
                                                 state->match,
-                                                1 + TAJADA_TOKEN_RE2(*it)->NumberOfCapturingGroups()
+                                                TAJADA_TOKEN_RE2(*it)->NumberOfCapturingGroups() + 1
                                         )
                                 ) continue;
 
@@ -105,34 +114,38 @@ namespace tajada {
                                           }
                                 }
 
-#if TAJADA_DEBUG_LEXER
-                                std::cerr
-                                        << u8"Found token “"
-                                        << TAJADA_TOKEN_TAG(*it)
-                                        << u8"” matching text “"
-                                        << text
-                                        << u8"” ";
-                                if (state->line == endline && state->col == endcol - 1) {
-                                        std::cerr
-                                                << u8"at line "
-                                                << state->line
-                                                << u8", column "
-                                                << state->col
-                                                << std::endl;
-                                } else {
-                                        std::cerr
-                                                << u8"spanning range ("
-                                                << state->line
-                                                << u8", "
-                                                << state->col
-                                                << u8")–("
-                                                << endline
-                                                << u8", "
-                                                << endcol - 1
-                                                << u8")"
-                                                << std::endl;
+                                if (TAJADA_TOKEN_ENUM(*it) != tajada::lex::Token::IGNORE) {
+                                        TAJADA_DEBUG_LEXER_DO(
+                                                std::cerr
+                                                        << u8"Found token “"
+                                                        << TAJADA_TOKEN_TAG(*it)
+                                                        << u8"” ";
+                                                if (state->line == endline && state->col == endcol - 1) {
+                                                        std::cerr
+                                                                << u8"at line "
+                                                                << state->line
+                                                                << u8", column "
+                                                                << state->col
+                                                                << u8" matching character “"
+                                                                << state->match[1]
+                                                                << u8"”";
+                                                } else {
+                                                        std::cerr
+                                                                << u8"spanning range ("
+                                                                << state->line
+                                                                << u8", "
+                                                                << state->col
+                                                                << u8")–("
+                                                                << endline
+                                                                << u8", "
+                                                                << endcol - 1
+                                                                << u8") matching text"
+                                                                << (state->line == endline ? u8": " : u8" on next line:\n")
+                                                                << state->match[1];
+                                                }
+                                                std::cerr << std::endl;
+                                        );
                                 }
-#endif
 
                                 l->begin.line   = state->line;
                                 l->begin.column = state->col;
@@ -145,20 +158,24 @@ namespace tajada {
                                 // TODO: set s
                                 switch (TAJADA_TOKEN_ENUM(*it)) {
                                         case tajada::lex::Token::IGNORE:
+                                                state->in->remove_prefix(state->match[1].length());
                                                 return yylex(s, l, state);
                                         case tajada::lex::Token::LIT_STR:
                                                 // TODO: eliminar delimitadores del string y backslashes escapadores
-                                                s->LIT_STR = new std::string(text);
+                                                s->LIT_STR = new std::string(state->match[1].ToString().substr(2, state->match[1].length() - 2));
+                                                TAJADA_DEBUG_LEXER_PRINT("Encontré un string y su contenido sin las comillas es:\n" << s->LIT_STR);
                                                 break;
                                         case tajada::lex::Token::LIT_CHR:
-                                                s->LIT_CHR = new std::string(text.substr(1));
+                                                s->LIT_CHR = new std::string(state->match[1].ToString().substr(1));
                                                 break;
                                         case tajada::lex::Token::LIT_INT:
-                                                RE2::FullMatch(text, *re_int, &s->LIT_INT);
+                                                RE2::FullMatch(state->match[1], *re_int, &s->LIT_INT);
                                                 break;
                                         default:
                                                 break;
                                 }
+
+                                state->in->remove_prefix(state->match[1].length());
 
                                 return TAJADA_TOKEN_BISON_ENUM(*it);
                         }
@@ -229,14 +246,7 @@ namespace tajada {
                                         }
                                         nmatch = std::max(nmatch, n);
 
-#if TAJADA_DEBUG_LEXER
-                                        std::cerr
-                                                << u8"Parsed regexp for token “"
-                                                << TAJADA_TOKEN_TAG(*it)
-                                                << u8"”"
-                                                << std::endl;
-#endif
-
+                                        TAJADA_DEBUG_LEXER_PRINT(u8"Parsed regexp for token “" << TAJADA_TOKEN_TAG(*it) << u8"”");
                                 }
                                 TAJADA_TOKEN_RE2(*it) = r;
                         }

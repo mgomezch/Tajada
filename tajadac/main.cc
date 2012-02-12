@@ -19,7 +19,7 @@ void tajada::yy::parser::error(location_type const & l, std::string const & msg)
                 } else {
                         std::cerr
                                 << u8"At line " << l.begin.line
-                                << u8",  columns " << l.begin.column << u8"–" << l.end.column;
+                                << u8", columns " << l.begin.column << u8"–" << l.end.column;
                 }
         } else {
                 std::cerr

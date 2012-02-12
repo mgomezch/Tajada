@@ -36,9 +36,6 @@
 %left OP_MULT OP_DIV OP_MOD
 %nonassoc PAREN_CL
 
-/* Tokens pendientes: */
-%token ASSIGN "indicador de asignación"
-
 %tokens
 
 %token END 0 "fin del documento"
@@ -123,7 +120,7 @@ block
 ;
 
 blocklevels
-: blocklevel
+: blocklevels blocklevel
 |
 ;
 
@@ -146,6 +143,9 @@ expr
 | LIT_INT
 | LIT_CHR
 | LIT_STR
+| LIT_INT FLOAT_SEP LIT_INT
+| TETERO
+| NEGRITO
 | arg OP_PLUS  arg
 | arg OP_MINUS arg
 | arg OP_DIV   arg

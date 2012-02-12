@@ -19,9 +19,9 @@ clean:
 tajadac     : main.o lex.o parser.tab.o
 	$(CXX) $(CXXOPTS) -o $@ $^ $(LDLIBS:%=-l%)
 
-main.o      : main.cc lex.hh tokens.hh parser.tab.hh stack.hh location.hh position.hh
-lex.o       : lex.cc         tokens.hh parser.tab.hh stack.hh location.hh position.hh
-parser.tab.o: parser.tab.cc            parser.tab.hh stack.hh location.hh position.hh
+main.o      : main.cc lex.hh  tokens.hh parser.tab.hh stack.hh location.hh position.hh
+lex.o       : lex.cc debug.hh tokens.hh parser.tab.hh stack.hh location.hh position.hh
+parser.tab.o: parser.tab.cc             parser.tab.hh stack.hh location.hh position.hh
 
 location.hh parser.tab.cc parser.tab.hh position.hh stack.hh: parser.y tokens.hh Makefile
 	@printf '%s\n'                                                                    \

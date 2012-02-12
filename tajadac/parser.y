@@ -37,7 +37,6 @@
 %nonassoc PAREN_CL
 
 /* Tokens pendientes: */
-%token IDENT "identificador"
 %token ASSIGN "indicador de asignación"
 
 %tokens

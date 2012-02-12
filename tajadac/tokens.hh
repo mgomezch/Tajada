@@ -1,14 +1,15 @@
 #ifndef TAJADA_TOKENS_HH
 #define TAJADA_TOKENS_HH
 
-#define TAJADA_ENDLINES "\u000A\u000B\u000C\u000D\u0085\u2028\u2029"
+#define TAJADA_ENDLINES       "\u000A\u000B\u000C\u000D\u0085\u2028\u2029"
+#define TAJADA_RESERVED_START u8"(?P<lookahead>[][←→()=≠~+÷×−&«»{}.,\\\\·‹⫽“\u0009-\u000D\u0020\u0085\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]|$)"
 
-#define TAJADA_RESERVED_WORD(TOKEN, tag, word)          \
-        TOKEN(                                          \
-                tag,                                    \
-                u8"palabra reservada “" word u8"”",     \
-                u8"(" word u8")",                       \
-                void                                    \
+#define TAJADA_RESERVED_WORD(TOKEN, tag, word)                  \
+        TOKEN(                                                  \
+                tag,                                            \
+                u8"palabra reservada “" word u8"”",             \
+                u8"(?P<main>" word TAJADA_RESERVED_START u8")", \
+                void                                            \
         )
 
 #define TAJADA_TOKEN_DATA(TOKEN)                                               \
@@ -16,7 +17,7 @@
         TOKEN(                                                                 \
                 LIT_STR,                                                       \
                 u8"literal de cadena de caracteres",                           \
-                u8R"#((“([^”\\]|\\.)*”))#",                                    \
+                u8"(?P<main>“(?:[^”\\\\]|\\\\.)*”)",                           \
                 std::string *                                                  \
         )                                                                      \
                                                                                \
@@ -24,7 +25,7 @@
         TOKEN(                                                                 \
                 IGNORE,                                                        \
                 u8"espacio en blanco",                                         \
-                u8"(("                                                         \
+                u8"(?P<main>(?:"                                               \
                         /* §1.2.1p4 (comentario de bloque) */                  \
                         u8"‹[^›]*›|"                                           \
                                                                                \
@@ -33,13 +34,7 @@
                         u8"["   TAJADA_ENDLINES u8"]|"                         \
                                                                                \
                         /* §1.2.2p5 (fin de línea) */                          \
-                        u8"\u000A|"                                            \
-                        u8"\u000B|"                                            \
-                        u8"\u000C|"                                            \
-                        u8"\u000D|"                                            \
-                        u8"\u0085|"                                            \
-                        u8"\u2028|"                                            \
-                        u8"\u2029|"                                            \
+                        u8"[" TAJADA_ENDLINES u8"]|"                           \
                                                                                \
                         /* §1.2.3p1 (espacio en blanco individual) */          \
                         /* Taken from the PropList.txt file in the Unicode  */ \
@@ -68,7 +63,7 @@
         TOKEN(                                                                 \
                 LIT_INT,                                                       \
                 u8"literal entero",                                            \
-                u8R"#(([0-9]+))#",                                             \
+                u8"(?P<main>[0-9]+)",                                          \
                 int                                                            \
         )                                                                      \
                                                                                \
@@ -76,7 +71,7 @@
         TOKEN(                                                                 \
                 FLOAT_SEP,                                                     \
                 u8"separador de literal de punto flotante",                    \
-                u8R"#((·))#",                                                  \
+                u8"(P?<main>·)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -96,7 +91,7 @@
         TOKEN(                                                                 \
                 LIT_CHR,                                                       \
                 u8"literal de caraota",                                        \
-                u8R"#((\\.))#",                                                \
+                u8"(?P<main>\\\\.)",                                           \
                 std::string *                                                  \
         )                                                                      \
                                                                                \
@@ -122,7 +117,7 @@
         TOKEN(                                                                 \
                 LIST_SEP,                                                      \
                 u8"separador de lista",                                        \
-                u8R"#((,))#",                                                  \
+                u8"(?P<main>,)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -148,7 +143,7 @@
         TOKEN(                                                                 \
                 STMT_END,                                                      \
                 u8"terminador de frase",                                       \
-                u8R"#((\.))#",                                                  \
+                u8"(?P<main>\\.)",                                             \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -177,7 +172,7 @@
         TOKEN(                                                                 \
                 BLOCK_OP,                                                      \
                 u8"inicio de bloque",                                          \
-                u8R"#((\{))#",                                                 \
+                u8"(?P<main>\\{)",                                             \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -185,7 +180,7 @@
         TOKEN(                                                                 \
                 BLOCK_CL,                                                      \
                 u8"fin de bloque",                                             \
-                u8R"#((\}))#",                                                 \
+                u8"(?P<main>\\})",                                             \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -193,7 +188,7 @@
         TOKEN(                                                                 \
                 TUPLE_OP,                                                      \
                 u8"inicio de literal estructurado",                            \
-                u8R"#((«))#",                                                  \
+                u8"(?P<main>«)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -201,7 +196,7 @@
         TOKEN(                                                                 \
                 TUPLE_CL,                                                      \
                 u8"fin de literal estructurado",                               \
-                u8R"#((»))#",                                                  \
+                u8"(?P<main>»)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -209,7 +204,7 @@
         TOKEN(                                                                 \
                 LABEL_ARROW,                                                   \
                 u8"indicador de etiqueta",                                     \
-                u8R"#((←))#",                                                  \
+                u8"(?P<main>←)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -217,7 +212,7 @@
         TOKEN(                                                                 \
                 REF_MARK,                                                      \
                 u8"indicador de referencia",                                   \
-                u8R"#((&))#",                                                  \
+                u8"(?P<main>&)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -225,7 +220,7 @@
         TOKEN(                                                                 \
                 OP_MINUS,                                                      \
                 u8"operador de resta",                                         \
-                u8R"#((−))#",                                                  \
+                u8"(?P<main>−)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -233,7 +228,7 @@
         TOKEN(                                                                 \
                 OP_PLUS,                                                       \
                 u8"operador de suma",                                          \
-                u8R"#((\+))#",                                                 \
+                u8"(?P<main>\\+)",                                             \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -241,7 +236,7 @@
         TOKEN(                                                                 \
                 OP_MULT,                                                       \
                 u8"operador de multiplicación",                                \
-                u8R"#((×))#",                                                  \
+                u8"(?P<main>×)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -249,7 +244,7 @@
         TOKEN(                                                                 \
                 OP_DIV,                                                        \
                 u8"operador de división",                                      \
-                u8R"#((÷))#",                                                  \
+                u8"(?P<main>÷)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -257,7 +252,7 @@
         TOKEN(                                                                 \
                 OP_MOD,                                                        \
                 u8"operador de módulo",                                        \
-                u8R"#((~))#",                                                  \
+                u8"(?P<main>~)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -265,7 +260,7 @@
         TOKEN(                                                                 \
                 OP_EQ,                                                         \
                 u8"operador de igualdad",                                      \
-                u8R"#((=))#",                                                  \
+                u8"(?P<main>=)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -273,7 +268,7 @@
         TOKEN(                                                                 \
                 OP_NEQ,                                                        \
                 u8"operador de no‐igualdad",                                   \
-                u8R"#((≠))#",                                                  \
+                u8"(?P<main>≠)",                                               \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -281,7 +276,7 @@
         TOKEN(                                                                 \
                 PAREN_OP,                                                      \
                 u8"inicio de paréntesis",                                      \
-                u8R"#((\())#",                                                 \
+                u8"(?P<main>\\()",                                             \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -289,7 +284,7 @@
         TOKEN(                                                                 \
                 PAREN_CL,                                                      \
                 u8"fin de paréntesis",                                         \
-                u8R"#((\)))#",                                                 \
+                u8"(?P<main>\\))",                                             \
                 void                                                           \
         )                                                                      \
                                                                                \
@@ -297,7 +292,15 @@
         TOKEN(                                                                 \
                 TUPLE_ARROW,                                                   \
                 u8"indicador de acceso a arepa",                               \
-                u8R"#((→))#",                                                  \
+                u8"(?P<main>→)",                                               \
+                void                                                           \
+        )                                                                      \
+                                                                               \
+        /* TODO: sección */                                                    \
+        TOKEN(                                                                 \
+                IDENT,                                                         \
+                u8"identificador",                                             \
+                u8"(?P<main>[^" TAJADA_RESERVED_START "]*)",                   \
                 void                                                           \
         )                                                                      \
 

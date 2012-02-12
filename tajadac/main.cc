@@ -60,6 +60,6 @@ int main(int argc, char * argv[]) {
         {
                 re2::StringPiece in(in_s);
                 tajada::lex::scanner s = { &in };
-                std::cout << (tajada::yy::parser(&s).parse() ? "Successfully parsed." : "Parse error.") << std::endl;
+                std::cout << (tajada::yy::parser(&s).parse() ? "Parse error." : "Successfully parsed.") << std::endl;
         }
 }

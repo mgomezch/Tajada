@@ -315,11 +315,11 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             La especificación completa de tipo de cualquier tipo que no haga referencia a otros tipos es su especificación de tipo.  La especificación completa de tipo de una arepa o cachapa es de la misma forma que su especificación de tipo, pero en vez de escribirse la especificación de tipo de sus ingredientes, se escriben sus especificaciones completas de tipo.
 
-            Una **definición de variable** es una secuencia compuesta por un identificador (su **nombre**), una `es`, una especificación completa de tipo y un terminador de frase.  Por ejemplo,
+            Una **definición de variable** es una secuencia compuesta por un identificador (su **nombre**), una `es`, una especificación completa de tipo (su **tipo**) y un terminador de frase.  Una definición de variable establece la existencia de una variable con ese nombre y ese tipo; por ejemplo,
 
                 telita es queso.
 
-            define una variable llamada `telita` de tipo `queso`.  La variable es un ente del tipo especificado y puede ser referida por el identificador usado en su definición.
+            define una variable llamada `telita` de tipo `queso`.  La variable es un ente que almacena un **valor** del tipo de su definición y tiene asociado el nombre de su definición.
 
             Una tajada no define más de una variable con un mismo nombre fuera de un bloque.
 
@@ -441,9 +441,17 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 TODO: ¿cuál es el valor?  ¿cómo se evalúa un cubierto?  ¿cómo se describe formalmente la ejecución de un procedimiento que toma parámetros (por valor y/o por referencia) y produce un resultado? :(
 
-        4.  #### Otras
+        4.  #### Variables
 
-            TODO: organizar esta sección
+            Una variable es **alcanzable** en una instrucción en los siguientes casos.
+
+            *   La definición de la variable está en el mismo bloque que la instrucción, y ocurre antes de la instrucción.
+
+            *   El bloque en el que está la instrucción no define ninguna variable con el nombre de la variable de interés, pero el bloque está contenido directamente en otro bloque en el que la variable sería alcanzable si ocurriera una instrucción en el lugar donde aparece el bloque en el que está la instrucción de interés.
+
+            Se puede construir una expresión con el nombre de una variable alcanzable.  Su tipo es el tipo de la variable y su valor es el valor de la variable.
+
+        5.  #### Otras
 
             Un **inicio de paréntesis** es un punto de código “LEFT PARENTHESIS” (U+0028, **(**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de paréntesis es un símbolo reservado.
 
@@ -455,25 +463,134 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **acceso a arepa** es una expresión compuesta de una expresión (la **fuente**) cuyo tipo sea una arepa, seguida de un indicador de acceso a arepa, seguido de un literal entero que corresponda al número o un identificador que corresponda al nombre de algún ingrediente, el **ingrediente accedido**, del tipo de la expresión.  El tipo de un acceso a arepa es el ingrediente accedido de su fuente.  El valor de un acceso a arepa es el relleno del valor de la fuente identificado por el literal entero o el identificador usado en el acceso a arepa.
 
-            Un **inicio de acceso a arroz** es un punto de código “LEFT SQUARE BRACKET” (U+005B, **[**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de acceso a arroz es un símbolo reservado.
+            Un **inicio de acceso a arroz** es un punto de código “LEFT SQUARE BRACKET” (U+005B, **\[**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de acceso a arroz es un símbolo reservado.
 
-            Un **fin de acceso a arroz** es un punto de código “RIGHT SQUARE BRACKET” (U+005D, **[**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de acceso a arroz es un símbolo reservado.
+            Un **fin de acceso a arroz** es un punto de código “RIGHT SQUARE BRACKET” (U+005D, **\]**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un fin de acceso a arroz es un símbolo reservado.
 
             Un **acceso a arroz** es una expresión compuesta de una expresión (la **fuente**) cuyo tipo sea un arroz, seguida de un inicio de acceso a arroz, seguido de una expresión (la **posición accedida**) cuyo tipo sea el queso, seguida de un fin de acceso a arroz.  El tipo de un acceso a arroz es el tipo del contenido de su fuente.  El valor de un acceso a arroz es el valor del valor de la fuente cuya posición sea el valor de la posición accedida.
 
+            Un **separador de lista de expresiones** es un punto de código “SEMICOLON” (U+003B, **;**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un separador de lista de expresiones es un símbolo reservado.
+
+            Se puede construir una expresión con una secuencia de dos o más expresiones separadas por separadores de lista de expresiones.  El valor y el tipo de la expresión son los de la última de la lista.  Las acciones de las expresiones se efectúan en secuencia: se terminan de efectuar todas las acciones de una expresión de la lista antes de comenzar a efectuar las acciones de la siguiente expresión, y el valor de la expresión completa se considera calculado luego de efectuar las acciones de todas las expresiones de la lista..
+
             TODO: inline if
+
+            TODO: precedencias
 
     4.  ### Instrucciones
 
         Una **instrucción** es una secuencia de símbolos y símbolos reservados que representa una acción y tiene una cierta estructura.  Las instrucciones se ejecutan en secuencia, y al ejecutarse tienen ciertos efectos sobre el estado manejado por la ejecución de una tajada.
 
-        TODO: organizar
+        Los efectos de una instrucción sobre el estado manejado por la ejecución de una tajada y su entorno de ejecución se realizan completamente antes del comienzo de la ejecución de otra instrucción.  Si no se especifica explícitamente, el orden en el que se efectúan las acciones de una instrucción es indefinido.  Por ejemplo:
 
-        TODO: asignaciones
+            telita es queso.
 
-        TODO: estructuras de control
+            pabellón es un plato de arepa viuda con salsa de arepa viuda {
+                telita ≔ telita + 1.
+                retorna «».
+            }
 
-        Una expresión seguida de un terminador de frase es una instrucción.
+            chupe    es un plato de arepa viuda con salsa de arepa viuda {
+                telita ≔ telita × 2.
+                retorna «».
+            }
+
+        Si el anterior fragmento de tajada es seguido del bloque
+
+            {
+                telita ≔ 0.
+                pabellón «».
+                chupe    «».
+            }
+
+        entonces la variable “telita” habrá tenido los valores `0`, `1` y `2`, en ese orden, a lo largo de la ejecución de la tajada, porque las instrucciones se ejecutan una después de otra en el orden definido por el bloque en el que aparecen.  Sin embargo, si el mismo fragmento de tajada es seguido por el bloque
+
+            {
+                telita ≔ 0.
+                «pabellón «», chupe «»».
+            }
+
+        entonces el comportamiento de esa tajada es indefinido, porque en este caso no se define orden alguno para efectuar las acciones de los dos platos.  La implementación está en libertad de seleccionar un orden de evaluación, reportar un error, hacer explotar al disco duro, liberar a Cthulhu, o cualquier otra cosa.
+
+        1.  #### Simples
+
+            Una expresión seguida de un terminador de frase es una instrucción.
+
+            Una **ubicación** es un tipo particular de expresión que representa a un ente que almacena información que puede ser modificada por la ejecución de una tajada.  Cada ubicación tiene asociado un **tipo*, que es el mismo que tendría si se tratara como expresión, y un **espacio**, que es el ente que almacena un valor de ese tipo.
+
+            Se puede construir una ubicación con el nombre de una variable alcanzable.  El espacio de este tipo de ubicación es la variable.
+
+            Un acceso a arepa es una ubicación si su fuente es una ubicación; en ese caso, su espacio es el ente que almacena su relleno accedido.
+
+            Un acceso a arroz es una ubicación si su fuente es una ubicación; en ese caso, su espacio es el ente que almacena el ente de su fuente cuya posición sea el valor de la posición accedida.
+
+            Un **indicador de asignación** es un punto de código “COLON EQUALS” (U+2254, **≔**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un indicador de asignación es un símbolo reservado.
+
+            Una **asignación** es una secuencia compuesta de una ubicación, seguida de un indicador de asignación, seguida de una expresión cuyo tipo sea equivalente al tipo de la ubicación, seguida de un terminador de frase.  Una asignación es una instrucción.
+
+            La acción especificada por una asignación es efectuar las acciones indicadas por la expresión, y luego almacenar su valor en la ubicación.
+
+        2.  #### Estructuras de control
+
+                1.  ##### Iteración condicionada
+
+                2.  ##### Iteración controlada
+
+4.  ## Librería
+
+    Tajada cuenta con ciertos platos y cubiertos predefinidos automáticamente que realizan operaciones básicas sobre los datos manejados por el lenguaje.  Un **plato predefinido** y un **cubierto predefinido** es un plato o un cubierto cuya declaración y definición están dadas implícitamente en toda tajada sin tener que escribirse en su texto para poder usarse.
+
+    La definición de estos platos y cubiertos no necesariamente existe ni es necesariamente posible de escribirla directamente en Tajada.  La implementación deberá ejecutar sus efectos y retornar sus resultados como si existieran sus declaraciones y definiciones como para cualquier plato o cubierto declarado y definido explícitamente en una tajada.
+
+    Cada especificación de un plato o cubierto predefinido en este documento proveerá una posible declaración junto con una breve descripción de su semántica.  La implementación debe proveer todos estos platos y cubiertos predefinidos, y puede proveer otros que no estén enumerados en este documento.
+
+    1.  ### Operaciones numéricas
+
+        1.  `hay un cubierto + para arepa con queso y queso y salsa de queso.`
+
+            Retorna la suma de dos valores.
+
+            TODO: overflow
+
+        2.  `hay un cubierto − para arepa con queso y queso y salsa de queso.`
+
+            Retorna la resta del primer valor menos el segundo.
+
+            TODO: overflow
+
+        2.  `hay un cubierto − para arepa de queso y salsa de queso.`
+
+            Retorna el inverso aditivo del valor.
+
+            TODO: overflow
+
+        3.  `hay un cubierto × para arepa con queso y queso y salsa de queso.`
+
+            Retorna la multiplicación de los valores.
+
+            TODO: overflow
+
+        4.  `hay un cubierto ÷ para arepa con queso y queso y salsa de queso.`
+
+            Retorna el resultado de la división entera del primer valor entre el segundo.
+
+            TODO: zero division
+
+        5.  `hay un cubierto ~ para arepa con queso y queso y salsa de queso.`
+
+            Retorna el resto de la división entera del primer valor entre el segundo.
+
+            TODO: zero division
+
+        6.  `hay un cubierto = para arepa con queso y queso y salsa de café.`
+
+            Retorna `tetero` si los valores son iguales y `negrito` si no.
+
+        7.  `hay un cubierto ≠ para arepa con queso y queso y salsa de café.`
+
+            Retorna `negrito` si los valores son iguales y `tetero` si no.
+
+        TODO: escribir los otros 98237509873093725092375 que hacen falta para que los tipos del lenguaje sirvan de algo
 
 * * *
 

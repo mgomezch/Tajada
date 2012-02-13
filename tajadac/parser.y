@@ -31,6 +31,7 @@
 %parse-param { tajada::lex::scanner * s }
 %lex-param   { tajada::lex::scanner * s }
 
+%left EXPR_LIST_SEP
 %nonassoc OP_EQ OP_NEQ
 %left OP_PLUS OP_MINUS
 %left OP_MULT OP_DIV OP_MOD
@@ -147,46 +148,11 @@ structure_typespecs
 | typespec
 ;
 
-operator
-: OP_PLUS
-| OP_MINUS
-| OP_MULT
-| OP_DIV
-| OP_MOD
-| OP_EQ
-| OP_NEQ
-;
-
-block
-: BLOCK_OP blocklevels BLOCK_CL
-;
-
-blocklevels
-: blocklevels blocklevel
-|
-;
-
-blocklevel
-: var_def
-| stmt STMT_END
-| block
-;
-
-stmt
-: lvalue ASSIGN expr
-;
-
-lvalue
-: IDENT
-;
-
 
 
 expr
-: IDENT
-
 /* §3.4.1.1p1 */
-| LIT_STR
+: LIT_STR
 
 /* §3.4.1.1p2 */
 | TETERO
@@ -201,42 +167,93 @@ expr
 /* §3.4.1.1p5, §2.1.4p4 */
 | LIT_INT FLOAT_SEP LIT_INT
 
-/* §3.4.2p4 */
+/* §3.4.1.2p4 */
 | TUPLE_OP TUPLE_CL
 | TUPLE_OP tuple_elems TUPLE_CL
 
-/* §3.4.3 */
 /* TODO: arreglar el peo del pasaje por referenca y detallar los párrafos en las referencias de esto */
-| expr OP_PLUS  expr
-| expr OP_MINUS expr
-| expr OP_DIV   expr
-| expr OP_MOD   expr
-| expr OP_EQ    expr
-| expr OP_NEQ   expr
-| PAREN_OP OP_PLUS  PAREN_CL expr expr
-| PAREN_OP OP_MINUS PAREN_CL expr expr
-| PAREN_OP OP_DIV   PAREN_CL expr expr
-| PAREN_OP OP_MOD   PAREN_CL expr expr
-| PAREN_OP OP_EQ    PAREN_CL expr expr
-| PAREN_OP OP_NEQ   PAREN_CL expr expr
+/* TODO: operadores unarios */
 
-/* §3.4.3 */
-/* TODO: organizar la sección de “otras” y detallar los párrafos en las referencias de esto */
+/* §3.4.3.2l1.1 */
+| expr OP_MINUS expr
+| PAREN_OP OP_MINUS PAREN_CL expr expr
+
+/* §3.4.3.2l1.2 */
+| expr OP_PLUS expr
+| PAREN_OP OP_PLUS  PAREN_CL expr expr
+
+/* §3.4.3.2l1.3 */
+| expr OP_MULT expr
+| PAREN_OP OP_DIV PAREN_CL expr expr
+
+/* §3.4.3.2l1.4 */
+| expr OP_DIV expr
+| PAREN_OP OP_DIV PAREN_CL expr expr
+
+/* §3.4.3.2l1.5 */
+| expr OP_MOD expr
+| PAREN_OP OP_MOD PAREN_CL expr expr
+
+/* §3.4.3.2l1.6 */
+| expr OP_EQ expr
+| PAREN_OP OP_EQ PAREN_CL expr expr
+
+/* §3.4.3.2l1.7 */
+| expr OP_NEQ expr
+| PAREN_OP OP_NEQ PAREN_CL expr expr
+
+/* §3.4.4p2 */
+| IDENT
+
+/* §3.4.5p3 */
 | PAREN_OP expr PAREN_CL
+
+/* §3.4.5p5 */
 | expr TUPLE_ARROW LIT_INT
 | expr TUPLE_ARROW IDENT
+
+/* §3.4.5p8 */
 | expr ARRAY_ACCESS_OP expr ARRAY_ACCESS_CL
+
+/* §3.4.5p10 */
+| expr EXPR_LIST_SEP
 ;
 
 
 
-/* §3.4.2p4 */
+operator
+
+/* §3.4.3.2l1.1 */
+: OP_MINUS
+
+/* §3.4.3.2l1.2 */
+| OP_PLUS
+
+/* §3.4.3.2l1.3 */
+| OP_MULT
+
+/* §3.4.3.2l1.4 */
+| OP_DIV
+
+/* §3.4.3.2l1.5 */
+| OP_MOD
+
+/* §3.4.3.2l1.6 */
+| OP_EQ
+
+/* §3.4.3.2l1.7 */
+| OP_NEQ
+;
+
+
+
+/* §3.4.1.2p4 */
 tuple_elems
 : tuple_elems LIST_SEP tuple_elem
 | tuple_elem
 ;
 
-/* §3.4.2p4 */
+/* §3.4.1.2p4 */
 tuple_elem
 : expr LABEL_ARROW IDENT
 | expr
@@ -244,7 +261,37 @@ tuple_elem
 
 
 
-/* Pasaje por referencia que no funciona */
+/* §3.3p3 */
+block
+: BLOCK_OP blocklevels BLOCK_CL
+;
+
+/* §3.3p3 */
+blocklevels
+: blocklevels blocklevel
+|
+;
+
+/* §3.3p3 */
+blocklevel
+: var_def
+| stmt
+| block
+;
+
+
+
+/* TODO: completar y sección */
+stmt
+: lvalue ASSIGN expr STMT_END
+;
+
+/* TODO: completar y sección */
+lvalue
+: IDENT
+;
+
+/* TODO: Pasaje por referencia que no funciona */
 /*
 arg
 : expr
@@ -274,4 +321,3 @@ mixed_tuple_elem
 */
 
 %%
-

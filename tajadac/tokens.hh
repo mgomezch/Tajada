@@ -2,7 +2,7 @@
 #define TAJADA_TOKENS_HH
 
 #define TAJADA_ENDLINES       "\u000A\u000B\u000C\u000D\u0085\u2028\u2029"
-#define TAJADA_RESERVED_START u8"][←→()=≠~+÷×−&«»{}.,\\\\·‹⫽“\u0009-\u000D\u0020\u0085\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000"
+#define TAJADA_RESERVED_START u8"][←→()=≠+−×÷~&«»{}.,\\\\·‹⫽“\u0009-\u000D\u0020\u0085\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000"
 
 #define TAJADA_RESERVED_WORD(TOKEN, tag, word)                                          \
         TOKEN(                                                                          \
@@ -267,7 +267,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.4.4p1 */                                                         \
+        /* §3.4.5p1 */                                                         \
         TOKEN(                                                                 \
                 PAREN_OP,                                                      \
                 u8"inicio de paréntesis",                                      \
@@ -275,7 +275,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.4.4p2 */                                                         \
+        /* §3.4.5p2 */                                                         \
         TOKEN(                                                                 \
                 PAREN_CL,                                                      \
                 u8"fin de paréntesis",                                         \
@@ -283,7 +283,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.4.4p4 */                                                         \
+        /* §3.4.5p4 */                                                         \
         TOKEN(                                                                 \
                 TUPLE_ARROW,                                                   \
                 u8"indicador de acceso a arepa",                               \
@@ -291,7 +291,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.4.4p4 */                                                         \
+        /* §3.4.5p6 */                                                         \
         TOKEN(                                                                 \
                 ARRAY_ACCESS_OP,                                               \
                 u8"inicio de acceso a arroz",                                  \
@@ -299,11 +299,27 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.4.4p4 */                                                         \
+        /* §3.4.5p7 */                                                         \
         TOKEN(                                                                 \
                 ARRAY_ACCESS_CL,                                               \
                 u8"fin de acceso a arroz",                                     \
                 u8"(\\])",                                                     \
+                void                                                           \
+        )                                                                      \
+                                                                               \
+        /* §3.4.5p9 */                                                         \
+        TOKEN(                                                                 \
+                EXPR_LIST_SEP,                                                 \
+                u8"separador de lista de expresiones",                         \
+                u8"(\\])",                                                     \
+                void                                                           \
+        )                                                                      \
+                                                                               \
+        /* TODO: sección */                                                    \
+        TOKEN(                                                                 \
+                ASSIGN,                                                        \
+                u8"indicador de asignación",                                   \
+                u8"(≔)",                                                       \
                 void                                                           \
         )                                                                      \
                                                                                \

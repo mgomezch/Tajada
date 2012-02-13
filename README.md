@@ -534,43 +534,43 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Estructuras de control
 
-                1.  ##### Selección simple
+            1.  ##### Selección simple
 
-                    `if` es una palabra reservada.
+                `if` es una palabra reservada.
 
-                    `else` es una palabra reservada.
+                `else` es una palabra reservada.
 
-                    Una **instrucción de selección** es una `if`, seguida de un inicio de paréntesis, seguida de una expresión (la **condición**) cuyo tipo sea el café, seguida de un fin de paréntesis, seguida de un bloque o una instrucción (el **cuerpo positivo**), opcionalmente seguido por una `else` seguida de un bloque o una instrucción (el **cuerpo negativo**).  Una instrucción de selección es una instrucción.
+                Una **instrucción de selección** es una `if`, seguida de un inicio de paréntesis, seguida de una expresión (la **condición**) cuyo tipo sea el café, seguida de un fin de paréntesis, seguida de un bloque o una instrucción (el **cuerpo positivo**), opcionalmente seguido por una `else` seguida de un bloque o una instrucción (el **cuerpo negativo**).  Una instrucción de selección es una instrucción.
 
-                    La acción especificada por una instrucción de selección es efectuar las acciones indicadas por la condición, y si su valor es verdadero, efectuar las acciones indicadas por el cuerpo positivo, y en el caso contrario, si existe, efectuar las acciones indicadas por el cuerpo negativo.
+                La acción especificada por una instrucción de selección es efectuar las acciones indicadas por la condición, y si su valor es verdadero, efectuar las acciones indicadas por el cuerpo positivo, y en el caso contrario, si existe, efectuar las acciones indicadas por el cuerpo negativo.
 
-                2.  ##### Iteración condicionada
+            2.  ##### Iteración condicionada
 
-                    `while` es una palabra reservada.
+                `while` es una palabra reservada.
 
-                    Una **iteración condicionada** es una `while`, seguida de un inicio de paréntesis, seguida de una expresión (la **condición**) cuyo tipo sea el café, seguida de un fin de paréntesis, seguida de un bloque o una instrucción (el **cuerpo**).  Una iteración condicionada es una instrucción.
+                Una **iteración condicionada** es una `while`, seguida de un inicio de paréntesis, seguida de una expresión (la **condición**) cuyo tipo sea el café, seguida de un fin de paréntesis, seguida de un bloque o una instrucción (el **cuerpo**).  Una iteración condicionada es una instrucción.
 
-                    La acción especificada por una iteración condicionada es efectuar las acciones indicadas por la condición, y si su valor es verdadero, efectuar las acciones indicadas por el cuerpo y repetir el proceso.
+                La acción especificada por una iteración condicionada es efectuar las acciones indicadas por la condición, y si su valor es verdadero, efectuar las acciones indicadas por el cuerpo y repetir el proceso.
 
-                    TODO: break, continue
+                TODO: break, continue
 
-                3.  ##### Iteración controlada
+            3.  ##### Iteración controlada
 
-                    `for` es una palabra reservada.
+                `for` es una palabra reservada.
 
-                    `in` es una palabra reservada.
+                `in` es una palabra reservada.
 
-                    Un **separador de rango** es un punto de código “HORIZONTAL ELLIPSIS” (U+2026, **…**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un separador de rango es un símbolo reservado.
+                Un **separador de rango** es un punto de código “HORIZONTAL ELLIPSIS” (U+2026, **…**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un separador de rango es un símbolo reservado.
 
-                    Una **iteración controlada** es una `for`, seguida de un identificador (el **nombre del contador**), seguido de una `in`, seguida de un inicio de paréntesis, seguido de una expresión (el **inicio**) cuyo tipo sea el queso, seguida de un separador de rango, seguida de una expresión (el **fin**) cuyo tipo sea el queso, seguida de un fin de paréntesis, seguida de un bloque o una instrucción (el **cuerpo**).  Una iteración controlada es una instrucción.
+                Una **iteración controlada** es una `for`, seguida de un identificador (el **nombre del contador**), seguido de una `in`, seguida de un inicio de paréntesis, seguido de una expresión (el **inicio**) cuyo tipo sea el queso, seguida de un separador de rango, seguida de una expresión (el **fin**) cuyo tipo sea el queso, seguida de un fin de paréntesis, seguida de un bloque o una instrucción (el **cuerpo**).  Una iteración controlada es una instrucción.
 
-                    En el cuerpo de una iteración controlada es alcanzable una variable (el **contador**) cuyo tipo es el queso y cuyo nombre es el nombre del contador como si al inicio del bloque se hubiera escrito su definición, y si no había un bloque sino una instrucción, lo mismo aplica como si la instrucción hubiera estado sola en un bloque.
+                En el cuerpo de una iteración controlada es alcanzable una variable (el **contador**) cuyo tipo es el queso y cuyo nombre es el nombre del contador como si al inicio del bloque se hubiera escrito su definición, y si no había un bloque sino una instrucción, lo mismo aplica como si la instrucción hubiera estado sola en un bloque.
 
-                    La acción especificada por una iteración controlada es efectuar las acciones indicadas por el inicio, efectuar las acciones indicadas por el fin, y luego, para cada entero desde el valor del inicio hasta el valor del fin, inclusive el primero y no inclusive el segundo, y en ese orden, almacenar ese entero en el contador y efectuar las acciones de la instrucción o el bloque.
+                La acción especificada por una iteración controlada es efectuar las acciones indicadas por el inicio, efectuar las acciones indicadas por el fin, y luego, para cada entero desde el valor del inicio hasta el valor del fin, inclusive el primero y no inclusive el segundo, y en ese orden, almacenar ese entero en el contador y efectuar las acciones de la instrucción o el bloque.
 
-                4.  ##### Selección por tipo
+            4.  ##### Selección por tipo
 
-                    TODO: case of para cachapas
+                TODO: case of para cachapas
 
 4.  ## Librería
 

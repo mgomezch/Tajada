@@ -163,7 +163,7 @@
         /* §3.2.1p1 */                                                         \
         TAJADA_RESERVED_WORD(TOKEN, TAZAS   , u8"tazas"   )                    \
                                                                                \
-        /* §3.2.2p1 */                                                         \
+        /* TODO: sección */                                                    \
         TOKEN(                                                                 \
                 BLOCK_OP,                                                      \
                 u8"inicio de bloque",                                          \
@@ -171,7 +171,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.2.2p2 */                                                         \
+        /* TODO: sección */                                                    \
         TOKEN(                                                                 \
                 BLOCK_CL,                                                      \
                 u8"fin de bloque",                                             \
@@ -179,7 +179,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.1.2p1 */                                                       \
+        /* §3.4.1.2p1 */                                                       \
         TOKEN(                                                                 \
                 TUPLE_OP,                                                      \
                 u8"inicio de literal estructurado",                            \
@@ -187,7 +187,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.1.2p2 */                                                       \
+        /* §3.4.1.2p2 */                                                       \
         TOKEN(                                                                 \
                 TUPLE_CL,                                                      \
                 u8"fin de literal estructurado",                               \
@@ -195,7 +195,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.1.2p3 */                                                       \
+        /* §3.4.1.2p3 */                                                       \
         TOKEN(                                                                 \
                 LABEL_ARROW,                                                   \
                 u8"indicador de etiqueta",                                     \
@@ -203,7 +203,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.2p1 */                                                         \
+        /* §3.4.2p1 */                                                         \
         TOKEN(                                                                 \
                 REF_MARK,                                                      \
                 u8"indicador de referencia",                                   \
@@ -211,7 +211,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.3.1l1.1p1 */                                                   \
+        /* §3.4.3.1l1.1p1 */                                                   \
         TOKEN(                                                                 \
                 OP_MINUS,                                                      \
                 u8"operador de resta",                                         \
@@ -219,7 +219,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.3.2l1.2p1 */                                                   \
+        /* §3.4.3.2l1.2p1 */                                                   \
         TOKEN(                                                                 \
                 OP_PLUS,                                                       \
                 u8"operador de suma",                                          \
@@ -227,7 +227,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.3.2l1.3p1 */                                                   \
+        /* §3.4.3.2l1.3p1 */                                                   \
         TOKEN(                                                                 \
                 OP_MULT,                                                       \
                 u8"operador de multiplicación",                                \
@@ -235,7 +235,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.3.2l1.4p1 */                                                   \
+        /* §3.4.3.2l1.4p1 */                                                   \
         TOKEN(                                                                 \
                 OP_DIV,                                                        \
                 u8"operador de división",                                      \
@@ -243,7 +243,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.3.2l1.4p1 */                                                   \
+        /* §3.4.3.2l1.4p1 */                                                   \
         TOKEN(                                                                 \
                 OP_MOD,                                                        \
                 u8"operador de módulo",                                        \
@@ -251,7 +251,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.3.2l1.5p1 */                                                   \
+        /* §3.4.3.2l1.5p1 */                                                   \
         TOKEN(                                                                 \
                 OP_EQ,                                                         \
                 u8"operador de igualdad",                                      \
@@ -259,7 +259,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.3.2l1.6p1 */                                                   \
+        /* §3.4.3.2l1.6p1 */                                                   \
         TOKEN(                                                                 \
                 OP_NEQ,                                                        \
                 u8"operador de no‐igualdad",                                   \
@@ -267,7 +267,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.4p1 */                                                         \
+        /* §3.4.4p1 */                                                         \
         TOKEN(                                                                 \
                 PAREN_OP,                                                      \
                 u8"inicio de paréntesis",                                      \
@@ -275,7 +275,7 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.4p2 */                                                         \
+        /* §3.4.4p2 */                                                         \
         TOKEN(                                                                 \
                 PAREN_CL,                                                      \
                 u8"fin de paréntesis",                                         \
@@ -283,11 +283,27 @@
                 void                                                           \
         )                                                                      \
                                                                                \
-        /* §3.3.4p4 */                                                         \
+        /* §3.4.4p4 */                                                         \
         TOKEN(                                                                 \
                 TUPLE_ARROW,                                                   \
                 u8"indicador de acceso a arepa",                               \
                 u8"(→)",                                                       \
+                void                                                           \
+        )                                                                      \
+                                                                               \
+        /* §3.4.4p4 */                                                         \
+        TOKEN(                                                                 \
+                ARRAY_ACCESS_OP,                                               \
+                u8"inicio de acceso a arroz",                                  \
+                u8"(\\[)",                                                     \
+                void                                                           \
+        )                                                                      \
+                                                                               \
+        /* §3.4.4p4 */                                                         \
+        TOKEN(                                                                 \
+                ARRAY_ACCESS_CL,                                               \
+                u8"fin de acceso a arroz",                                     \
+                u8"(\\])",                                                     \
                 void                                                           \
         )                                                                      \
                                                                                \

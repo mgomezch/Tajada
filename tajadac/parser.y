@@ -34,6 +34,8 @@
 %nonassoc OP_EQ OP_NEQ
 %left OP_PLUS OP_MINUS
 %left OP_MULT OP_DIV OP_MOD
+%nonassoc TUPLE_ARROW
+%nonassoc ARRAY_ACCESS_OP
 %nonassoc PAREN_CL
 
 %tokens
@@ -55,20 +57,30 @@ toplevels
 |
 ;
 
+
+
 /* §3p1 */
 toplevel
-: typedef
-| var_def
-| func_spec STMT_END
-| overload_spec STMT_END
-| func_spec block
-| overload_spec block
-;
+: var_def
 
 /* §3.1.1p4 */
-typedef
-: IDENT[identificador] ES DULCE DE typespec[tipo] STMT_END
+| IDENT[identificador] ES DULCE DE typespec[tipo] STMT_END
+
+/* §3.1.2p6 */
+| func_spec STMT_END
+
+/* §3.1.3p6 */
+| overload_spec STMT_END
+
+/* §3.2.2p1 */
+| func_spec block
+
+/* §3.2.3p1 */
+| overload_spec block
+
 ;
+
+
 
 /* §3.1.2p5,6 */
 func_spec
@@ -90,7 +102,7 @@ var_def
 
 typespec
 
-/* TODO: sección de dulces */
+/* §3.1.1p5 */
 : IDENT
 
 /* §2.1.1p5 */
@@ -131,6 +143,7 @@ typespec
 structure_typespecs
 : structure_typespecs LIST_SEP typespec IDENT
 | structure_typespecs LIST_SEP typespec
+| typespec IDENT
 | typespec
 ;
 
@@ -167,41 +180,76 @@ lvalue
 : IDENT
 ;
 
+
+
 expr
 : IDENT
-| LIT_INT
-| LIT_CHR
+
+/* §3.4.1.1p1 */
 | LIT_STR
-| LIT_INT FLOAT_SEP LIT_INT
+
+/* §3.4.1.1p2 */
 | TETERO
 | NEGRITO
-| arg OP_PLUS  arg
-| arg OP_MINUS arg
-| arg OP_DIV   arg
-| arg OP_MOD   arg
-| arg OP_EQ    arg
-| arg OP_NEQ   arg
-| PAREN_OP OP_PLUS  PAREN_CL arg arg
-| PAREN_OP OP_MINUS PAREN_CL arg arg
-| PAREN_OP OP_DIV   PAREN_CL arg arg
-| PAREN_OP OP_MOD   PAREN_CL arg arg
-| PAREN_OP OP_EQ    PAREN_CL arg arg
-| PAREN_OP OP_NEQ   PAREN_CL arg arg
-| TUPLE_OP tuple_elems TUPLE_CL
+
+/* §3.4.1.1p3 */
+| LIT_CHR
+
+/* §3.4.1.1p4 */
+| LIT_INT
+
+/* §3.4.1.1p5, §2.1.4p4 */
+| LIT_INT FLOAT_SEP LIT_INT
+
+/* §3.4.2p4 */
 | TUPLE_OP TUPLE_CL
+| TUPLE_OP tuple_elems TUPLE_CL
+
+/* §3.4.3 */
+/* TODO: arreglar el peo del pasaje por referenca y detallar los párrafos en las referencias de esto */
+| expr OP_PLUS  expr
+| expr OP_MINUS expr
+| expr OP_DIV   expr
+| expr OP_MOD   expr
+| expr OP_EQ    expr
+| expr OP_NEQ   expr
+| PAREN_OP OP_PLUS  PAREN_CL expr expr
+| PAREN_OP OP_MINUS PAREN_CL expr expr
+| PAREN_OP OP_DIV   PAREN_CL expr expr
+| PAREN_OP OP_MOD   PAREN_CL expr expr
+| PAREN_OP OP_EQ    PAREN_CL expr expr
+| PAREN_OP OP_NEQ   PAREN_CL expr expr
+
+/* §3.4.3 */
+/* TODO: organizar la sección de “otras” y detallar los párrafos en las referencias de esto */
 | PAREN_OP expr PAREN_CL
+| expr TUPLE_ARROW LIT_INT
+| expr TUPLE_ARROW IDENT
+| expr ARRAY_ACCESS_OP expr ARRAY_ACCESS_CL
 ;
 
+
+
+/* §3.4.2p4 */
 tuple_elems
-: expr
-| tuple_elems LIST_SEP expr
+: tuple_elems LIST_SEP tuple_elem
+| tuple_elem
 ;
 
+/* §3.4.2p4 */
+tuple_elem
+: expr LABEL_ARROW IDENT
+| expr
+;
+
+
+
+/* Pasaje por referencia que no funciona */
+/*
 arg
 : expr
 ;
 
-/*
 arg
 : expr
 | REF_MARK expr

@@ -245,15 +245,15 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     4.  ### Arroz
 
-        El **arroz** es un tipo de tipos de colección que asocian en un mismo ente a una cantidad acotada de valores, todos de un mismo tipo: el tipo del *contenido* del arroz.  Dos arroces son equivalentes si sus tipos de contenido son equivalentes.
+        El **arroz** es un tipo de tipos de colección que asocian en un mismo ente a una cantidad fija de valores, todos de un mismo tipo (el tipo del **contenido** del arroz), y asocia a cada uno un número entero no negativo único entre ellos y menor que su cantidad (la **posición** de cada valor del arroz).  Dos arroces son equivalentes si sus tipos de contenido son equivalentes.
 
         `arroz` es una palabra reservada.
 
         La especificación de tipo correspondiente a un arroz es `arroz` seguida de `con`, a su vez seguida de la especificación de tipo correspondiente a su tipo de contenido.
 
-        La **especificación completa de tipo** para un arroz es un literal entero seguido de `tazas`, seguida de `de`, seguida de `arroz`, seguida de `con`, seguida de la especificación completa del tipo de contenido del arroz.
+        La **especificación completa de tipo** para un valor cuyo tipo sea un arroz es un literal entero seguido de `tazas`, seguida de `de`, seguida de `arroz`, seguida de `con`, seguida de la especificación completa del tipo de contenido del arroz.
 
-        La cota de la cantidad de valores asociados por un arroz no es parte de su definición ni está asociada a él.  El número de entes de su tipo de contenido que un valor de un arroz asocia es su **tamaño**.  El tamaño de un valor de un arroz es inmutable.
+        La cantidad de entes asociados por un arroz no es parte de su definición ni está asociada a él, pero sí es parte de la definición de sus valores.  El número de entes del tipo de contenido de su tipo que un valor de un arroz asocia es su **tamaño**.  El tamaño de un valor de un arroz es inmutable.
 
 3.  ## Estructura
 
@@ -287,7 +287,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `salsa` es una palabra reservada.
 
-            Una **especificación de plato** es una secuencia compuesta por un identificador (el *nombre*), una `es`, una `un`, una `plato`, una `de`, una especificación de tipo opcionalmente seguida de un identificador (el *dominio* del plato), una `con`, una `salsa`, una `de`, y una especificación de tipo (el *rango* del plato).
+            Una **especificación de plato** es una secuencia compuesta por un identificador (el **nombre**), una `es`, una `un`, una `plato`, una `de`, una especificación de tipo (el **dominio** del plato) opcionalmente seguida de un identificador (el **nombre del dominio**), una `con`, una `salsa`, una `de`, y una especificación de tipo (el **rango** del plato).
 
             Una **declaración de plato** es una especificación de plato seguida de un terminador de frase.  Una declaración de plato hace que ese plato se considere declarado desde el punto en el que aparece en la tajada con el identificador y los tipos usados en su especificación de plato.
 
@@ -325,19 +325,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Una tajada no define ninguna variable cuyo nombre sea igual al de algún dulce.
 
-            TODO: mover a sección sobre bloques
-
-            Una tajada no define más de una variable con un mismo nombre en un mismo bloque.
-
-            [Nota: Es posible definir una variable en un bloque, y ese bloque puede contener a otro bloque que podría definir otra variable con el mismo nombre que la primera.  Decir que una variable se define en un bloque significa que la definición de esa variable está directamente en él, y no en algún otro bloque contenido en él directa o indirectamente. —fin de la nota]
-
         2.  #### Platos
-
-            Un **inicio de bloque** es un punto de código “LEFT CURLY BRACKET” (U+007B, **{**) que no ocurra dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un espacio en blanco.  Un inicio de bloque es un símbolo reservado.
-
-            Un **fin de bloque** es un punto de código “RIGHT CURLY BRACKET” (U+007D, **{**) que no ocurra dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un espacio en blanco.  Un fin de bloque es un símbolo reservado.
-
-            Un **bloque** es un inicio de bloque, seguido de una secuencia de cero o más definiciones de variables, seguida de una secuencia de cero o más instrucciones o bloques, seguida de un fin de bloque.
 
             Una **definición de plato** es una especificación de plato seguida de un bloque.
 
@@ -353,7 +341,19 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un cubierto se puede definir a lo sumo una vez en una tajada.
 
-    3.  ### Expresiones
+    3.  ### Bloques
+
+        Un **inicio de bloque** es un punto de código “LEFT CURLY BRACKET” (U+007B, **{**) que no ocurra dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un espacio en blanco.  Un inicio de bloque es un símbolo reservado.
+
+        Un **fin de bloque** es un punto de código “RIGHT CURLY BRACKET” (U+007D, **{**) que no ocurra dentro de un literal de cadena de caracteres, ni de un escapado de caracter, ni de un espacio en blanco.  Un fin de bloque es un símbolo reservado.
+
+        Un **bloque** es un inicio de bloque, seguido de una secuencia de cero o más definiciones de variables, instrucciones o bloques, seguida de un fin de bloque.
+
+        Una tajada no define más de una variable con un mismo nombre en un mismo bloque.
+
+        [Nota: Es posible definir una variable en un bloque, y ese bloque puede contener a otro bloque que podría definir a otra variable con el mismo nombre que la primera.  Decir que una variable se define en un bloque significa que la definición de esa variable está directamente en él, y no en algún otro bloque contenido en él directa o indirectamente. —fin de la nota]
+
+    4.  ### Expresiones
 
         Una **expresión** es una secuencia de símbolos y símbolos reservados que representa el cálculo de un valor y tiene una cierta estructura.  Una expresión tiene asociado un tipo que se infiere de su estructura, y es el mismo tipo del valor asociado a la expresión.
 
@@ -365,7 +365,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 Un literal de café es una expresión cuyo tipo es el café y cuyo valor es aquel que el literal de café representa.
 
-                Un literal de caraota es una expresión cuyo tipo es la caraota y cuyo valor es el último punto de código que conforma al literal de caraota.
+                Un literal de caraota es una expresión cuyo tipo es la caraota y cuyo valor es el último punto de código que conforme al literal de caraota.
 
                 Un literal entero es una expresión cuyo tipo es el queso y cuyo valor es el valor de tipo queso especificado por el literal entero.
 
@@ -381,7 +381,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 Un **literal de arepa rellena** es una secuencia compuesta de un inicio de literal estructurado, seguido de una lista de cero o más expresiones separadas por separadores de lista, cada una de las cuales puede opcionalmente estar seguida de un indicador de etiqueta seguido de un identificador, y todo finalizado con un fin de literal estructurado.
 
-                Un literal de arepa rellena es una expresión cuyo tipo es una arepa cuyos ingredientes son los tipos de las expresiones sucesivas del literal de arepa rellena en el mismo orden de aparición y, si en alguna de ellas ocurre el identificador opcional, su correspondiente ingrediente tendrá ese identificador como nombre.
+                Un literal de arepa rellena es una expresión cuyo tipo es una arepa cuyos ingredientes son los tipos de las expresiones sucesivas del literal de arepa rellena en el mismo orden de aparición y, si en alguna de ellas ocurre el identificador opcional, su correspondiente ingrediente tendrá ese identificador como nombre.  El valor de un literal de arepa rellena es una arepa rellena de su tipo, y los valores de sus rellenos son los valores de sus expresiones correspondientes.
+
+                TODO: ¿literales de arroz?  ¿literales de cachapa?
 
         2.  #### Platos
 
@@ -441,6 +443,8 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         4.  #### Otras
 
+            TODO: organizar esta sección
+
             Un **inicio de paréntesis** es un punto de código “LEFT PARENTHESIS” (U+0028, **(**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de paréntesis es un símbolo reservado.
 
             Un **fin de paréntesis** es un punto de código “RIGHT PARENTHESIS” (U+0029, **)**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un fin de paréntesis es un símbolo reservado.
@@ -449,9 +453,13 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **indicador de acceso a arepa** es un punto de código “RIGHTWARDS ARROW” (U+2192, **→**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Una flecha es un símbolo reservado.
 
-            Un **acceso a arepa** es una expresión compuesta de una expresión, la **fuente**, cuyo tipo sea una arepa, seguida de un indicador de acceso a arepa, seguido de un literal entero que corresponda al número o un identificador que corresponda al nombre de algún ingrediente, el **ingrediente accedido**, del tipo de la expresión.  El tipo de un acceso a arepa es el ingrediente accedido de su fuente.  El valor de un acceso a arepa es el relleno del valor de la fuente identificado por el literal entero o el identificador usado en el acceso a arepa.
+            Un **acceso a arepa** es una expresión compuesta de una expresión (la **fuente**) cuyo tipo sea una arepa, seguida de un indicador de acceso a arepa, seguido de un literal entero que corresponda al número o un identificador que corresponda al nombre de algún ingrediente, el **ingrediente accedido**, del tipo de la expresión.  El tipo de un acceso a arepa es el ingrediente accedido de su fuente.  El valor de un acceso a arepa es el relleno del valor de la fuente identificado por el literal entero o el identificador usado en el acceso a arepa.
 
-            TODO: acceso a arroz
+            Un **inicio de acceso a arroz** es un punto de código “LEFT SQUARE BRACKET” (U+005B, **[**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de acceso a arroz es un símbolo reservado.
+
+            Un **fin de acceso a arroz** es un punto de código “RIGHT SQUARE BRACKET” (U+005D, **[**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de acceso a arroz es un símbolo reservado.
+
+            Un **acceso a arroz** es una expresión compuesta de una expresión (la **fuente**) cuyo tipo sea un arroz, seguida de un inicio de acceso a arroz, seguido de una expresión (la **posición accedida**) cuyo tipo sea el queso, seguida de un fin de acceso a arroz.  El tipo de un acceso a arroz es el tipo del contenido de su fuente.  El valor de un acceso a arroz es el valor del valor de la fuente cuya posición sea el valor de la posición accedida.
 
             TODO: inline if
 

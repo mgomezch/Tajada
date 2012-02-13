@@ -477,7 +477,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             TODO: precedencias
 
-    4.  ### Instrucciones
+    5.  ### Instrucciones
 
         Una **instrucción** es una secuencia de símbolos y símbolos reservados que representa una acción y tiene una cierta estructura.  Las instrucciones se ejecutan en secuencia, y al ejecutarse tienen ciertos efectos sobre el estado manejado por la ejecución de una tajada.
 
@@ -490,7 +490,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
                 retorna «».
             }
 
-            chupe    es un plato de arepa viuda con salsa de arepa viuda {
+            chupe es un plato de arepa viuda con salsa de arepa viuda {
                 telita ≔ telita × 2.
                 retorna «».
             }
@@ -532,9 +532,39 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Estructuras de control
 
-                1.  ##### Iteración condicionada
+                1.  ##### Selección
 
-                2.  ##### Iteración controlada
+                    `if` es una palabra reservada.
+
+                    `else` es una palabra reservada.
+
+                    Una **instrucción de selección** es una `if`, seguida de un inicio de paréntesis, seguida de una expresión (la **condición**) cuyo tipo sea el café, seguida de un fin de paréntesis, seguida de un bloque o una instrucción (el **cuerpo positivo**), opcionalmente seguido por una `else` seguida de un bloque o una instrucción (el **cuerpo negativo**).  Una instrucción de selección es una instrucción.
+
+                    La acción especificada por una instrucción de selección es efectuar las acciones indicadas por la condición, y si su valor es verdadero, efectuar las acciones indicadas por el cuerpo positivo, y en el caso contrario, si existe, efectuar las acciones indicadas por el cuerpo negativo.
+
+                2.  ##### Iteración condicionada
+
+                    `while` es una palabra reservada.
+
+                    Una **iteración condicionada** es una `while`, seguida de un inicio de paréntesis, seguida de una expresión (la **condición**) cuyo tipo sea el café, seguida de un fin de paréntesis, seguida de un bloque o una instrucción (el **cuerpo**).  Una iteración condicionada es una instrucción.
+
+                    La acción especificada por una iteración condicionada es efectuar las acciones indicadas por la condición, y si su valor es verdadero, efectuar las acciones indicadas por el cuerpo y repetir el proceso.
+
+                    TODO: break, continue
+
+                3.  ##### Iteración controlada
+
+                    `for` es una palabra reservada.
+
+                    `in` es una palabra reservada.
+
+                    Un **separador de rango** es un punto de código “HORIZONTAL ELLIPSIS” (U+2026, **…**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un separador de rango es un símbolo reservado.
+
+                    Una **iteración controlada** es una `for`, seguida de un identificador (el **nombre del contador**), seguido de una `in`, seguida de un inicio de paréntesis, seguido de una expresión (el **inicio**) cuyo tipo sea el queso, seguida de un separador de rango, seguida de una expresión (el **fin**) cuyo tipo sea el queso, seguida de un fin de paréntesis, seguida de un bloque o una instrucción (el **cuerpo**).  Una iteración controlada es una instrucción.
+
+                    En el cuerpo de una iteración controlada es alcanzable una variable (el **contador**) cuyo tipo es el queso y cuyo nombre es el nombre del contador como si al inicio del bloque se hubiera escrito su definición, y si no había un bloque sino una instrucción, lo mismo aplica como si la instrucción hubiera estado sola en un bloque.
+
+                    La acción especificada por una iteración controlada es efectuar las acciones indicadas por el inicio, efectuar las acciones indicadas por el fin, y luego, para cada entero desde el valor del inicio hasta el valor del fin, inclusive el primero y no inclusive el segundo, y en ese orden, almacenar ese entero en el contador y efectuar las acciones de la instrucción o el bloque.
 
 4.  ## Librería
 

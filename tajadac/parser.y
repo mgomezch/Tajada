@@ -39,6 +39,8 @@
 %nonassoc ARRAY_ACCESS_OP
 %nonassoc PAREN_CL
 
+%right ELSE
+
 %tokens
 
 %token END 0 "fin del documento"
@@ -184,7 +186,7 @@ expr
 
 /* §3.4.3.2l1.3 */
 | expr OP_MULT expr
-| PAREN_OP OP_DIV PAREN_CL expr expr
+| PAREN_OP OP_MULT PAREN_CL expr expr
 
 /* §3.4.3.2l1.4 */
 | expr OP_DIV expr
@@ -281,22 +283,37 @@ blocklevel
 
 
 
-/* TODO: completar y sección */
 stmt
-: lvalue ASSIGN expr STMT_END
+
+/* §3.5.1p1 */
+: expr STMT_END
+
+/* §3.5.1p7 */
+/* TODO: check for lvalue in action */
+| expr ASSIGN expr STMT_END
+
+/* §3.5.2.1p3 */
+| IF PAREN_OP expr PAREN_CL body ELSE body
+| IF PAREN_OP expr PAREN_CL body
+
+/* §3.5.2.2p2 */
+| WHILE PAREN_OP expr PAREN_CL body
+
+/* §3.5.2.3p4 */
+| FOR IDENT IN PAREN_OP expr RANGE_SEP expr PAREN_CL body
 ;
 
-/* TODO: completar y sección */
-lvalue
-: IDENT
+
+
+body
+: stmt
+| block
 ;
+
+
 
 /* TODO: Pasaje por referencia que no funciona */
 /*
-arg
-: expr
-;
-
 arg
 : expr
 | REF_MARK expr

@@ -231,6 +231,8 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     3.  ### Cachapa
 
+        TODO: cachapas con arroz requieren tipos completos, no tipos
+
         La **cachapa** es un tipo de tipos unión que asocian en un mismo ente a exactamente *un* valor cuyo tipo puede ser alguno de un cierto conjunto de al menos dos elementos.  Los tipos asociados por una cachapa son sus **ingredientes**.  Los ingredientes de una cachapa están implícitamente enumerados por enteros desde el cero en el órden en el que se especifican, y pueden tener opcionalmente un identificador asociado.
 
         Una tajada no especifica cachapas donde exista algún par de ingredientes enumerados en su especificación que sean equivalentes.  Ningún par de ingredientes con nombre en una cachapa puede compartir un mismo nombre.
@@ -532,7 +534,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         2.  #### Estructuras de control
 
-                1.  ##### Selección
+                1.  ##### Selección simple
 
                     `if` es una palabra reservada.
 
@@ -565,6 +567,10 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
                     En el cuerpo de una iteración controlada es alcanzable una variable (el **contador**) cuyo tipo es el queso y cuyo nombre es el nombre del contador como si al inicio del bloque se hubiera escrito su definición, y si no había un bloque sino una instrucción, lo mismo aplica como si la instrucción hubiera estado sola en un bloque.
 
                     La acción especificada por una iteración controlada es efectuar las acciones indicadas por el inicio, efectuar las acciones indicadas por el fin, y luego, para cada entero desde el valor del inicio hasta el valor del fin, inclusive el primero y no inclusive el segundo, y en ese orden, almacenar ese entero en el contador y efectuar las acciones de la instrucción o el bloque.
+
+                4.  ##### Selección por tipo
+
+                    TODO: case of para cachapas
 
 4.  ## Librería
 

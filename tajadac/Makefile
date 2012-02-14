@@ -8,20 +8,26 @@ LDLIBS   = re2
 YACC     = bison
 YACCOPTS = --warnings=all --report=all
 
-%.o: %.cc; $(CXX) $(CXXOPTS) -c ./$<
-%  : %.o ; $(CXX) $(CXXOPTS) -o $@ $^ $(LDLIBS:%=-l%)
+build-obj  = $(CXX) $(CXXOPTS) -c ./$<
+build-exec = $(CXX) $(CXXOPTS) -o $@ $^ $(LDLIBS:%=-l%)
+
+%.o: %.cc; $(build-obj)
+%  : %.o ; $(build-exec)
 
 .PHONY: all clean
 all: tajadac
 clean:
 	rm -f ./*.o ./*.gch ./*.out ./*.yy tajadac location.hh parser.output parser.tab.cc parser.tab.hh position.hh stack.hh
 
-tajadac     : main.o lex.o parser.tab.o
-	$(CXX) $(CXXOPTS) -o $@ $^ $(LDLIBS:%=-l%)
+tajadac : ast.o lex.o main.o parser.tab.o scope.o types.o ; $(build-exec)
 
-main.o      : main.cc lex.hh  tokens.hh parser.tab.hh stack.hh location.hh position.hh
-lex.o       : lex.cc debug.hh tokens.hh parser.tab.hh stack.hh location.hh position.hh
-parser.tab.o: parser.tab.cc             parser.tab.hh stack.hh location.hh position.hh
+#          .o:           .cc tokens.hh scope.hh ast.hh types.hh lex.hh debug.hh parser.tab.hh stack.hh location.hh position.hh
+        ast.o:        ast.cc                    ast.hh types.hh
+        lex.o:        lex.cc tokens.hh                          lex.hh debug.hh parser.tab.hh stack.hh location.hh position.hh
+       main.o:       main.cc tokens.hh                          lex.hh          parser.tab.hh stack.hh location.hh position.hh
+ parser.tab.o: parser.tab.cc                    ast.hh types.hh                 parser.tab.hh stack.hh location.hh position.hh
+      scope.o:      scope.cc           scope.hh        types.hh
+      types.o:      types.cc                           types.hh
 
 location.hh parser.tab.cc parser.tab.hh position.hh stack.hh: parser.y tokens.hh Makefile
 	@printf '%s\n'                                                                    \

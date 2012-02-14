@@ -17,8 +17,7 @@
 #define       TAJADA_TOKEN_REGEX(t) std::get<4>(t)
 #define         TAJADA_TOKEN_RE2(t) std::get<5>(t)
 
-
-namespace tajada {
+namespace Tajada {
         namespace lex {
                 // Tamaño del arreglo de grupos de captura necesario para el conjunto de expresiones regulares usado.
                 extern int nmatch;
@@ -44,7 +43,7 @@ namespace tajada {
                         ~scanner();
                 };
 
-                int yylex(tajada::yy::parser::semantic_type * s, tajada::yy::parser::location_type * l, tajada::lex::scanner * state);
+                int yylex(Tajada::yy::parser::semantic_type * s, Tajada::yy::parser::location_type * l, Tajada::lex::scanner * state);
 
                 void init(void);
         }

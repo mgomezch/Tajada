@@ -1,3 +1,6 @@
+#ifndef TAJADA_DEBUG_HH
+#define TAJADA_DEBUG_HH
+
 /*
 #define TAJADA_DEBUG_<module> 1
 
@@ -36,3 +39,5 @@
                         << "): ";          \
                 x                          \
         } while (0)
+
+#endif

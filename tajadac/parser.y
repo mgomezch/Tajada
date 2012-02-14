@@ -1,8 +1,8 @@
 %require "2.5"
 
 %language "C++"
-%define namespace "tajada::yy"
-//%name-prefix "tajada::lex::yy"
+%define namespace "Tajada::yy"
+//%name-prefix "Tajada::lex::yy"
 
 %debug
 %defines
@@ -10,26 +10,31 @@
 %locations
 %verbose
 
+%code requires {
+        #include <list>
+        #include "ast.hh"
+}
+
 %code {
-        namespace tajada {
+        namespace Tajada {
                 namespace lex {
 #undef yylex
-                        int yylex(tajada::yy::parser::semantic_type * s, tajada::yy::parser::location_type * l, tajada::lex::scanner * state);
-#define yylex tajada::lex::yylex
+                        int yylex(Tajada::yy::parser::semantic_type * s, Tajada::yy::parser::location_type * l, Tajada::lex::scanner * state);
+#define yylex Tajada::lex::yylex
                 }
         }
 }
 
 %code requires {
-        namespace tajada {
+        namespace Tajada {
                 namespace lex {
                         struct scanner;
                 }
         }
 }
 
-%parse-param { tajada::lex::scanner * s }
-%lex-param   { tajada::lex::scanner * s }
+%parse-param { Tajada::lex::scanner * s }
+%lex-param   { Tajada::lex::scanner * s }
 
 %left EXPR_LIST_SEP
 %nonassoc OP_EQ OP_NEQ
@@ -44,6 +49,13 @@
 %tokens
 
 %token END 0 "fin del documento"
+
+/* %union { std::list<Tajada::AST::YARRST *> * list; } */
+/* %type <list> toplevels structure_typespecs tuple_elems blocklevels */
+
+%union { Tajada::AST::Expression * expr; }
+%type <expr> expr
+/* %type <yarrst> tajada toplevel func_spec overload_spec var_def typespec structure_typespec expr operator tuple_elem block blocklevel stmt body */
 
 %start tajada
 
@@ -144,9 +156,12 @@ typespec
 
 /* §2.2p11, §2.3p6 */
 structure_typespecs
-: structure_typespecs LIST_SEP typespec IDENT
-| structure_typespecs LIST_SEP typespec
-| typespec IDENT
+: structure_typespecs LIST_SEP structure_typespec
+| structure_typespec
+;
+
+structure_typespec
+: typespec IDENT
 | typespec
 ;
 
@@ -157,8 +172,8 @@ expr
 : LIT_STR
 
 /* §3.4.1.1p2 */
-| TETERO
-| NEGRITO
+| TETERO  { $$ = new Tajada::AST::TrueLiteral (); }
+| NEGRITO { $$ = new Tajada::AST::FalseLiteral(); }
 
 /* §3.4.1.1p3 */
 | LIT_CHR

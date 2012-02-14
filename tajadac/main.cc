@@ -12,7 +12,7 @@
 #include "lex.hh"
 
 // Aquí porque no sé dónde ponerla:
-void tajada::yy::parser::error(location_type const & l, std::string const & msg) {
+void Tajada::yy::parser::error(location_type const & l, std::string const & msg) {
         if (l.begin.line == l.end.line) {
                 if (l.begin.column == l.end.column - 1) {
                         std::cerr << u8"At line " << l.begin.line << u8", column " << l.begin.column;
@@ -31,7 +31,7 @@ void tajada::yy::parser::error(location_type const & l, std::string const & msg)
 }
 
 int main(int argc, char * argv[]) {
-        tajada::lex::init();
+        Tajada::lex::init();
 
         if (argc != 2) {
                 std::cerr
@@ -59,7 +59,7 @@ int main(int argc, char * argv[]) {
 
         {
                 re2::StringPiece in(in_s);
-                tajada::lex::scanner s = { &in };
-                std::cout << (tajada::yy::parser(&s).parse() ? "Parse error." : "Successfully parsed.") << std::endl;
+                Tajada::lex::scanner s = { &in };
+                std::cout << (Tajada::yy::parser(&s).parse() ? "Parse error." : "Successfully parsed.") << std::endl;
         }
 }

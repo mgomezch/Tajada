@@ -48,7 +48,7 @@
                 }                                                                         \
         } while (0)
 
-namespace tajada {
+namespace Tajada {
         namespace lex {
                 int nmatch = -1;
 
@@ -114,7 +114,7 @@ namespace tajada {
                                           }
                                 }
 
-                                if (TAJADA_TOKEN_ENUM(*it) != tajada::lex::Token::IGNORE) {
+                                if (TAJADA_TOKEN_ENUM(*it) != Tajada::lex::Token::IGNORE) {
                                         TAJADA_DEBUG_LEXER_DO(
                                                 std::cerr
                                                         << u8"Found token “"
@@ -157,18 +157,18 @@ namespace tajada {
 
                                 // TODO: set s
                                 switch (TAJADA_TOKEN_ENUM(*it)) {
-                                        case tajada::lex::Token::IGNORE:
+                                        case Tajada::lex::Token::IGNORE:
                                                 state->in->remove_prefix(state->match[1].length());
                                                 return yylex(s, l, state);
-                                        case tajada::lex::Token::LIT_STR:
+                                        case Tajada::lex::Token::LIT_STR:
                                                 // TODO: eliminar delimitadores del string y backslashes escapadores
                                                 s->LIT_STR = new std::string(state->match[1].ToString().substr(2, state->match[1].length() - 2));
                                                 TAJADA_DEBUG_LEXER_PRINT("Encontré un string y su contenido sin las comillas es:\n" << s->LIT_STR);
                                                 break;
-                                        case tajada::lex::Token::LIT_CHR:
+                                        case Tajada::lex::Token::LIT_CHR:
                                                 s->LIT_CHR = new std::string(state->match[1].ToString().substr(1));
                                                 break;
-                                        case tajada::lex::Token::LIT_INT:
+                                        case Tajada::lex::Token::LIT_INT:
                                                 RE2::FullMatch(state->match[1], *re_int, &s->LIT_INT);
                                                 break;
                                         default:

@@ -1,3 +1,4 @@
+#include <cassert>
 #include <numeric>
 #include <string>
 
@@ -26,7 +27,7 @@ namespace Tajada {
                         type(type)
                 {}
 
-                Expression::~Expression() {}
+                AST::~AST() {}
 
                 namespace Literal {
                         String::String(
@@ -55,6 +56,11 @@ namespace Tajada {
         //                      delete type;
                         }
 */
+
+                        // ¿Por qué coño la llamada al constructor del padre indirecto no la puedo delegar al padre directo?
+                        True ::True (): Tajada::AST::Expression(new Tajada::Type::Boolean()) {}
+                        False::False(): Tajada::AST::Expression(new Tajada::Type::Boolean()) {}
+
                         std::string True::show() {
                                 return std::string(u8"tetero");
                         }
@@ -116,16 +122,14 @@ namespace Tajada {
                                 std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * elems
                         ):
                                 Tajada::AST::Expression(
-                                        (elems == NULL) ? NULL : (
-                                                std::accumulate(
-                                                        elems->begin(),
-                                                        elems->end(),
-                                                        new Tajada::Type::Tuple(),
-                                                        [](Tajada::Type::Tuple * acc, std::tuple<Tajada::AST::Expression *, std::string *> * x) {
-                                                                acc->elems.push_back(new std::tuple<Tajada::Type::Type *, std::string *>(std::get<0>(*x)->type, std::get<1>(*x)));
-                                                                return acc;
-                                                        }
-                                                )
+                                        std::accumulate(
+                                                (assert(elems != NULL), elems->begin()),
+                                                (assert(elems != NULL), elems->end()),
+                                                new Tajada::Type::Tuple(new std::list<std::tuple<Tajada::Type::Type *, std::string *> *>()),
+                                                [](Tajada::Type::Tuple * acc, std::tuple<Tajada::AST::Expression *, std::string *> * x) {
+                                                        acc->elems->push_back(new std::tuple<Tajada::Type::Type *, std::string *>(std::get<0>(*x)->type, std::get<1>(*x)));
+                                                        return acc;
+                                                }
                                         )
                                 ),
                                 elems(elems)
@@ -161,7 +165,7 @@ namespace Tajada {
                         Tajada::AST::Expression * source,
                         Tajada::AST::Literal::Integer * field
                 ):
-                        Tajada::AST::Expression(source->type),
+                        Tajada::AST::Expression(dynamic_cast<Tajada::Type::Tuple &>(*source->type)[field->value]),
                         source(source),
                         field(field)
                 {}
@@ -171,6 +175,38 @@ namespace Tajada {
                                 source->show()
                                 + u8" → "
                                 + field->show();
+                }
+
+                TupleAccessByName::TupleAccessByName(
+                        Tajada::AST::Expression * source,
+                        std::string * field
+                ):
+                        Tajada::AST::Expression(dynamic_cast<Tajada::Type::Tuple &>(*source->type)[*field]),
+                        source(source),
+                        field(field)
+                {}
+
+                std::string TupleAccessByName::show() {
+                        return
+                                source->show()
+                                + u8" → "
+                                + *field;
+                }
+
+                Variable::Variable(
+                        std::string * name,
+                        Tajada::Type::Type * type
+                ):
+                        name(name),
+                        type(type)
+                {}
+
+                std::string Variable::show() {
+                        return
+                                *name
+                                + u8" es "
+                                + type->show()
+                                + u8".";
                 }
         }
 }

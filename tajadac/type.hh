@@ -36,14 +36,19 @@ namespace Tajada {
 
                 class Tuple : public virtual Type {
                         public:
-                                std::list<std::tuple<Type *, std::string *> *> elems;
+                                std::list<std::tuple<Tajada::Type::Type *, std::string *> *> * elems;
+
+                                Tuple(std::list<std::tuple<Tajada::Type::Type *, std::string *> *> * elems);
+
+                                Tajada::Type::Type * operator [] (int n) const;
+                                Tajada::Type::Type * operator [] (std::string const name) const;
 
                                 virtual std::string show();
                 };
 
                 class Union : public virtual Type {
                         public:
-                                std::list<std::tuple<Type *, std::string *> *> elems;
+                                std::list<std::tuple<Tajada::Type::Type *, std::string *> *> * elems;
 
                                 virtual std::string show();
                 };

@@ -65,6 +65,21 @@
 
 /* %type <list> toplevels structure_typespecs tuple_elems blocklevels */
 
+%union { Tajada::AST::AST * toplevel; }
+%type <toplevel> toplevel
+
+%union { Tajada::Type::Type * typespec; }
+%type <typespec> typespec
+
+%union { std::tuple<Tajada::Type::Type *, std::string *> * structure_typespec; }
+%type <structure_typespec> structure_typespec
+
+%union { std::list<std::tuple<Tajada::Type::Type *, std::string *> *> * structure_typespecs; }
+%type <structure_typespecs> structure_typespecs
+
+%union { Tajada::AST::Variable * var_def; }
+%type <var_def> var_def
+
 %union { Tajada::AST::Expression * expr; }
 %type <expr> expr
 
@@ -103,7 +118,8 @@ toplevels
 
 /* §3p1 */
 toplevel
-: var_def
+: var_def[def]
+{ $$ = $[def]; }
 
 /* §3.1.1p4 */
 | IDENT[identificador] ES DULCE DE typespec[tipo] STMT_END
@@ -138,6 +154,14 @@ overload_spec
 /* §3.2.1p4 */
 var_def
 : IDENT[nombre] ES typespec[tipo] STMT_END
+{
+        if (scope->symbols.find(*$[nombre]) != scope->symbols.end()) {
+                error(@[nombre], "Attempt to redefine a variable");
+                YYERROR;
+        }
+        scope->symbols[*$[nombre]] = $[tipo];
+        $$ = new Tajada::AST::Variable($[nombre], $[tipo]);
+}
 ;
 
 
@@ -149,33 +173,57 @@ typespec
 
 /* §2.1.1p5 */
 | CAFE
+{ $$ = new Tajada::Type::Boolean(); }
 
 /* §2.1.2p3 */
 | CARAOTA
+{ $$ = new Tajada::Type::Character(); }
 
 /* §2.1.3p3 */
 | QUESO
+{ $$ = new Tajada::Type::Integer(); }
 
 /* §2.1.4p3 */
 | PAPELON
+{ $$ = new Tajada::Type::Float(); }
 
 /* §2.2p7 */
 | AREPA VIUDA
+{ $$ = new Tajada::Type::Tuple(new std::list<std::tuple<Tajada::Type::Type *, std::string *> *>()); }
 
 /* §2.2p8 */
-| AREPA DE typespec
+| AREPA DE structure_typespec[ingrediente]
+{
+        auto ret = new Tajada::Type::Tuple(new std::list<std::tuple<Tajada::Type::Type *, std::string *> *>());
+        ret->elems->push_back($[ingrediente]);
+        $$ = ret;
+}
 
 /* §2.2p11 */
-| AREPA CON structure_typespecs Y typespec
+| AREPA CON structure_typespecs[ingredientes] Y structure_typespec[ingrediente]
+{
+        auto ret = new Tajada::Type::Tuple($[ingredientes]);
+        ret->elems->push_back($[ingrediente]);
+        $$ = ret;
+}
 
 /* §2.3p6 */
-| CACHAPA CON structure_typespecs O typespec
+| CACHAPA CON structure_typespecs[ingredientes] O structure_typespec[ingrediente]
+{
+        auto ret = new Tajada::Type::Union();
+        $[ingredientes]->push_back($[ingrediente]);
+        ret->elems = $[ingredientes];
+        $$ = ret;
+}
 
 /* §2.4p3 */
-| ARROZ CON typespec
+| ARROZ CON typespec[contenido]
+{ $$ = new Tajada::Type::Array($[contenido]); }
 
 /* §2.4p4 */
-| intlit TAZAS DE ARROZ CON typespec
+/* TODO: Y con el tamaño ¿qué hago?  Hay que definir todo eso mejor. */
+| intlit TAZAS DE ARROZ CON typespec[contenido]
+{ $$ = new Tajada::Type::Array($[contenido]); }
 
 ;
 
@@ -183,18 +231,36 @@ typespec
 
 /* §2.2p11, §2.3p6 */
 structure_typespecs
-: structure_typespecs LIST_SEP structure_typespec
-| structure_typespec
+
+: structure_typespecs[ingredientes] LIST_SEP structure_typespec[ingrediente]
+{
+        $[ingredientes]->push_back($[ingrediente]);
+        $$ = $[ingredientes];
+}
+
+| structure_typespec[ingrediente]
+{ $$ = new std::list<std::tuple<Tajada::Type::Type *, std::string *> *>(1, $[ingrediente]); }
+
+
 ;
+
+
 
 structure_typespec
-: typespec IDENT
-| typespec
+
+/* §2.2p2 */
+: typespec[tipo]
+{ $$ = new std::tuple<Tajada::Type::Type *, std::string *>($[tipo], new std::string()); }
+
+/* §2.2p2 */
+| PAREN_OP typespec[tipo] IDENT[nombre] PAREN_CL
+{ $$ = new std::tuple<Tajada::Type::Type *, std::string *>($[tipo], $[nombre]); }
+
 ;
 
 
 
-expr[lhs]
+expr
 
 /* §3.4.1.1p1 */
 : LIT_STR[token]
@@ -213,7 +279,8 @@ expr[lhs]
 { $$ = new Tajada::AST::Literal::Character($[token]); }
 
 /* §3.4.1.1p4 */
-| intlit
+| intlit[literal]
+{ $$ = $[literal]; }
 
 /* §3.4.1.1p5, §2.1.4p4 */
 | LIT_INT[integer] FLOAT_SEP LIT_INT[fractional]
@@ -221,7 +288,7 @@ expr[lhs]
 
 /* §3.4.1.2p4 */
 | TUPLE_OP TUPLE_CL
-{ $$ = new Tajada::AST::Literal::Tuple(); }
+{ $$ = new Tajada::AST::Literal::Tuple(new std::list<std::tuple<Tajada::AST::Expression *, std::string *> *>()); }
 
 /* §3.4.1.2p4 */
 | TUPLE_OP tuple_elems TUPLE_CL
@@ -273,13 +340,37 @@ expr[lhs]
 | expr[source] TUPLE_ARROW intlit[field]
 {
         auto tp = dynamic_cast<Tajada::Type::Tuple *>($[source]->type);
-        if (tp == NULL) YYERROR;
-        if (tp->elems.size() <= static_cast<long int>($[field]->value)) YYERROR;
+
+        if (tp == NULL) {
+                error(@$, u8"Attempt to access numbered tuple field by number on expression of non‐tuple type");
+                YYERROR;
+        }
+
+        if ((*tp)[$[field]->value] == NULL) {
+                error(@$, u8"Attempt to access nonexistent tuple field");
+                YYERROR;
+        }
+
         $$ = new Tajada::AST::TupleAccessByInteger($[source], $[field]);
 }
 
 /* §3.4.5p5 */
-| expr[source] TUPLE_ARROW IDENT[pos]
+| expr[source] TUPLE_ARROW IDENT[field]
+{
+        auto tp = dynamic_cast<Tajada::Type::Tuple *>($[source]->type);
+
+        if (tp == NULL) {
+                error(@$, u8"Attempt to access tuple field by name on expression of non‐tuple type");
+                YYERROR;
+        }
+
+        if ((*tp)[*$[field]] == NULL) {
+                error(@$, u8"Attempt to access nonexistent named tuple field");
+                YYERROR;
+        }
+
+        $$ = new Tajada::AST::TupleAccessByName($[source], $[field]);
+}
 
 /* §3.4.5p8 */
 | expr[source] ARRAY_ACCESS_OP expr[pos] ARRAY_ACCESS_CL
@@ -350,7 +441,28 @@ tuple_elem
 
 /* §3.3p3 */
 block
-: BLOCK_OP blocklevels BLOCK_CL
+
+: BLOCK_OP
+{
+        auto ns = new Scope(scope);
+        scope->children.insert(ns);
+        std::cerr
+                << u8"Enter scope: "
+                << static_cast<void *>(scope)
+                << u8" → "
+                << static_cast<void *>(ns)
+                << std::endl;
+        scope = ns;
+} blocklevels {
+        std::cerr
+                << u8"Exit scope: "
+                << static_cast<void *>(scope)
+                << u8" → "
+                << static_cast<void *>(scope->parent)
+                << std::endl;
+        scope = scope->parent;
+} BLOCK_CL
+
 ;
 
 /* §3.3p3 */

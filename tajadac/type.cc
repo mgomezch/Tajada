@@ -18,8 +18,29 @@ namespace Tajada {
                 std::string Integer  ::show() { return u8"queso"  ; }
                 std::string Float    ::show() { return u8"papelón"; }
 
+                Tuple::Tuple(std::list<std::tuple<Tajada::Type::Type *, std::string *> *> * elems):
+                        elems(elems)
+                {}
+
+                Tajada::Type::Type * Tuple::operator [] (int n) const {
+                        if (static_cast<unsigned long>(n) >= elems->size()) return NULL;
+
+                        // Coño.  Coño.  Coño.  ¿Por qué coño no usé std::vector para todo desde el principio?  Coño, ¿std::list?  A qué clase de imbécil se le ocurre hacer un std::list para esto en C++11, con move constructors y rvalue references?  A mí.  Ahora hay que cambiar todo, coño.  Piratería temporal:
+                        for (auto it = elems->begin(); it != elems->end() && n >= 0; ++it, --n) {
+                                if (n == 0) return std::get<0>(**it);
+                        }
+                        return NULL;
+                }
+
+                Tajada::Type::Type * Tuple::operator [] (std::string const name) const {
+                        for (auto it = elems->begin(); it != elems->end(); ++it) {
+                                if (name == *std::get<1>(**it)) return std::get<0>(**it);
+                        }
+                        return NULL;
+                }
+
                 std::string Tuple::show() {
-                        switch (elems.size()) {
+                        switch (elems->size()) {
                                 case 0:
                                         return u8"arepa viuda";
 
@@ -30,13 +51,13 @@ namespace Tajada {
                                                         return
                                                                 std::get<0>(*tp)->show()
                                                                 + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp));
-                                                } (elems.front());
+                                                } (elems->front());
 
                                 default:
                                         return
                                                 std::accumulate(
-                                                        elems.begin(),
-                                                        --elems.end(),
+                                                        elems->begin(),
+                                                        --elems->end(),
                                                         std::string(u8"arepa con "),
                                                         [](std::string acc, std::tuple<Type *, std::string *> * tp) {
                                                                 return
@@ -52,7 +73,7 @@ namespace Tajada {
                                                                 std::get<0>(*tp)->show()
                                                                 + " "
                                                                 + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp));
-                                                } (elems.back());
+                                                } (elems->back());
                         }
                 }
 
@@ -60,8 +81,8 @@ namespace Tajada {
                         return
                                 u8"cachapa";
                                 std::accumulate(
-                                        elems.begin(),
-                                        --elems.end(),
+                                        elems->begin(),
+                                        --elems->end(),
                                         std::string(u8"cachapa con "),
                                         [](std::string acc, std::tuple<Type *, std::string *> * tp) {
                                                 return acc
@@ -76,7 +97,7 @@ namespace Tajada {
                                                 std::get<0>(*tp)->show()
                                                 + " "
                                                 + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp));
-                                } (elems.back());
+                                } (elems->back());
                 }
 
                 Array::Array(Type * contents):
@@ -91,11 +112,11 @@ namespace Tajada {
                         if (typeid(l) != typeid(r)) {
                                 return false;
                         } else if (typeid(l) == typeid(Tuple)) {
-                                return dynamic_cast<Tuple const &>(l).elems    == dynamic_cast<Tuple const &>(r).elems;
+                                return *dynamic_cast<Tuple const &>(l).elems    == *dynamic_cast<Tuple const &>(r).elems;
                         } else if (typeid(l) == typeid(Union)) {
-                                return dynamic_cast<Union const &>(l).elems    == dynamic_cast<Union const &>(r).elems;
+                                return *dynamic_cast<Union const &>(l).elems    == *dynamic_cast<Union const &>(r).elems;
                         } else if (typeid(l) == typeid(Array)) {
-                                return dynamic_cast<Array const &>(l).contents == dynamic_cast<Array const &>(r).contents;
+                                return  dynamic_cast<Array const &>(l).contents ==  dynamic_cast<Array const &>(r).contents;
                         } else std::exit(EX_SOFTWARE);
                 }
 

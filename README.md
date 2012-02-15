@@ -197,7 +197,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         La **arepa** es un tipo de tipos estructurados que asocian en un mismo ente a una cantidad *fija* de valores de otros tipos particulares en un orden específico.  Los tipos asociados por una arepa son sus **ingredientes**.  Los ingredientes de una arepa están implícitamente enumerados por enteros desde el cero en el orden en el que se especifican, y pueden tener opcionalmente un identificador asociado (su **nombre**).  Una arepa puede tener cualquier cantidad de ingredientes del mismo tipo, y cada uno es independiente de los demás.  Ningún par de ingredientes con nombre en una arepa puede compartir un mismo nombre.
 
-        Un **literal de ingrediente** es una especificación de tipo seguida opcionalmente de un identificador.
+        Un **literal de ingrediente** es una secuencia compuesta de una especificación de tipo, o una secuencia compuesta de un inicio de paréntesis, seguido de una especificación de tipo, seguido de un identificador, seguido de un fin de paréntesis.
 
         `arepa` es una palabra reservada.
 
@@ -289,7 +289,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `salsa` es una palabra reservada.
 
-            Una **especificación de plato** es una secuencia compuesta por un identificador (el **nombre**), una `es`, una `un`, una `plato`, una `de`, una especificación de tipo (el **dominio** del plato) opcionalmente seguida de un identificador (el **nombre del dominio**), una `con`, una `salsa`, una `de`, y una especificación de tipo (el **rango** del plato).
+            Una **especificación de plato** es una secuencia compuesta por un identificador (el **nombre**), seguido de una `es`, seguido de una `un`, seguido de una `plato`, seguido de una `de`, seguido de una especificación de tipo (el **dominio** del plato) opcionalmente seguida de un identificador (el **nombre del dominio**), seguidos de una `con`, seguida de una `salsa`, seguida de una `de`, seguida de una especificación de tipo (el **rango** del plato).
 
             Una **declaración de plato** es una especificación de plato seguida de un terminador de frase.  Una declaración de plato hace que ese plato se considere declarado desde el punto en el que aparece en la tajada con el identificador y los tipos usados en su especificación de plato.
 
@@ -303,7 +303,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `para` es una palabra reservada.
 
-            Una **especificación de cubierto** es una secuencia compuesta por una `hay`, una `un`, una `cubierto`, un operador, una `para`, una especificación de tipo (el *dominio* del cubierto), una `y`, una `salsa`, una `de`, y una especificación de tipo (el *rango* del cubierto).
+            Una **especificación de cubierto** es una secuencia compuesta por una `hay`, seguida de una `un`, seguida de una `cubierto`, seguida de un operador, seguido de una `para`, seguida de una especificación de tipo (el *dominio* del cubierto), seguida de una `y`, seguida de una `salsa`, seguida de una `de`, seguida de una especificación de tipo (el *rango* del cubierto).
 
             Una **declaración de cubierto** es una especificación de cubierto seguida de un terminador de frase.  Una declaración de cubierto hace que ese cubierto se considere declarado desde el punto en el que aparece en la tajada con el operador y los tipos usados en su especificación de cubierto.
 

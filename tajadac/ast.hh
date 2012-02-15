@@ -7,15 +7,18 @@
 
 namespace Tajada {
         namespace AST {
-                class Expression {
+                class AST {
+                        public:
+                                virtual std::string show() = 0;
+
+                                virtual ~AST() = 0;
+                };
+
+                class Expression : public virtual Tajada::AST::AST {
                         public:
                                 Tajada::Type::Type * type;
 
-                                Expression(Tajada::Type::Type * type = NULL);
-
-                                virtual std::string show() = 0;
-
-                                virtual ~Expression() = 0;
+                                Expression(Tajada::Type::Type * type);
                 };
 
                 namespace Literal {
@@ -27,11 +30,17 @@ namespace Tajada {
                         };
 
                         class True : public virtual Boolean {
-                                virtual std::string show();
+                                public:
+                                        True();
+
+                                        virtual std::string show();
                         };
 
                         class False : public virtual Boolean {
-                                virtual std::string show();
+                                public:
+                                        False();
+
+                                        virtual std::string show();
                         };
 
                         class Character : public virtual Tajada::AST::Expression {
@@ -80,7 +89,7 @@ namespace Tajada {
                                 public:
                                         std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * elems;
 
-                                        Tuple(std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * elems = NULL);
+                                        Tuple(std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * elems);
 
                                         virtual std::string show();
 
@@ -96,6 +105,32 @@ namespace Tajada {
                                 TupleAccessByInteger(
                                         Tajada::AST::Expression * source,
                                         Tajada::AST::Literal::Integer * field
+                                );
+
+                                virtual std::string show();
+                };
+
+                class TupleAccessByName : public virtual Tajada::AST::Expression {
+                        public:
+                                Tajada::AST::Expression * source;
+                                std::string * field;
+
+                                TupleAccessByName(
+                                        Tajada::AST::Expression * source,
+                                        std::string * field
+                                );
+
+                                virtual std::string show();
+                };
+
+                class Variable : public virtual Tajada::AST::AST {
+                        public:
+                                std::string * name;
+                                Tajada::Type::Type * type;
+
+                                Variable(
+                                        std::string * name,
+                                        Tajada::Type::Type * type
                                 );
 
                                 virtual std::string show();

@@ -1,8 +1,9 @@
+/* Para GNU Bison */
+
 %require "2.5"
 
 %language "C++"
 %define namespace "Tajada::yy"
-//%name-prefix "Tajada::lex::yy"
 
 %debug
 %defines
@@ -10,32 +11,41 @@
 %locations
 %verbose
 
-%code requires {
-        #include <list>
-        #include "ast.hh"
-}
+
+
+//%name-prefix "Tajada::lex::yy"
 
 %code {
         namespace Tajada {
                 namespace lex {
 #undef yylex
-                        int yylex(Tajada::yy::parser::semantic_type * s, Tajada::yy::parser::location_type * l, Tajada::lex::scanner * state);
+                        int yylex(Tajada::yy::parser::semantic_type * s, Tajada::yy::parser::location_type * l, Tajada::lex::Scanner * state);
 #define yylex Tajada::lex::yylex
                 }
         }
 }
 
+
+
 %code requires {
         namespace Tajada {
                 namespace lex {
-                        struct scanner;
+                        struct Scanner;
                 }
         }
 }
 
-%parse-param { Tajada::lex::scanner * s }
-%lex-param   { Tajada::lex::scanner * s }
+%parse-param { Tajada::lex::Scanner * scanner }
+%lex-param   { Tajada::lex::Scanner * scanner }
 
+
+
+%code requires { #include "scope.hh" }
+%parse-param { Tajada::Scope * scope }
+
+
+
+%nonassoc CALL
 %left EXPR_LIST_SEP
 %nonassoc OP_EQ OP_NEQ
 %left OP_PLUS OP_MINUS
@@ -46,20 +56,37 @@
 
 %right ELSE
 
-%tokens
 
+
+%token_data
 %token END 0 "fin del documento"
 
-/* %union { std::list<Tajada::AST::YARRST *> * list; } */
+
+
 /* %type <list> toplevels structure_typespecs tuple_elems blocklevels */
 
 %union { Tajada::AST::Expression * expr; }
 %type <expr> expr
+
+%union { Tajada::AST::Literal::Integer * intlit; }
+%type <intlit> intlit
+
+%union { std::tuple<Tajada::AST::Expression *, std::string *> * tuple_elem; }
+%type <tuple_elem> tuple_elem
+
+%union { std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * tuple_elems; }
+%type <tuple_elems> tuple_elems
+
 /* %type <yarrst> tajada toplevel func_spec overload_spec var_def typespec structure_typespec expr operator tuple_elem block blocklevel stmt body */
 
+%code requires { #include "ast.hh" }
 %start tajada
 
+
+
 %%
+
+
 
 /* §3p1 */
 tajada
@@ -148,7 +175,7 @@ typespec
 | ARROZ CON typespec
 
 /* §2.4p4 */
-| LIT_INT TAZAS DE ARROZ CON typespec
+| intlit TAZAS DE ARROZ CON typespec
 
 ;
 
@@ -167,74 +194,105 @@ structure_typespec
 
 
 
-expr
+expr[lhs]
+
 /* §3.4.1.1p1 */
-: LIT_STR
+: LIT_STR[token]
+{ $$ = new Tajada::AST::Literal::String($[token]); }
 
 /* §3.4.1.1p2 */
-| TETERO  { $$ = new Tajada::AST::TrueLiteral (); }
-| NEGRITO { $$ = new Tajada::AST::FalseLiteral(); }
+| TETERO
+{ $$ = new Tajada::AST::Literal::True(); }
+
+/* §3.4.1.1p2 */
+| NEGRITO
+{ $$ = new Tajada::AST::Literal::False(); }
 
 /* §3.4.1.1p3 */
-| LIT_CHR
+| LIT_CHR[token]
+{ $$ = new Tajada::AST::Literal::Character($[token]); }
 
 /* §3.4.1.1p4 */
-| LIT_INT
+| intlit
 
 /* §3.4.1.1p5, §2.1.4p4 */
-| LIT_INT FLOAT_SEP LIT_INT
+| LIT_INT[integer] FLOAT_SEP LIT_INT[fractional]
+{ $$ = new Tajada::AST::Literal::Float($[integer], $[fractional]); }
 
 /* §3.4.1.2p4 */
 | TUPLE_OP TUPLE_CL
-| TUPLE_OP tuple_elems TUPLE_CL
+{ $$ = new Tajada::AST::Literal::Tuple(); }
 
-/* TODO: arreglar el peo del pasaje por referenca y detallar los párrafos en las referencias de esto */
+/* §3.4.1.2p4 */
+| TUPLE_OP tuple_elems TUPLE_CL
+{ $$ = new Tajada::AST::Literal::Tuple($[tuple_elems]); }
+
+/* TODO: arreglar el peo del pasaje por referenca */
+
+/* §3.4.2p5 */
+| IDENT CALL expr
+
 /* TODO: operadores unarios */
 
 /* §3.4.3.2l1.1 */
-| expr OP_MINUS expr
-| PAREN_OP OP_MINUS PAREN_CL expr expr
+| expr[l] OP_MINUS expr[r]
+| PAREN_OP OP_MINUS PAREN_CL expr[l] expr[r]
 
 /* §3.4.3.2l1.2 */
-| expr OP_PLUS expr
-| PAREN_OP OP_PLUS  PAREN_CL expr expr
+| expr[l] OP_PLUS expr[r]
+| PAREN_OP OP_PLUS PAREN_CL expr[l] expr[r]
 
 /* §3.4.3.2l1.3 */
-| expr OP_MULT expr
-| PAREN_OP OP_MULT PAREN_CL expr expr
+| expr[l] OP_MULT expr[r]
+| PAREN_OP OP_MULT PAREN_CL expr[l] expr[r]
 
 /* §3.4.3.2l1.4 */
-| expr OP_DIV expr
-| PAREN_OP OP_DIV PAREN_CL expr expr
+| expr[l] OP_DIV expr[r]
+| PAREN_OP OP_DIV PAREN_CL expr[l] expr[r]
 
 /* §3.4.3.2l1.5 */
-| expr OP_MOD expr
-| PAREN_OP OP_MOD PAREN_CL expr expr
+| expr[l] OP_MOD expr[r]
+| PAREN_OP OP_MOD PAREN_CL expr[l] expr[r]
 
 /* §3.4.3.2l1.6 */
-| expr OP_EQ expr
-| PAREN_OP OP_EQ PAREN_CL expr expr
+| expr[l] OP_EQ expr[r]
+| PAREN_OP OP_EQ PAREN_CL expr[l] expr[r]
 
 /* §3.4.3.2l1.7 */
-| expr OP_NEQ expr
-| PAREN_OP OP_NEQ PAREN_CL expr expr
+| expr[l] OP_NEQ expr[r]
+| PAREN_OP OP_NEQ PAREN_CL expr[l] expr[r]
 
 /* §3.4.4p2 */
 | IDENT
 
 /* §3.4.5p3 */
-| PAREN_OP expr PAREN_CL
+| PAREN_OP expr[in] PAREN_CL
+{ $$ = $[in]; }
 
 /* §3.4.5p5 */
-| expr TUPLE_ARROW LIT_INT
-| expr TUPLE_ARROW IDENT
+| expr[source] TUPLE_ARROW intlit[field]
+{
+        auto tp = dynamic_cast<Tajada::Type::Tuple *>($[source]->type);
+        if (tp == NULL) YYERROR;
+        if (tp->elems.size() <= static_cast<long int>($[field]->value)) YYERROR;
+        $$ = new Tajada::AST::TupleAccessByInteger($[source], $[field]);
+}
+
+/* §3.4.5p5 */
+| expr[source] TUPLE_ARROW IDENT[pos]
 
 /* §3.4.5p8 */
-| expr ARRAY_ACCESS_OP expr ARRAY_ACCESS_CL
+| expr[source] ARRAY_ACCESS_OP expr[pos] ARRAY_ACCESS_CL
 
 /* §3.4.5p10 */
-| expr EXPR_LIST_SEP
+| expr[l] EXPR_LIST_SEP expr[r]
 ;
+
+
+
+intlit
+: LIT_INT[token]
+{ $$ = new Tajada::AST::Literal::Integer($[token]); }
 
 
 
@@ -266,14 +324,26 @@ operator
 
 /* §3.4.1.2p4 */
 tuple_elems
-: tuple_elems LIST_SEP tuple_elem
-| tuple_elem
+
+: tuple_elems[xs] LIST_SEP tuple_elem[x]
+{ $[xs]->push_back($[x]); $$ = $[xs]; }
+
+| tuple_elem[x]
+{ $$ = new std::list<std::tuple<Tajada::AST::Expression *, std::string *> *>(1, $[x]); }
+
 ;
+
+
 
 /* §3.4.1.2p4 */
 tuple_elem
-: expr LABEL_ARROW IDENT
+
+: expr LABEL_ARROW IDENT[name]
+{ $$ = new std::tuple<Tajada::AST::Expression *, std::string *>($[expr], $[name]); }
+
 | expr
+{ $$ = new std::tuple<Tajada::AST::Expression *, std::string *>($[expr], new std::string("")); }
+
 ;
 
 
@@ -351,5 +421,3 @@ mixed_tuple_elem
 | REF_MARK expr
 ;
 */
-
-%%

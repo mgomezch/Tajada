@@ -1,0 +1,3 @@
+Quitar los 49857394593872598345 memory leaks y accesos inseguros a apuntadores
+Decidir cuándo hacer delete
+Hacer que no sea todo una piratería :(

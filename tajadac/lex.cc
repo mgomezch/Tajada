@@ -14,7 +14,11 @@
 #include "tokens.hh"
 #include "debug.hh"
 
-#define TAJADA_DEBUG_LEXER 1
+#ifdef TAJADA_DEBUG
+#       define TAJADA_DEBUG_LEXER TAJADA_DEBUG
+#else
+#       define TAJADA_DEBUG_LEXER 0
+#endif
 
 #if TAJADA_DEBUG_LEXER
 #       define TAJADA_DEBUG_LEXER_PRINT(x) TAJADA_DEBUG_PRINT(LEXER, x)
@@ -57,9 +61,8 @@ namespace Tajada {
 #undef TAJADA_TOKEN_TUPLES
 
                 re2::RE2 * re_line;
-                re2::RE2 * re_int;
 
-                scanner::scanner(re2::StringPiece * in):
+                Scanner::Scanner(re2::StringPiece * in):
                         in(in),
                         line(1),
                         col(1),
@@ -74,15 +77,15 @@ namespace Tajada {
                         } else match = NULL;
                 }
 
-                scanner::~scanner() {
+                Scanner::~Scanner() {
                         if (match != NULL) delete [] match;
                 }
 
-                int yylex(yy::parser::semantic_type * s, yy::parser::location_type * l, scanner * state) {
+                int yylex(yy::parser::semantic_type * s, yy::parser::location_type * l, Scanner * scanner) {
                         unsigned int endline, endcol;
                         int bytes;
 
-                        if (state->in->length() <= 0 || state->in->data()[0] == '\0') {
+                        if (scanner->in->length() <= 0 || scanner->in->data()[0] == '\0') {
                                 TAJADA_DEBUG_LEXER_PRINT("Done.");
                                 return 0;
                         }
@@ -90,28 +93,34 @@ namespace Tajada {
                                 if (
                                         TAJADA_TOKEN_RE2(*it) == NULL ||
                                         !TAJADA_TOKEN_RE2(*it)->Match(
-                                                *state->in,
+                                                *scanner->in,
                                                 0,
-                                                state->in->length(),
+                                                scanner->in->length(),
                                                 re2::RE2::ANCHOR_START,
-                                                state->match,
+                                                scanner->match,
                                                 TAJADA_TOKEN_RE2(*it)->NumberOfCapturingGroups() + 1
                                         )
                                 ) continue;
 
-                                endline = state->line;
-                                endcol  = state->col;
+                                endline = scanner->line;
+                                endcol  = scanner->col;
 
                                 {}{
-                                          re2::StringPiece textpiece(state->match[1]);
-                                          while (re2::RE2::FindAndConsume(&textpiece, *re_line)) {
-                                                  ++endline;
-                                                  endcol = 0;
-                                          }
-                                          for (auto it = textpiece.begin(); it != textpiece.end(); ++it) {
-                                                  if ((1 << 7) & *it) continue;
-                                                  ++endcol;
-                                          }
+                                        re2::StringPiece textpiece(scanner->match[1]);
+                                        while (re2::RE2::FindAndConsume(&textpiece, *re_line)) {
+                                                ++endline;
+                                                endcol = 1;
+                                        }
+                                        for (auto it = textpiece.begin(); it != textpiece.end(); it += bytes) {
+                                                for (bytes = 1; bytes < 8; ++bytes) {
+                                                        if (!((*it >> (8 - bytes)) & 1)) {
+                                                                if (bytes > 1) --bytes;
+                                                                break;
+                                                        }
+                                                }
+
+                                                ++endcol;
+                                        }
                                 }
 
                                 if (TAJADA_TOKEN_ENUM(*it) != Tajada::lex::Token::IGNORE) {
@@ -120,68 +129,69 @@ namespace Tajada {
                                                         << u8"Found token “"
                                                         << TAJADA_TOKEN_TAG(*it)
                                                         << u8"” ";
-                                                if (state->line == endline && state->col == endcol - 1) {
+                                                if (scanner->line == endline && scanner->col == endcol - 1) {
                                                         std::cerr
                                                                 << u8"at line "
-                                                                << state->line
+                                                                << scanner->line
                                                                 << u8", column "
-                                                                << state->col
+                                                                << scanner->col
                                                                 << u8" matching character “"
-                                                                << state->match[1]
+                                                                << scanner->match[1]
                                                                 << u8"”";
                                                 } else {
                                                         std::cerr
                                                                 << u8"spanning range ("
-                                                                << state->line
+                                                                << scanner->line
                                                                 << u8", "
-                                                                << state->col
+                                                                << scanner->col
                                                                 << u8")–("
                                                                 << endline
                                                                 << u8", "
                                                                 << endcol - 1
                                                                 << u8") matching text"
-                                                                << (state->line == endline ? u8": " : u8" on next line:\n")
-                                                                << state->match[1];
+                                                                << (scanner->line == endline ? u8": " : u8" on next line:\n")
+                                                                << scanner->match[1];
                                                 }
                                                 std::cerr << std::endl;
                                         );
                                 }
 
-                                l->begin.line   = state->line;
-                                l->begin.column = state->col;
+                                l->begin.line   = scanner->line;
+                                l->begin.column = scanner->col;
                                 l->end.line     = endline;
                                 l->end.column   = endcol;
 
-                                state->line = endline;
-                                state->col  = endcol;
+                                scanner->line = endline;
+                                scanner->col  = endcol;
 
                                 // TODO: set s
                                 switch (TAJADA_TOKEN_ENUM(*it)) {
                                         case Tajada::lex::Token::IGNORE:
-                                                state->in->remove_prefix(state->match[1].length());
-                                                return yylex(s, l, state);
+                                                scanner->in->remove_prefix(scanner->match[1].length());
+                                                return yylex(s, l, scanner);
                                         case Tajada::lex::Token::LIT_STR:
                                                 // TODO: eliminar delimitadores del string y backslashes escapadores
-                                                s->LIT_STR = new std::string(state->match[1].ToString().substr(2, state->match[1].length() - 2));
+                                                s->LIT_STR = new std::string(scanner->match[1].ToString().substr(2, scanner->match[1].length() - 2));
                                                 TAJADA_DEBUG_LEXER_PRINT("Encontré un string y su contenido sin las comillas es:\n" << s->LIT_STR);
                                                 break;
                                         case Tajada::lex::Token::LIT_CHR:
-                                                s->LIT_CHR = new std::string(state->match[1].ToString().substr(1));
+                                                s->LIT_CHR = new std::string(scanner->match[1].ToString().substr(1));
                                                 break;
                                         case Tajada::lex::Token::LIT_INT:
-                                                RE2::FullMatch(state->match[1], *re_int, &s->LIT_INT);
+                                        case Tajada::lex::Token::IDENT:
+                                                s->LIT_STR = new std::string(scanner->match[1].ToString());
                                                 break;
                                         default:
                                                 break;
                                 }
 
-                                state->in->remove_prefix(state->match[1].length());
+                                scanner->in->remove_prefix(scanner->match[1].length());
 
                                 return TAJADA_TOKEN_BISON_ENUM(*it);
                         }
 
                         for (bytes = 1; bytes < 8; ++bytes) {
-                                if (!((state->in->data()[0] >> (8 - bytes)) & 1)) {
+                                if (!((scanner->in->data()[0] >> (8 - bytes)) & 1)) {
                                         if (bytes > 1) --bytes;
                                         break;
                                 }
@@ -190,21 +200,21 @@ namespace Tajada {
                                 << u8"Skipping unrecognized "
                                 << bytes
                                 << u8"‐byte character ‘";
-                        for (int i = 0; i < bytes; ++i) std::cerr << state->in->data()[i];
+                        for (int i = 0; i < bytes; ++i) std::cerr << scanner->in->data()[i];
                         std::cerr
                                 << u8"’ at line "
-                                << state->line
+                                << scanner->line
                                 << u8", column "
-                                << state->col
+                                << scanner->col
                                 << u8"."
                                 << std::endl;
                         // TODO: handle lexical errors
 
-                        state->in->remove_prefix(bytes);
-                        ++(state->errors);
-                        ++(state->col);
+                        scanner->in->remove_prefix(bytes);
+                        ++(scanner->errors);
+                        ++(scanner->col);
 
-                        return yylex(s, l, state);
+                        return yylex(s, l, scanner);
                 }
 
 
@@ -252,7 +262,6 @@ namespace Tajada {
                         }
 
                         TAJADA_SCANNER_INIT_FIXED_REGEX(re_line, u8"([" TAJADA_ENDLINES "])");
-                        TAJADA_SCANNER_INIT_FIXED_REGEX(re_int , u8"([0-9]+)"               );
                 }
         }
 }

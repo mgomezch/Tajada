@@ -1,12 +1,19 @@
 SHELL    = bash
+
 CC       = gcc
-CCOPTS   = -g -Wall -D_GNU_SOURCE
-CPP      = gcc -E -P
+CCOPTS   = -g -Wall $(DEFINES:%=-D%)
+
 CXX      = g++
-CXXOPTS  = -g -Wall -D_GNU_SOURCE --std=gnu++0x
-LDLIBS   = re2
+CXXOPTS  = -g -Wall $(DEFINES:%=-D%) --std=gnu++0x
+
 YACC     = bison
 YACCOPTS = --warnings=all --report=all
+
+CPP      = gcc -E
+CPPOPTS  = -P
+
+LDLIBS   = re2
+DEFINES  = _GNU_SOURCE TAJADA_DEBUG
 
 build-obj  = $(CXX) $(CXXOPTS) -c ./$<
 build-exec = $(CXX) $(CXXOPTS) -o $@ $^ $(LDLIBS:%=-l%)
@@ -19,22 +26,22 @@ all: tajadac
 clean:
 	rm -f ./*.o ./*.gch ./*.out ./*.yy tajadac location.hh parser.output parser.tab.cc parser.tab.hh position.hh stack.hh
 
-tajadac : ast.o lex.o main.o parser.tab.o scope.o types.o ; $(build-exec)
+tajadac : ast.o lex.o main.o parser.tab.o scope.o type.o ; $(build-exec)
 
-#          .o:           .cc tokens.hh scope.hh ast.hh types.hh lex.hh debug.hh parser.tab.hh stack.hh location.hh position.hh
-        ast.o:        ast.cc                    ast.hh types.hh
-        lex.o:        lex.cc tokens.hh                          lex.hh debug.hh parser.tab.hh stack.hh location.hh position.hh
-       main.o:       main.cc tokens.hh                          lex.hh          parser.tab.hh stack.hh location.hh position.hh
- parser.tab.o: parser.tab.cc                    ast.hh types.hh                 parser.tab.hh stack.hh location.hh position.hh
-      scope.o:      scope.cc           scope.hh        types.hh
-      types.o:      types.cc                           types.hh
+#          .o:           .cc tokens.hh scope.hh ast.hh type.hh lex.hh debug.hh parser.tab.hh stack.hh location.hh position.hh
+        ast.o:        ast.cc                    ast.hh type.hh
+        lex.o:        lex.cc tokens.hh                         lex.hh debug.hh parser.tab.hh stack.hh location.hh position.hh
+       main.o:       main.cc tokens.hh                         lex.hh          parser.tab.hh stack.hh location.hh position.hh
+ parser.tab.o: parser.tab.cc           scope.hh ast.hh type.hh                 parser.tab.hh stack.hh location.hh position.hh
+      scope.o:      scope.cc           scope.hh        type.hh
+       type.o:       type.cc                           type.hh
 
 location.hh parser.tab.cc parser.tab.hh position.hh stack.hh: parser.y tokens.hh Makefile
 	@printf '%s\n'                                                                    \
                 '#include "tokens.hh"'                                                    \
                 '#define X(tag, description, r, type) type|%token@<tag>@tag@description!' \
                 'TAJADA_TOKEN_DATA(X)'                                                    \
-                | $(CPP) -                                                                \
+                | $(CPP) $(CPPOPTS) -                                                     \
                 | sed 's/ \?! \?/\n/g'                                                    \
                 | sed                                                                     \
                         -e 's/^void|\(%token@\)<[^>]*>\(@[^ ]*@\)u8\(.*\)$$/\1 \2\3/'     \
@@ -50,7 +57,7 @@ location.hh parser.tab.cc parser.tab.hh position.hh stack.hh: parser.y tokens.hh
                 '#include "tokens.hh"'                       \
                 '#define X(tag, d, r, type) type|type@tag;!' \
                 'TAJADA_TOKEN_DATA(X)'                       \
-                | $(CPP) -                                   \
+                | $(CPP) $(CPPOPTS) -                        \
                 | sed 's/ \?! \?/\n/g'                       \
                 | sed                                        \
                         -e '/^void|/d'                       \
@@ -59,17 +66,17 @@ location.hh parser.tab.cc parser.tab.hh position.hh stack.hh: parser.y tokens.hh
                 | column -t -s @                             \
                 >> token_data.out
 	@printf '%s\n' '}' >> token_data.out
+	@tr -d '\n' < token_data.out > token_data_line.out
+	@echo >> token_data_line.out
 	@printf '%s\n'                                            \
-                '1i'                                              \
-                '/*********************************************'  \
-                ' *   THIS FILE WAS AUTOMATICALLY GENERATED   *'  \
-                ' *  BY THE BUILD SCRIPTS USING THE CONTENTS  *'  \
-                ' *       OF “tokens.hh” AND “parser.y”       *'  \
-                ' *********************************************/' \
-                ''                                                \
-                '.'                                               \
-                '/^%tokens$$/r token_data.out'                    \
-                '/^%tokens$$/d'                                   \
+                '1s@.*@@'                                         \
+                '1s@$$@/* THIS FILE WAS AUTOMATICALLY GENERATED@' \
+                '1s@$$@ BY THE BUILD SCRIPTS USING THE CONTENTS@' \
+                '1s@$$@ OF “tokens.hh” AND “parser.y”; EDIT@'     \
+                '1s@$$@ THOSE FILES INSTEAD OR YOUR CHANGES@'     \
+                '1s@$$@ WILL BE LOST ONCE IT’S REGENERATED */@'   \
+                '/^%token_data$$/r token_data_line.out'           \
+                '/^%token_data$$/d'                               \
                 'w $<y'                                           \
                 'q'                                               \
                 | ed -s ./$<

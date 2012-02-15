@@ -327,6 +327,8 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Una tajada no define ninguna variable cuyo nombre sea igual al de algún dulce.
 
+            El valor almacenado por una variable es indefinido desde su definición hasta que se le asigne un valor en una asignación.  El comportamiento de una tajada es indefinido si utiliza un valor indefinido.  La implementación está en libertad de asignar un valor por defecto a la variable al definirla, reportar un error, hacer explotar al disco duro, invocar a Beelzebub, o hacer cualquier otra cosa.
+
         2.  #### Platos
 
             Una **definición de plato** es una especificación de plato seguida de un bloque.
@@ -395,7 +397,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **argumento** es una secuencia compuesta de una expresión opcionalmente precedida de un indicador de referencia (en cuyo caso su **tipo** es el tipo de la expresión), o un literal condimentado de arepa rellena (en cuyo caso su tipo es la arepa asociada al literal condimentado de arepa rellena).
 
-            Con cada plato declarado se pueden construir **expresiones de plato**, que son expresiones, con el identificador del plato seguido de un argumento cuyo tipo sea equivalente al del dominio del plato.
+            Un **indicador de llamada** es un punto de código “COMMERCIAL AT” (U+0040, **@**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un indicador de llamada es un símbolo reservado.
+
+            Con cada plato declarado se pueden construir **expresiones de plato**, que son expresiones, con el identificador del plato, seguido de un indicador de llamada, seguido de un argumento cuyo tipo sea equivalente al del dominio del plato.
 
             El tipo de una expresión de plato es el rango del plato.
 
@@ -512,7 +516,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
                 «pabellón «», chupe «»».
             }
 
-        entonces el comportamiento de esa tajada es indefinido, porque en este caso no se define orden alguno para efectuar las acciones de los dos platos.  La implementación está en libertad de seleccionar un orden de evaluación, reportar un error, hacer explotar al disco duro, liberar a Cthulhu, o cualquier otra cosa.
+        entonces el comportamiento de esa tajada es indefinido, porque en este caso no se define orden alguno para efectuar las acciones de los dos platos.  La implementación está en libertad de seleccionar un orden de evaluación, reportar un error, hacer explotar al disco duro, liberar a Cthulhu, o hacer cualquier otra cosa.
 
         1.  #### Simples
 

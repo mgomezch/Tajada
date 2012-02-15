@@ -6,7 +6,7 @@
 #include <tuple>
 
 namespace Tajada {
-        namespace types {
+        namespace Type {
                 class Type {
                         public:
                                 virtual std::string show() = 0;
@@ -36,14 +36,14 @@ namespace Tajada {
 
                 class Tuple : public virtual Type {
                         public:
-                                std::list<std::tuple<Type *, std::string>> elems;
+                                std::list<std::tuple<Type *, std::string *> *> elems;
 
                                 virtual std::string show();
                 };
 
                 class Union : public virtual Type {
                         public:
-                                std::list<std::tuple<Type *, std::string>> elems;
+                                std::list<std::tuple<Type *, std::string *> *> elems;
 
                                 virtual std::string show();
                 };
@@ -52,12 +52,13 @@ namespace Tajada {
                         public:
                                 Type * contents;
 
+                                Array(Type * contents);
+
                                 virtual std::string show();
                 };
 
                 bool operator == (Type &, Type &);
                 bool operator != (Type &, Type &);
-
         }
 }
 

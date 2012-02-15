@@ -4,12 +4,13 @@
 #include <iostream>
 #include <streambuf>
 
-#include <sysexits.h>
 #include <re2/re2.h>
+#include <sysexits.h>
 
-#include "parser.tab.hh"
-#include "tokens.hh"
 #include "lex.hh"
+#include "parser.tab.hh"
+#include "scope.hh"
+#include "tokens.hh"
 
 // Aquí porque no sé dónde ponerla:
 void Tajada::yy::parser::error(location_type const & l, std::string const & msg) {
@@ -59,7 +60,8 @@ int main(int argc, char * argv[]) {
 
         {
                 re2::StringPiece in(in_s);
-                Tajada::lex::scanner s = { &in };
-                std::cout << (Tajada::yy::parser(&s).parse() ? "Parse error." : "Successfully parsed.") << std::endl;
+                Tajada::lex::Scanner scanner = { &in };
+                Tajada::Scope scope;
+                std::cout << (Tajada::yy::parser(&scanner, &scope).parse() ? "Parse error." : "Successfully parsed.") << std::endl;
         }
 }

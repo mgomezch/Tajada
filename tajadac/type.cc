@@ -7,10 +7,10 @@
 
 #include <sysexits.h>
 
-#include "types.hh"
+#include "type.hh"
 
 namespace Tajada {
-        namespace types {
+        namespace Type {
                 Type::~Type() {}
 
                 std::string Boolean  ::show() { return u8"café"   ; }
@@ -26,10 +26,10 @@ namespace Tajada {
                                 case 1:
                                         return
                                                 u8"arepa de "
-                                                + [](std::tuple<Type *, std::string> x) {
+                                                + [](std::tuple<Type *, std::string *> * tp) {
                                                         return
-                                                                std::get<0>(x)->show()
-                                                                + (std::get<1>(x) == "" ? "" : " " + std::get<1>(x));
+                                                                std::get<0>(*tp)->show()
+                                                                + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp));
                                                 } (elems.front());
 
                                 default:
@@ -38,20 +38,20 @@ namespace Tajada {
                                                         elems.begin(),
                                                         --elems.end(),
                                                         std::string(u8"arepa con "),
-                                                        [](std::string acc, std::tuple<Type *, std::string> t) {
+                                                        [](std::string acc, std::tuple<Type *, std::string *> * tp) {
                                                                 return
                                                                         acc
-                                                                        + std::get<0>(t)->show()
+                                                                        + std::get<0>(*tp)->show()
                                                                         + " "
-                                                                        + (std::get<1>(t) == "" ? "" : " " + std::get<1>(t) + " ");
+                                                                        + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp) + " ");
                                                         }
                                                 )
                                                 + u8"y "
-                                                + [](std::tuple<Type *, std::string> t) {
+                                                + [](std::tuple<Type *, std::string *> * tp) {
                                                         return
-                                                                std::get<0>(t)->show()
+                                                                std::get<0>(*tp)->show()
                                                                 + " "
-                                                                + (std::get<1>(t) == "" ? "" : " " + std::get<1>(t));
+                                                                + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp));
                                                 } (elems.back());
                         }
                 }
@@ -63,21 +63,25 @@ namespace Tajada {
                                         elems.begin(),
                                         --elems.end(),
                                         std::string(u8"cachapa con "),
-                                        [](std::string acc, std::tuple<Type *, std::string> t) {
+                                        [](std::string acc, std::tuple<Type *, std::string *> * tp) {
                                                 return acc
-                                                        + std::get<0>(t)->show()
+                                                        + std::get<0>(*tp)->show()
                                                         + " "
-                                                        + (std::get<1>(t) == "" ? "" : " " + std::get<1>(t) + " ");
+                                                        + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp) + " ");
                                         }
                                 )
                                 + u8"o "
-                                + [](std::tuple<Type *, std::string> t) {
+                                + [](std::tuple<Type *, std::string *> * tp) {
                                         return
-                                                std::get<0>(t)->show()
+                                                std::get<0>(*tp)->show()
                                                 + " "
-                                                + (std::get<1>(t) == "" ? "" : " " + std::get<1>(t));
+                                                + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp));
                                 } (elems.back());
                 }
+
+                Array::Array(Type * contents):
+                        contents(contents)
+                {}
 
                 std::string Array::show() {
                         return u8"arroz con " + contents->show();

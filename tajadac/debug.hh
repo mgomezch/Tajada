@@ -1,8 +1,14 @@
 #ifndef TAJADA_DEBUG_HH
 #define TAJADA_DEBUG_HH
 
+#include <iostream>
+
 /*
-#define TAJADA_DEBUG_<module> 1
+#ifdef TAJADA_DEBUG
+#       define TAJADA_DEBUG_<module> TAJADA_DEBUG
+#else
+#       define TAJADA_DEBUG_<module> 0
+#endif
 
 #if TAJADA_DEBUG_<module>
 #       define TAJADA_DEBUG_<module>_PRINT(x) TAJADA_DEBUG_PRINT(<module>, x)

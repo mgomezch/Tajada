@@ -31,19 +31,20 @@ namespace Tajada {
                 extern re2::RE2 * re_line;
                 extern re2::RE2 * re_int;
 
-                struct scanner {
-                        re2::StringPiece * in;
-                        re2::StringPiece * match;
+                class Scanner {
+                        public:
+                                re2::StringPiece * in;
+                                re2::StringPiece * match;
 
-                        unsigned int line;
-                        unsigned int col;
-                        unsigned int errors;
+                                unsigned int line;
+                                unsigned int col;
+                                unsigned int errors;
 
-                        scanner(re2::StringPiece * in);
-                        ~scanner();
+                                Scanner(re2::StringPiece * in);
+                                ~Scanner();
                 };
 
-                int yylex(Tajada::yy::parser::semantic_type * s, Tajada::yy::parser::location_type * l, Tajada::lex::scanner * state);
+                int yylex(Tajada::yy::parser::semantic_type * s, Tajada::yy::parser::location_type * l, Tajada::lex::Scanner * scanner);
 
                 void init(void);
         }

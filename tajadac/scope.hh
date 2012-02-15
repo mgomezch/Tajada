@@ -5,14 +5,14 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "types.hh"
+#include "type.hh"
 
 namespace Tajada {
         class Scope {
                 public:
                         Scope * parent;
                         std::unordered_set<Scope *> children;
-                        std::unordered_map<std::string, Tajada::types::Type *> symbols;
+                        std::unordered_map<std::string, Tajada::Type::Type *> symbols;
 
                         Scope(Scope * parent = NULL);
         };

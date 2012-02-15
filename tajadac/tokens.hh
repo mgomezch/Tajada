@@ -59,7 +59,7 @@
                 LIT_INT,                                                       \
                 u8"literal entero",                                            \
                 u8"([0-9]+)",                                                  \
-                int                                                            \
+                std::string *                                                  \
         )                                                                      \
                                                                                \
         /* §1.3.2p1 */                                                         \
@@ -211,6 +211,14 @@
                 void                                                           \
         )                                                                      \
                                                                                \
+        /* §3.4.2p4 */                                                         \
+        TOKEN(                                                                 \
+                CALL,                                                          \
+                u8"indicador de llamada",                                      \
+                u8"(@)",                                                       \
+                void                                                           \
+        )                                                                      \
+                                                                               \
         /* §3.4.3.1l1.1p1 */                                                   \
         TOKEN(                                                                 \
                 OP_MINUS,                                                      \
@@ -351,7 +359,7 @@
                 IDENT,                                                         \
                 u8"identificador",                                             \
                 u8"([^" TAJADA_RESERVED_START "]+)",                           \
-                void                                                           \
+                std::string *                                                  \
         )                                                                      \
 
 #endif

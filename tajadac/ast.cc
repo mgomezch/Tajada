@@ -210,7 +210,7 @@ namespace Tajada {
                                 std::string * integer,
                                 std::string * fractional
                         ):
-                                Tajada::AST::Expression(new Tajada::Type::Character(), false),
+                                Tajada::AST::Expression(new Tajada::Type::Float(), false),
                                 value(0.0) // TODO: convert
                         {}
 

@@ -113,11 +113,25 @@ namespace Tajada {
                         if (typeid(l) != typeid(r)) {
                                 return false;
                         } else if (typeid(l) == typeid(Tuple)) {
-                                return *dynamic_cast<Tuple const &>(l).elems    == *dynamic_cast<Tuple const &>(r).elems;
+                                auto el = dynamic_cast<Tuple const &>(l).elems;
+                                auto er = dynamic_cast<Tuple const &>(r).elems;
+                                if (el->size() != er->size()) return false;
+                                for (auto itl = el->begin(), itr = er->begin(); itl != el->end() && itr != er->end(); ++itl, ++itr) {
+                                        if (*std::get<1>(**itl) != *std::get<1>(**itr)) return false;
+                                        if (*std::get<0>(**itl) != *std::get<0>(**itr)) return false;
+                                }
+                                return true;
                         } else if (typeid(l) == typeid(Union)) {
-                                return *dynamic_cast<Union const &>(l).elems    == *dynamic_cast<Union const &>(r).elems;
+                                auto el = dynamic_cast<Tuple const &>(l).elems;
+                                auto er = dynamic_cast<Tuple const &>(r).elems;
+                                if (el->size() != er->size()) return false;
+                                for (auto itl = el->begin(), itr = er->begin(); itl != el->end() && itr != er->end(); ++itl, ++itr) {
+                                        if (*std::get<1>(**itl) != *std::get<1>(**itr)) return false;
+                                        if (*std::get<0>(**itl) != *std::get<0>(**itr)) return false;
+                                }
+                                return true;
                         } else if (typeid(l) == typeid(Array)) {
-                                return  dynamic_cast<Array const &>(l).contents ==  dynamic_cast<Array const &>(r).contents;
+                                return *dynamic_cast<Array const &>(l).contents == *dynamic_cast<Array const &>(r).contents;
                         } else {
                                 return true;
                         }

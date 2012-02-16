@@ -1,3 +1,4 @@
-Quitar los 49857394593872598345 memory leaks y accesos inseguros a apuntadores
-Decidir cuándo hacer delete
+Quitar los 49857394593872598345 memory leaks y accesos inseguros a apuntadores.
+Decidir cuándo hacer delete.
 Hacer consistente el uso del idioma.  O todo el código en inglés, o todo el código en español.
+Eliminar la duplicación de código, que ahorita es más bien una exponenciación.  parser.y está asqueroso, y ast.{hh,cc} se pueden mejorar muchísimo con macros.

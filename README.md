@@ -49,7 +49,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         1.  #### Comentarios de bloque
 
-            Un **inicio de comentario de bloque** es un punto de código “SINGLE LEFT-POINTING ANGLE QUOTATION MARK” (U+2039: ‹).
+            Un **inicio de comentario de bloque** es un punto de código “SINGLE LEFT-POINTING ANGLE QUOTATION MARK” (U+2039: **‹**).
 
             Un **fin de comentario de bloque** es un punto de código “SINGLE RIGHT-POINTING ANGLE QUOTATION MARK” (U+203A, **›**).
 
@@ -653,14 +653,26 @@ La estructura de este documento está basada en [la especificación del lenguaje
 Cosas por hacer
 ---------------
 
-¿En algún momento se definió lo que son “valores” y un “tipos”?
-¿Debería también definir lo que es un lenguaje, un número, una palabra, definir, existir?
-¿Cómo se describe algo formalmente sin excesos absurdos de formalidad?  Los del JTC1/SC22 saben… ☹
+*   Convertir esta porquería a LaTeX.
 
-Hacer consistente la definición de símbolos reservados que no estén en espacios en blanco ni escapados ni strings.
+*   Verificar la numeración de todo.
 
-Agregar ejemplos a todo.
+*   Arreglar el desastre del pasaje por referencia.
 
-Términos por asignar:
+*   Hacer que haya correspondencia entre lo implementado y lo que dice acá.  Seguro que corriendo para la primera entrega hubo cambios que no volvieron a la especificación. :(
 
-*   carne mechada
+*   Especificar el pasaje de parámetros y el retorno de valores… y definir la instrucción de retorno.  Oops.
+
+*   ¿En algún momento se definió lo que son “valores” y un “tipo”?
+
+    ¿Debería también definir lo que es un lenguaje, un número, una palabra, definir, existir?
+
+    ¿Cómo se describe algo formalmente sin excesos absurdos de formalidad?  Los del JTC1/SC22 saben…
+
+*   Hacer consistente la definición de símbolos reservados que no estén en espacios en blanco ni escapados ni strings.
+
+*   Agregar ejemplos a todo.
+
+*   Términos por asignar:
+
+    *   carne mechada

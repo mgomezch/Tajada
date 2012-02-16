@@ -62,16 +62,16 @@ namespace Tajada {
                                                         [](std::string acc, std::tuple<Type *, std::string *> * tp) {
                                                                 return
                                                                         acc
+                                                                        + (*std::get<1>(*tp) == "" ? "" : "(")
                                                                         + std::get<0>(*tp)->show()
                                                                         + " "
-                                                                        + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp) + " ");
+                                                                        + (*std::get<1>(*tp) == "" ? "" : *std::get<1>(*tp) + ") ");
                                                         }
                                                 )
                                                 + u8"y "
                                                 + [](std::tuple<Type *, std::string *> * tp) {
                                                         return
                                                                 std::get<0>(*tp)->show()
-                                                                + " "
                                                                 + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp));
                                                 } (elems->back());
                         }
@@ -86,17 +86,18 @@ namespace Tajada {
                                         std::string(u8"cachapa con "),
                                         [](std::string acc, std::tuple<Type *, std::string *> * tp) {
                                                 return acc
+                                                        + (*std::get<1>(*tp) == "" ? "" : "(")
                                                         + std::get<0>(*tp)->show()
                                                         + " "
-                                                        + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp) + " ");
+                                                        + (*std::get<1>(*tp) == "" ? "" : *std::get<1>(*tp) + ") ");
                                         }
                                 )
                                 + u8"o "
                                 + [](std::tuple<Type *, std::string *> * tp) {
                                         return
-                                                std::get<0>(*tp)->show()
-                                                + " "
-                                                + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp));
+                                                std::string(*std::get<1>(*tp) == "" ? "" : "(")
+                                                + std::get<0>(*tp)->show()
+                                                + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp) + ")");
                                 } (elems->back());
                 }
 
@@ -117,7 +118,9 @@ namespace Tajada {
                                 return *dynamic_cast<Union const &>(l).elems    == *dynamic_cast<Union const &>(r).elems;
                         } else if (typeid(l) == typeid(Array)) {
                                 return  dynamic_cast<Array const &>(l).contents ==  dynamic_cast<Array const &>(r).contents;
-                        } else std::exit(EX_SOFTWARE);
+                        } else {
+                                return true;
+                        }
                 }
 
                 bool operator != (Type const & l, Type const & r) {

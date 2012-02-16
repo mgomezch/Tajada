@@ -62,8 +62,8 @@ namespace Tajada {
                                 virtual std::string show();
                 };
 
-                bool operator == (Type &, Type &);
-                bool operator != (Type &, Type &);
+                bool operator == (Type const &, Type const &);
+                bool operator != (Type const &, Type const &);
         }
 }
 

@@ -7,7 +7,7 @@ CXX      = g++
 CXXOPTS  = -g -Wall $(DEFINES:%=-D%) --std=gnu++0x
 
 YACC     = bison
-YACCOPTS = --warnings=all --report=all
+YACCOPTS = --warnings=all --report=all -g -x
 
 CPP      = gcc -E
 CPPOPTS  = -P
@@ -24,7 +24,7 @@ build-exec = $(CXX) $(CXXOPTS) -o $@ $^ $(LDLIBS:%=-l%)
 .PHONY: all clean
 all: tajadac
 clean:
-	rm -f ./*.o ./*.gch ./*.out ./*.yy tajadac location.hh parser.output parser.tab.cc parser.tab.hh position.hh stack.hh
+	rm -f ./*.o ./*.gch ./*.out ./*.yy tajadac location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml position.hh stack.hh
 
 tajadac : ast.o lex.o main.o parser.tab.o scope.o type.o ; $(build-exec)
 
@@ -36,7 +36,7 @@ tajadac : ast.o lex.o main.o parser.tab.o scope.o type.o ; $(build-exec)
       scope.o:      scope.cc           scope.hh        type.hh
        type.o:       type.cc                           type.hh
 
-location.hh parser.tab.cc parser.tab.hh position.hh stack.hh: parser.y tokens.hh Makefile
+location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml position.hh stack.hh token_data.out token_data_line.out: parser.y tokens.hh Makefile
 	@printf '%s\n'                                                                    \
                 '#include "tokens.hh"'                                                    \
                 '#define X(tag, description, r, type) type|%token@<tag>@tag@description!' \

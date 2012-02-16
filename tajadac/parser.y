@@ -46,10 +46,10 @@
 
 
 %nonassoc CALL
-%left EXPR_LIST_SEP
+%left     EXPR_LIST_SEP
 %nonassoc OP_EQ OP_NEQ
-%left OP_PLUS OP_MINUS
-%left OP_MULT OP_DIV OP_MOD
+%left     OP_PLUS OP_MINUS
+%left     OP_MULT OP_DIV OP_MOD
 %nonassoc TUPLE_ARROW
 %nonassoc ARRAY_ACCESS_OP
 %nonassoc PAREN_CL
@@ -63,10 +63,20 @@
 
 
 
-/* %type <list> toplevels structure_typespecs tuple_elems blocklevels */
+%union { Tajada::AST::Program * tajada; }
+%type <tajada> tajada
 
-%union { Tajada::AST::AST * toplevel; }
-%type <toplevel> toplevel
+%union { std::list<Tajada::AST::Statement *> * statements; }
+%type <statements> toplevels blocklevels
+
+%union { Tajada::AST::Statement * statement; }
+%type <statement> toplevel blocklevel statement body
+
+%union { Tajada::AST::Block * block; }
+%type <block> block
+
+%union { std::string * op; }
+%type <op> operator
 
 %union { Tajada::Type::Type * typespec; }
 %type <typespec> typespec
@@ -77,7 +87,7 @@
 %union { std::list<std::tuple<Tajada::Type::Type *, std::string *> *> * structure_typespecs; }
 %type <structure_typespecs> structure_typespecs
 
-%union { Tajada::AST::Variable * var_def; }
+%union { Tajada::AST::VariableDefinition * var_def; }
 %type <var_def> var_def
 
 %union { Tajada::AST::Expression * expr; }
@@ -92,8 +102,6 @@
 %union { std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * tuple_elems; }
 %type <tuple_elems> tuple_elems
 
-/* %type <yarrst> tajada toplevel func_spec overload_spec var_def typespec structure_typespec expr operator tuple_elem block blocklevel stmt body */
-
 %code requires { #include "ast.hh" }
 %start tajada
 
@@ -105,13 +113,47 @@
 
 /* §3p1 */
 tajada
-: toplevels block
+
+: toplevels[statements] block[main]
+{
+        bool found_undefined = false;
+        for (auto it = scope->functions.begin(); it != scope->functions.end(); ++it) {
+                if (std::get<2>(it->second) == NULL) {
+                        error(
+                                @[main],
+                                std::string(u8"Function ")
+                                + it->first
+                                + std::string(u8" was declared for type “")
+                                + std::get<0>(it->second)->show()
+                                + std::string(u8"”, returning “")
+                                + std::get<1>(it->second)->show()
+                                + std::string(u8"”, but it was never defined")
+                        );
+                        found_undefined = true;
+                }
+        }
+
+        if (found_undefined) YYERROR;
+
+        $$ = new Tajada::AST::Program($[statements], $[main]);
+}
+
 ;
+
+
 
 /* §3p1 */
 toplevels
-: toplevels toplevel
+
+: toplevels[xs] toplevel[x]
+{
+        $[xs]->push_back($[x]);
+        $$ = $[xs];
+}
+
 |
+{ $$ = new std::list<Tajada::AST::Statement *>(); }
+
 ;
 
 
@@ -123,45 +165,176 @@ toplevel
 
 /* §3.1.1p4 */
 | IDENT[identificador] ES DULCE DE typespec[tipo] STMT_END
-
-/* §3.1.2p6 */
-| func_spec STMT_END
-
-/* §3.1.3p6 */
-| overload_spec STMT_END
-
-/* §3.2.2p1 */
-| func_spec block
-
-/* §3.2.3p1 */
-| overload_spec block
-
-;
-
-
+{
+        if (scope->aliases.find(*$[identificador]) != scope->aliases.end()) {
+                error(@[identificador], "Attempt to redefine a type alias");
+                YYERROR;
+        }
+        scope->aliases[*$[identificador]] = $[tipo];
+        $$ = new Tajada::AST::TypeAlias($[identificador], $[tipo]);
+}
 
 /* §3.1.2p5,6 */
-func_spec
-: IDENT[nombre] ES UN PLATO DE typespec[dominio] IDENT[nombre_dominio] CON SALSA DE typespec[rango]
-| IDENT[nombre] ES UN PLATO DE typespec[dominio]                       CON SALSA DE typespec[rango]
-;
+| IDENT[nombre] ES UN PLATO DE typespec[dominio] IDENT[nombre_dominio] CON SALSA DE typespec[codominio] STMT_END
+{
+        auto bucket = scope->functions.bucket(*$[nombre]);
+        bool insert = true;
+
+        for (auto it = scope->functions.begin(bucket); it != scope->functions.end(bucket); ++it) {
+                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
+                insert = false;
+                break;
+        }
+
+        if (insert) {
+                scope->functions.insert(
+                        std::make_pair(
+                                *$[nombre],
+                                std::make_tuple(
+                                        $[dominio],
+                                        $[codominio],
+                                        reinterpret_cast<Tajada::AST::FunctionDefinition *>(NULL)
+                                )
+                        )
+                );
+        }
+
+        $$ = new Tajada::AST::FunctionDeclaration($[nombre], $[dominio], $[codominio]);
+}
+
+| IDENT[nombre] ES UN PLATO DE typespec[dominio] CON SALSA DE typespec[codominio] STMT_END
+{
+        auto bucket = scope->functions.bucket(*$[nombre]);
+        bool insert = true;
+
+        for (auto it = scope->functions.begin(bucket); it != scope->functions.end(bucket); ++it) {
+                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
+                insert = false;
+                break;
+        }
+
+        if (insert) {
+                scope->functions.insert(
+                        std::make_pair(
+                                *$[nombre],
+                                std::make_tuple(
+                                        $[dominio],
+                                        $[codominio],
+                                        reinterpret_cast<Tajada::AST::FunctionDefinition *>(NULL)
+                                )
+                        )
+                );
+        }
+
+        $$ = new Tajada::AST::FunctionDeclaration($[nombre], $[dominio], $[codominio]);
+}
 
 /* §3.1.3p5,6 */
-overload_spec
-: HAY UN CUBIERTO operator PARA typespec[dominio] Y SALSA DE typespec[rango]
+| HAY UN CUBIERTO operator[nombre] PARA typespec[dominio] Y SALSA DE typespec[codominio] STMT_END
+{
+        auto bucket = scope->functions.bucket(*$[nombre]);
+        bool insert = true;
+
+        for (auto it = scope->functions.begin(bucket); it != scope->functions.end(bucket); ++it) {
+                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
+                insert = false;
+                break;
+        }
+
+        if (insert) {
+                scope->functions.insert(
+                        std::make_pair(
+                                *$[nombre],
+                                std::make_tuple(
+                                        $[dominio],
+                                        $[codominio],
+                                        reinterpret_cast<Tajada::AST::FunctionDefinition *>(NULL)
+                                )
+                        )
+                );
+        }
+
+        $$ = new Tajada::AST::FunctionDeclaration($[nombre], $[dominio], $[codominio]);
+}
+
+/* §3.2.2p1 */
+| IDENT[nombre] ES UN PLATO DE typespec[dominio] IDENT[nombre_dominio] CON SALSA DE typespec[codominio] block[body]
+{
+        auto bucket = scope->functions.bucket(*$[nombre]);
+        bool insert = true;
+
+        auto it = scope->functions.begin(bucket);
+        for (; it != scope->functions.end(bucket); ++it) {
+                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
+                insert = false;
+                break;
+        }
+
+        auto ret = new Tajada::AST::FunctionDefinition($[nombre], $[nombre_dominio], $[dominio], $[codominio], $[body]);
+
+        if (insert) scope->functions.insert(std::make_pair(*$[nombre], std::make_tuple($[dominio], $[codominio], ret)));
+        else std::get<2>(it->second) = ret;
+
+        $$ = ret;
+}
+
+| IDENT[nombre] ES UN PLATO DE typespec[dominio] CON SALSA DE typespec[codominio] block[body]
+{
+        auto bucket = scope->functions.bucket(*$[nombre]);
+        bool insert = true;
+
+        auto it = scope->functions.begin(bucket);
+        for (; it != scope->functions.end(bucket); ++it) {
+                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
+                insert = false;
+                break;
+        }
+
+        auto ret = new Tajada::AST::FunctionDefinition($[nombre], new std::string(), $[dominio], $[codominio], $[body]);
+
+        if (insert) scope->functions.insert(std::make_pair(*$[nombre], std::make_tuple($[dominio], $[codominio], ret)));
+        else std::get<2>(it->second) = ret;
+
+        $$ = ret;
+}
+
+/* §3.2.3p1 */
+| HAY UN CUBIERTO operator[nombre] PARA typespec[dominio] Y SALSA DE typespec[codominio] block[body]
+{
+        auto bucket = scope->functions.bucket(*$[nombre]);
+        bool insert = true;
+
+        auto it = scope->functions.begin(bucket);
+        for (; it != scope->functions.end(bucket); ++it) {
+                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
+                insert = false;
+                break;
+        }
+
+        auto ret = new Tajada::AST::FunctionDefinition($[nombre], new std::string(), $[dominio], $[codominio], $[body]);
+
+        if (insert) scope->functions.insert(std::make_pair(*$[nombre], std::make_tuple($[dominio], $[codominio], ret)));
+        else std::get<2>(it->second) = ret;
+
+        $$ = ret;
+}
+
 ;
+
+
 
 /* §3.2.1p4 */
 var_def
 : IDENT[nombre] ES typespec[tipo] STMT_END
 {
-        if (scope->symbols.find(*$[nombre]) != scope->symbols.end()) {
+        if (scope->variables.find(*$[nombre]) != scope->variables.end()) {
                 error(@[nombre], "Attempt to redefine a variable");
                 YYERROR;
         }
-        scope->symbols[*$[nombre]] = $[tipo];
-        $$ = new Tajada::AST::Variable($[nombre], $[tipo]);
+        scope->variables[*$[nombre]] = $[tipo];
+        $$ = new Tajada::AST::VariableDefinition($[nombre], $[tipo]);
 }
+
 ;
 
 
@@ -169,7 +342,23 @@ var_def
 typespec
 
 /* §3.1.1p5 */
-: IDENT
+: IDENT[nombre]
+{
+        auto s = scope;
+        decltype(s->aliases.begin()) it;
+
+        while (s != NULL) {
+                if ((it = s->aliases.find(*$[nombre])) != s->aliases.end()) break;
+                s = s->parent;
+        }
+
+        if (s == NULL) {
+                error(@[nombre], "Attempt to use an undefined type alias");
+                YYERROR;
+        }
+
+        $$ = it->second;
+}
 
 /* §2.1.1p5 */
 | CAFE
@@ -246,13 +435,12 @@ structure_typespecs
 
 
 
+/* §2.2p2 */
 structure_typespec
 
-/* §2.2p2 */
 : typespec[tipo]
 { $$ = new std::tuple<Tajada::Type::Type *, std::string *>($[tipo], new std::string()); }
 
-/* §2.2p2 */
 | PAREN_OP typespec[tipo] IDENT[nombre] PAREN_CL
 { $$ = new std::tuple<Tajada::Type::Type *, std::string *>($[tipo], $[nombre]); }
 
@@ -297,40 +485,75 @@ expr
 /* TODO: arreglar el peo del pasaje por referenca */
 
 /* §3.4.2p5 */
-| IDENT CALL expr
+| IDENT[nombre] CALL expr[argumento]
+{
+        auto s = scope;
+        decltype(s->functions.begin()) it;
+
+        while (s != NULL) {
+                if (
+                        (it = s->functions.find(*$[nombre])) != s->functions.end()
+                        && *$[argumento]->type == *std::get<0>(it->second)
+                ) break;
+                s = s->parent;
+        }
+
+        if (s == NULL) {
+                error(@[nombre], "Attempt to use an undefined function");
+                YYERROR;
+        }
+
+        $$ = new Tajada::AST::Call($[nombre], &it->second, $[argumento]);
+}
 
 /* TODO: operadores unarios */
 
 /* §3.4.3.2l1.1 */
-| expr[l] OP_MINUS expr[r]
-| PAREN_OP OP_MINUS PAREN_CL expr[l] expr[r]
+/* | expr[l] OP_MINUS expr[r] */
+/* | PAREN_OP OP_MINUS PAREN_CL expr[l] expr[r] */
 
 /* §3.4.3.2l1.2 */
-| expr[l] OP_PLUS expr[r]
-| PAREN_OP OP_PLUS PAREN_CL expr[l] expr[r]
+/* | expr[l] OP_PLUS expr[r] */
+/* | PAREN_OP OP_PLUS PAREN_CL expr[l] expr[r] */
 
 /* §3.4.3.2l1.3 */
-| expr[l] OP_MULT expr[r]
-| PAREN_OP OP_MULT PAREN_CL expr[l] expr[r]
+/* | expr[l] OP_MULT expr[r] */
+/* | PAREN_OP OP_MULT PAREN_CL expr[l] expr[r] */
 
 /* §3.4.3.2l1.4 */
-| expr[l] OP_DIV expr[r]
-| PAREN_OP OP_DIV PAREN_CL expr[l] expr[r]
+/* | expr[l] OP_DIV expr[r] */
+/* | PAREN_OP OP_DIV PAREN_CL expr[l] expr[r] */
 
 /* §3.4.3.2l1.5 */
-| expr[l] OP_MOD expr[r]
-| PAREN_OP OP_MOD PAREN_CL expr[l] expr[r]
+/* | expr[l] OP_MOD expr[r] */
+/* | PAREN_OP OP_MOD PAREN_CL expr[l] expr[r] */
 
 /* §3.4.3.2l1.6 */
-| expr[l] OP_EQ expr[r]
-| PAREN_OP OP_EQ PAREN_CL expr[l] expr[r]
+/* | expr[l] OP_EQ expr[r] */
+/* | PAREN_OP OP_EQ PAREN_CL expr[l] expr[r] */
 
 /* §3.4.3.2l1.7 */
-| expr[l] OP_NEQ expr[r]
-| PAREN_OP OP_NEQ PAREN_CL expr[l] expr[r]
+/* | expr[l] OP_NEQ expr[r] */
+/* | PAREN_OP OP_NEQ PAREN_CL expr[l] expr[r] */
 
 /* §3.4.4p2 */
-| IDENT
+| IDENT[nombre]
+{
+        auto s = scope;
+        decltype(s->variables.begin()) it;
+
+        while (s != NULL) {
+                if ((it = s->variables.find(*$[nombre])) != s->variables.end()) break;
+                s = s->parent;
+        }
+
+        if (s == NULL) {
+                error(@[nombre], "Attempt to use an undefined variable");
+                YYERROR;
+        }
+
+        $$ = new Tajada::AST::VariableUse($[nombre], it->second);
+}
 
 /* §3.4.5p3 */
 | PAREN_OP expr[in] PAREN_CL
@@ -373,10 +596,29 @@ expr
 }
 
 /* §3.4.5p8 */
-| expr[source] ARRAY_ACCESS_OP expr[pos] ARRAY_ACCESS_CL
+| expr[source] ARRAY_ACCESS_OP expr[position] ARRAY_ACCESS_CL
+{
+        auto ap = dynamic_cast<Tajada::Type::Array *>($[source]->type);
+
+        if (ap == NULL) {
+                error(@$, u8"Attempt to access array element on expression of non‐array type");
+                YYERROR;
+        }
+
+        auto ip = dynamic_cast<Tajada::Type::Integer *>($[position]->type);
+
+        if (ip == NULL) {
+                error(@$, u8"Attempt to access array element on non‐integer position");
+                YYERROR;
+        }
+
+        $$ = new Tajada::AST::ArrayAccess($[source], $[position]);
+}
 
 /* §3.4.5p10 */
 | expr[l] EXPR_LIST_SEP expr[r]
+{ $$ = new Tajada::AST::Sequence($[l], $[r]); }
+
 ;
 
 
@@ -390,25 +632,33 @@ intlit
 operator
 
 /* §3.4.3.2l1.1 */
-: OP_MINUS
+: OP_MINUS[op]
+{ $$ = $[op]; }
 
 /* §3.4.3.2l1.2 */
-| OP_PLUS
+| OP_PLUS[op]
+{ $$ = $[op]; }
 
 /* §3.4.3.2l1.3 */
-| OP_MULT
+| OP_MULT[op]
+{ $$ = $[op]; }
 
 /* §3.4.3.2l1.4 */
-| OP_DIV
+| OP_DIV[op]
+{ $$ = $[op]; }
 
 /* §3.4.3.2l1.5 */
-| OP_MOD
+| OP_MOD[op]
+{ $$ = $[op]; }
 
 /* §3.4.3.2l1.6 */
-| OP_EQ
+| OP_EQ[op]
+{ $$ = $[op]; }
 
 /* §3.4.3.2l1.7 */
-| OP_NEQ
+| OP_NEQ[op]
+{ $$ = $[op]; }
+
 ;
 
 
@@ -440,71 +690,94 @@ tuple_elem
 
 
 /* §3.3p3 */
+
 block
 
-: BLOCK_OP
-{
-        auto ns = new Scope(scope);
-        scope->children.insert(ns);
-        std::cerr
-                << u8"Enter scope: "
-                << static_cast<void *>(scope)
-                << u8" → "
-                << static_cast<void *>(ns)
-                << std::endl;
-        scope = ns;
-} blocklevels {
-        std::cerr
-                << u8"Exit scope: "
-                << static_cast<void *>(scope)
-                << u8" → "
-                << static_cast<void *>(scope->parent)
-                << std::endl;
-        scope = scope->parent;
-} BLOCK_CL
+: BLOCK_OP { auto ns = new Scope(scope); scope->children.insert(ns); scope = ns; } blocklevels[statements] { scope = scope->parent; } BLOCK_CL
+{ $$ = new Tajada::AST::Block($[statements]); }
 
 ;
 
-/* §3.3p3 */
+
 blocklevels
-: blocklevels blocklevel
+
+: blocklevels[xs] blocklevel[x]
+{
+        $[xs]->push_back($[x]);
+        $$ = $[xs];
+}
+
 |
+{ $$ = new std::list<Tajada::AST::Statement *>(); }
+
 ;
 
-/* §3.3p3 */
+
 blocklevel
+
 : var_def
-| stmt
+{ $$ = $[var_def]; }
+
+| statement
+{ $$ = $[statement]; }
+
 | block
+{ $$ = $[block]; }
+
 ;
 
 
 
-stmt
+statement
 
 /* §3.5.1p1 */
-: expr STMT_END
+: expr[expression] STMT_END
+{ $$ = new Tajada::AST::ExpressionStatement($[expression]); }
 
 /* §3.5.1p7 */
 /* TODO: check for lvalue in action */
-| expr ASSIGN expr STMT_END
+| expr[l] ASSIGN expr[r] STMT_END
+{
+        if (!$[l]->lvalue) {
+                error(@$, u8"Attempt to assign to expression without l‐value");
+                YYERROR;
+        }
+
+        if (*$[l]->type != *$[r]->type) {
+                error(@$, u8"Attempt to assign with incompatible types");
+                std::cerr << "lhs is " << $[l]->type->show() << std::endl;
+                std::cerr << "rhs is " << $[r]->type->show() << std::endl;
+                YYERROR;
+        }
+
+        $$ = new Tajada::AST::Assignment($[l], $[r]);
+}
 
 /* §3.5.2.1p3 */
-| IF PAREN_OP expr PAREN_CL body ELSE body
-| IF PAREN_OP expr PAREN_CL body
+| IF PAREN_OP expr[condition] PAREN_CL body[body_true] ELSE body[body_false]
+{ $$ = new Tajada::AST::If($[condition], $[body_true], $[body_false]); }
+
+| IF PAREN_OP expr[condition] PAREN_CL body[body_true]
+{ $$ = new Tajada::AST::If($[condition], $[body_true], new Tajada::AST::Block(new std::list<Tajada::AST::Statement *>())); }
 
 /* §3.5.2.2p2 */
-| WHILE PAREN_OP expr PAREN_CL body
+| WHILE PAREN_OP expr[condition] PAREN_CL body
+{ $$ = new Tajada::AST::While($[condition], $[body]); }
 
 /* §3.5.2.3p4 */
-| FOR IDENT IN PAREN_OP expr RANGE_SEP expr PAREN_CL body
+/*| FOR IDENT IN PAREN_OP expr RANGE_SEP expr PAREN_CL body*/
+
 ;
 
 
 
 body
-: stmt
+: statement
+{ $$ = $[statement]; }
+
 | block
+{ $$ = $[block]; }
+
 ;
 
 

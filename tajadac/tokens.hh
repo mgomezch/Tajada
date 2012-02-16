@@ -224,7 +224,7 @@
                 OP_MINUS,                                                      \
                 u8"operador de resta",                                         \
                 u8"(−)",                                                       \
-                void                                                           \
+                std::string *                                                  \
         )                                                                      \
                                                                                \
         /* §3.4.3.2l1.2p1 */                                                   \
@@ -232,7 +232,7 @@
                 OP_PLUS,                                                       \
                 u8"operador de suma",                                          \
                 u8"(\\+)",                                                     \
-                void                                                           \
+                std::string *                                                  \
         )                                                                      \
                                                                                \
         /* §3.4.3.2l1.3p1 */                                                   \
@@ -240,7 +240,7 @@
                 OP_MULT,                                                       \
                 u8"operador de multiplicación",                                \
                 u8"(×)",                                                       \
-                void                                                           \
+                std::string *                                                  \
         )                                                                      \
                                                                                \
         /* §3.4.3.2l1.4p1 */                                                   \
@@ -248,7 +248,7 @@
                 OP_DIV,                                                        \
                 u8"operador de división",                                      \
                 u8"(÷)",                                                       \
-                void                                                           \
+                std::string *                                                  \
         )                                                                      \
                                                                                \
         /* §3.4.3.2l1.4p1 */                                                   \
@@ -256,7 +256,7 @@
                 OP_MOD,                                                        \
                 u8"operador de módulo",                                        \
                 u8"(~)",                                                       \
-                void                                                           \
+                std::string *                                                  \
         )                                                                      \
                                                                                \
         /* §3.4.3.2l1.5p1 */                                                   \
@@ -264,7 +264,7 @@
                 OP_EQ,                                                         \
                 u8"operador de igualdad",                                      \
                 u8"(=)",                                                       \
-                void                                                           \
+                std::string *                                                  \
         )                                                                      \
                                                                                \
         /* §3.4.3.2l1.6p1 */                                                   \
@@ -272,7 +272,7 @@
                 OP_NEQ,                                                        \
                 u8"operador de no‐igualdad",                                   \
                 u8"(≠)",                                                       \
-                void                                                           \
+                std::string *                                                  \
         )                                                                      \
                                                                                \
         /* §3.4.5p1 */                                                         \

@@ -182,7 +182,7 @@ namespace Tajada {
                                 std::string * value
                         ):
                                 Tajada::AST::Expression(new Tajada::Type::Character(), false),
-                                value(new std::string(value->substr(1))) // FIXME: memory leak si no se libera en otro lado
+                                value(value)
                         {}
 
                         std::string Character::show() {
@@ -251,17 +251,16 @@ namespace Tajada {
                                         std::string(u8"«")
                                         + std::accumulate(
                                                 elems->begin(),
-                                                elems->end(),
+                                                --elems->end(),
                                                 std::string(),
                                                 [](std::string acc, std::tuple<Tajada::AST::Expression *, std::string *> * x) {
                                                         return
                                                                 acc
                                                                 + std::get<0>(*x)->show()
-                                                                + [](std::string * x) {
-                                                                        return *x == "" ? "" : " " + *x;
-                                                                } (std::get<1>(*x));
+                                                                + ", ";
                                                 }
                                         )
+                                        + (elems->size() == 0 ? "" : std::get<0>(*elems->back())->show())
                                         + std::string(u8"»");
                         }
 

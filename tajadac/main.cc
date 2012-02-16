@@ -62,6 +62,16 @@ int main(int argc, char * argv[]) {
                 re2::StringPiece in(in_s);
                 Tajada::lex::Scanner scanner = { &in };
                 Tajada::Scope scope;
-                std::cout << (Tajada::yy::parser(&scanner, &scope).parse() ? "Parse error." : "Successfully parsed.") << std::endl;
+                Tajada::AST::AST * tree = NULL;
+                if (Tajada::yy::parser(&tree, &scanner, &scope).parse()) {
+                        std::cout << u8"Parse error." << std::endl;
+                } else {
+                        std::cout
+                                << u8"Successfully parsed:\n"
+                                << tree->show()
+                                << u8"\n"
+                                << scope.show()
+                                << std::endl;
+                }
         }
 }

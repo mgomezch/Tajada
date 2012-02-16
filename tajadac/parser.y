@@ -35,8 +35,9 @@
         }
 }
 
-%parse-param { Tajada::lex::Scanner * scanner }
-%lex-param   { Tajada::lex::Scanner * scanner }
+%parse-param { Tajada::AST::AST     ** tree    }
+%parse-param { Tajada::lex::Scanner *  scanner }
+%lex-param   { Tajada::lex::Scanner *  scanner }
 
 
 
@@ -135,7 +136,7 @@ tajada
 
         if (found_undefined) YYERROR;
 
-        $$ = new Tajada::AST::Program($[statements], $[main]);
+        *tree = new Tajada::AST::Program($[statements], $[main]);
 }
 
 ;

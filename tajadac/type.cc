@@ -55,50 +55,62 @@ namespace Tajada {
 
                                 default:
                                         return
-                                                std::accumulate(
+                                                std::string(u8"arepa con ")
+                                                + std::accumulate(
                                                         elems->begin(),
-                                                        --elems->end(),
-                                                        std::string(u8"arepa con "),
+                                                        --(--elems->end()),
+                                                        std::string(),
                                                         [](std::string acc, std::tuple<Type *, std::string *> * tp) {
                                                                 return
                                                                         acc
                                                                         + (*std::get<1>(*tp) == "" ? "" : "(")
                                                                         + std::get<0>(*tp)->show()
-                                                                        + " "
-                                                                        + (*std::get<1>(*tp) == "" ? "" : *std::get<1>(*tp) + ") ");
+                                                                        + (*std::get<1>(*tp) == "" ? ", " : " " + *std::get<1>(*tp) + "), ");
                                                         }
                                                 )
-                                                + u8"y "
                                                 + [](std::tuple<Type *, std::string *> * tp) {
                                                         return
                                                                 std::get<0>(*tp)->show()
                                                                 + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp));
-                                                } (elems->back());
+                                                } (*(--(--elems->end())))
+                                                + u8" y "
+                                                + [](std::tuple<Type *, std::string *> * tp) {
+                                                        return
+                                                                + (*std::get<1>(*tp) == "" ? "" : "(")
+                                                                + std::get<0>(*tp)->show()
+                                                                + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp) + ")");
+                                                } (*(--elems->end()));
                         }
                 }
 
                 std::string Union::show() {
                         return
-                                u8"cachapa";
-                                std::accumulate(
+                                u8"cachapa con "
+                                + std::accumulate(
                                         elems->begin(),
-                                        --elems->end(),
-                                        std::string(u8"cachapa con "),
+                                        --(--elems->end()),
+                                        std::string(),
                                         [](std::string acc, std::tuple<Type *, std::string *> * tp) {
-                                                return acc
+                                                return
+                                                        acc
                                                         + (*std::get<1>(*tp) == "" ? "" : "(")
                                                         + std::get<0>(*tp)->show()
-                                                        + " "
-                                                        + (*std::get<1>(*tp) == "" ? "" : *std::get<1>(*tp) + ") ");
+                                                        + (*std::get<1>(*tp) == "" ? ", " : " " + *std::get<1>(*tp) + "), ");
                                         }
                                 )
-                                + u8"o "
-                                + [](std::tuple<Type *, std::string *> * tp) {
+                                + [](std::tuple<Type *, std::string *> t) {
                                         return
-                                                std::string(*std::get<1>(*tp) == "" ? "" : "(")
-                                                + std::get<0>(*tp)->show()
-                                                + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp) + ")");
-                                } (elems->back());
+                                                std::string(*std::get<1>(t) == "" ? "" : "(")
+                                                + std::get<0>(t)->show()
+                                                + (*std::get<1>(t) == "" ? "" : " " + *std::get<1>(t) + ")");
+                                } (*(--(--elems->back())))
+                                + u8"o "
+                                + [](std::tuple<Type *, std::string *> t) {
+                                        return
+                                                std::string(*std::get<1>(t) == "" ? "" : "(")
+                                                + std::get<0>(t)->show()
+                                                + (*std::get<1>(t) == "" ? "" : " " + *std::get<1>(t) + ")");
+                                } (*(--elems->back()));
                 }
 
                 Array::Array(Type * contents):

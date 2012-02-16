@@ -13,7 +13,7 @@ CPP      = gcc -E
 CPPOPTS  = -P
 
 LDLIBS   = re2
-DEFINES  = _GNU_SOURCE TAJADA_DEBUG
+DEFINES  = _GNU_SOURCE TAJADA_DEBUG=0
 
 build-obj  = $(CXX) $(CXXOPTS) -c ./$<
 build-exec = $(CXX) $(CXXOPTS) -o $@ $^ $(LDLIBS:%=-l%)

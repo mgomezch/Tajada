@@ -70,6 +70,7 @@ int main(int argc, char * argv[]) {
                                 << u8"Successfully parsed:\n"
                                 << tree->show()
                                 << u8"\n"
+                                << u8"Symbol tables:\n"
                                 << scope.show()
                                 << std::endl;
                 }

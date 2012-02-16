@@ -9,29 +9,29 @@ namespace Tajada {
         namespace Type {
                 class Type {
                         public:
-                                virtual std::string show() = 0;
+                                virtual std::string show(unsigned int depth = 0) = 0;
 
                                 virtual ~Type() = 0;
                 };
 
                 class Boolean : public virtual Type {
                         public:
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class Character : public virtual Type {
                         public:
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class Integer : public virtual Type {
                         public:
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class Float : public virtual Type {
                         public:
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class Tuple : public virtual Type {
@@ -43,14 +43,14 @@ namespace Tajada {
                                 Tajada::Type::Type * operator [] (int n) const;
                                 Tajada::Type::Type * operator [] (std::string const name) const;
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class Union : public virtual Type {
                         public:
                                 std::list<std::tuple<Tajada::Type::Type *, std::string *> *> * elems;
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class Array : public virtual Type {
@@ -59,7 +59,7 @@ namespace Tajada {
 
                                 Array(Type * contents);
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 bool operator == (Type const &, Type const &);

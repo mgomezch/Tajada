@@ -9,7 +9,7 @@ namespace Tajada {
         namespace AST {
                 class AST {
                         public:
-                                virtual std::string show() = 0;
+                                virtual std::string show(unsigned int depth = 0) = 0;
 
                                 virtual ~AST() = 0;
                 };
@@ -24,7 +24,7 @@ namespace Tajada {
                                         std::list<Tajada::AST::Statement *> * statements
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class TypeAlias : public virtual Tajada::AST::Statement {
@@ -37,7 +37,7 @@ namespace Tajada {
                                         Tajada::Type::Type * type
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class VariableDefinition : public virtual Tajada::AST::Statement {
@@ -50,7 +50,7 @@ namespace Tajada {
                                         Tajada::Type::Type * type
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class FunctionDeclaration : public virtual Tajada::AST::Statement {
@@ -65,7 +65,7 @@ namespace Tajada {
                                         Tajada::Type::Type * codomain
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class FunctionDefinition : public virtual Tajada::AST::Statement {
@@ -84,7 +84,7 @@ namespace Tajada {
                                         Tajada::AST::Block * body
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class Program : public virtual Tajada::AST::AST {
@@ -97,7 +97,7 @@ namespace Tajada {
                                         Tajada::AST::Block * main
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class Expression : public virtual Tajada::AST::AST {
@@ -118,14 +118,14 @@ namespace Tajada {
                                 public:
                                         True();
 
-                                        virtual std::string show();
+                                        virtual std::string show(unsigned int depth = 0);
                         };
 
                         class False : public virtual Boolean {
                                 public:
                                         False();
 
-                                        virtual std::string show();
+                                        virtual std::string show(unsigned int depth = 0);
                         };
 
                         class Character : public virtual Tajada::AST::Expression {
@@ -134,7 +134,7 @@ namespace Tajada {
 
                                         Character(std::string * value);
 
-                                        virtual std::string show();
+                                        virtual std::string show(unsigned int depth = 0);
                         };
 
                         class String : public virtual Tajada::AST::Expression {
@@ -143,7 +143,7 @@ namespace Tajada {
 
                                         String(std::string * value);
 
-                                        virtual std::string show();
+                                        virtual std::string show(unsigned int depth = 0);
                         };
 
                         class Integer : public virtual Tajada::AST::Expression {
@@ -152,7 +152,7 @@ namespace Tajada {
 
                                         Integer(std::string * value);
 
-                                        virtual std::string show();
+                                        virtual std::string show(unsigned int depth = 0);
                         };
 
                         class Float : public virtual Tajada::AST::Expression {
@@ -161,7 +161,7 @@ namespace Tajada {
 
                                         Float(std::string * integer, std::string * fractional);
 
-                                        virtual std::string show();
+                                        virtual std::string show(unsigned int depth = 0);
                         };
 
                         class Tuple : public virtual Tajada::AST::Expression {
@@ -170,7 +170,7 @@ namespace Tajada {
 
                                         Tuple(std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * elems);
 
-                                        virtual std::string show();
+                                        virtual std::string show(unsigned int depth = 0);
                         };
                 }
 
@@ -186,7 +186,7 @@ namespace Tajada {
                                         Tajada::AST::Expression * argument
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class VariableUse : public virtual Tajada::AST::Expression {
@@ -195,7 +195,7 @@ namespace Tajada {
 
                                 VariableUse(std::string * name, Tajada::Type::Type * type);
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class TupleAccessByInteger : public virtual Tajada::AST::Expression {
@@ -208,7 +208,7 @@ namespace Tajada {
                                         Tajada::AST::Literal::Integer * field
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class TupleAccessByName : public virtual Tajada::AST::Expression {
@@ -221,7 +221,7 @@ namespace Tajada {
                                         std::string * field
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class ArrayAccess : public virtual Tajada::AST::Expression {
@@ -234,7 +234,7 @@ namespace Tajada {
                                         Tajada::AST::Expression * position
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class Sequence : public virtual Tajada::AST::Expression {
@@ -247,7 +247,7 @@ namespace Tajada {
                                         Tajada::AST::Expression * second
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class ExpressionStatement : public virtual Tajada::AST::Statement {
@@ -258,7 +258,7 @@ namespace Tajada {
                                         Tajada::AST::Expression * expression
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class Assignment : public virtual Tajada::AST::Statement {
@@ -271,7 +271,7 @@ namespace Tajada {
                                         Tajada::AST::Expression * rhs
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class If : public virtual Tajada::AST::Statement {
@@ -286,7 +286,7 @@ namespace Tajada {
                                         Tajada::AST::Statement * body_false
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
 
                 class While : public virtual Tajada::AST::Statement {
@@ -299,7 +299,7 @@ namespace Tajada {
                                         Tajada::AST::Statement * body
                                 );
 
-                                virtual std::string show();
+                                virtual std::string show(unsigned int depth = 0);
                 };
         }
 }

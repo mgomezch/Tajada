@@ -13,10 +13,10 @@ namespace Tajada {
         namespace Type {
                 Type::~Type() {}
 
-                std::string Boolean  ::show() { return u8"café"   ; }
-                std::string Character::show() { return u8"caraota"; }
-                std::string Integer  ::show() { return u8"queso"  ; }
-                std::string Float    ::show() { return u8"papelón"; }
+                std::string Boolean  ::show(unsigned int depth) { return u8"café"   ; }
+                std::string Character::show(unsigned int depth) { return u8"caraota"; }
+                std::string Integer  ::show(unsigned int depth) { return u8"queso"  ; }
+                std::string Float    ::show(unsigned int depth) { return u8"papelón"; }
 
                 Tuple::Tuple(std::list<std::tuple<Tajada::Type::Type *, std::string *> *> * elems):
                         elems(elems)
@@ -39,7 +39,7 @@ namespace Tajada {
                         return NULL;
                 }
 
-                std::string Tuple::show() {
+                std::string Tuple::show(unsigned int depth) {
                         switch (elems->size()) {
                                 case 0:
                                         return u8"arepa viuda";
@@ -47,9 +47,9 @@ namespace Tajada {
                                 case 1:
                                         return
                                                 u8"arepa de "
-                                                + [](std::tuple<Type *, std::string *> * tp) {
+                                                + [depth](std::tuple<Type *, std::string *> * tp) {
                                                         return
-                                                                std::get<0>(*tp)->show()
+                                                                std::get<0>(*tp)->show(depth)
                                                                 + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp));
                                                 } (elems->front());
 
@@ -60,55 +60,55 @@ namespace Tajada {
                                                         elems->begin(),
                                                         --(--elems->end()),
                                                         std::string(),
-                                                        [](std::string acc, std::tuple<Type *, std::string *> * tp) {
+                                                        [depth](std::string acc, std::tuple<Type *, std::string *> * tp) {
                                                                 return
                                                                         acc
                                                                         + (*std::get<1>(*tp) == "" ? "" : "(")
-                                                                        + std::get<0>(*tp)->show()
+                                                                        + std::get<0>(*tp)->show(depth)
                                                                         + (*std::get<1>(*tp) == "" ? ", " : " " + *std::get<1>(*tp) + "), ");
                                                         }
                                                 )
-                                                + [](std::tuple<Type *, std::string *> * tp) {
+                                                + [depth](std::tuple<Type *, std::string *> * tp) {
                                                         return
-                                                                std::get<0>(*tp)->show()
+                                                                std::get<0>(*tp)->show(depth)
                                                                 + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp));
                                                 } (*(--(--elems->end())))
                                                 + u8" y "
-                                                + [](std::tuple<Type *, std::string *> * tp) {
+                                                + [depth](std::tuple<Type *, std::string *> * tp) {
                                                         return
                                                                 + (*std::get<1>(*tp) == "" ? "" : "(")
-                                                                + std::get<0>(*tp)->show()
+                                                                + std::get<0>(*tp)->show(depth)
                                                                 + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp) + ")");
                                                 } (*(--elems->end()));
                         }
                 }
 
-                std::string Union::show() {
+                std::string Union::show(unsigned int depth) {
                         return
                                 u8"cachapa con "
                                 + std::accumulate(
                                         elems->begin(),
                                         --(--elems->end()),
                                         std::string(),
-                                        [](std::string acc, std::tuple<Type *, std::string *> * tp) {
+                                        [depth](std::string acc, std::tuple<Type *, std::string *> * tp) {
                                                 return
                                                         acc
                                                         + (*std::get<1>(*tp) == "" ? "" : "(")
-                                                        + std::get<0>(*tp)->show()
+                                                        + std::get<0>(*tp)->show(depth)
                                                         + (*std::get<1>(*tp) == "" ? ", " : " " + *std::get<1>(*tp) + "), ");
                                         }
                                 )
-                                + [](std::tuple<Type *, std::string *> t) {
+                                + [depth](std::tuple<Type *, std::string *> t) {
                                         return
                                                 std::string(*std::get<1>(t) == "" ? "" : "(")
-                                                + std::get<0>(t)->show()
+                                                + std::get<0>(t)->show(depth)
                                                 + (*std::get<1>(t) == "" ? "" : " " + *std::get<1>(t) + ")");
                                 } (*(--(--elems->back())))
                                 + u8"o "
-                                + [](std::tuple<Type *, std::string *> t) {
+                                + [depth](std::tuple<Type *, std::string *> t) {
                                         return
                                                 std::string(*std::get<1>(t) == "" ? "" : "(")
-                                                + std::get<0>(t)->show()
+                                                + std::get<0>(t)->show(depth)
                                                 + (*std::get<1>(t) == "" ? "" : " " + *std::get<1>(t) + ")");
                                 } (*(--elems->back()));
                 }
@@ -117,8 +117,8 @@ namespace Tajada {
                         contents(contents)
                 {}
 
-                std::string Array::show() {
-                        return u8"arroz con " + contents->show();
+                std::string Array::show(unsigned int depth) {
+                        return u8"arroz con " + contents->show(depth);
                 }
 
                 bool operator == (Type const & l, Type const & r) {

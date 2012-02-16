@@ -659,6 +659,12 @@ Cosas por hacer
 
 *   Arreglar el desastre del pasaje por referencia.
 
+*   Arreglar el desastre de la definición circular de los símbolos básicos.
+
+*   Revisar/reescribir lo que esté dicho sobre variables locales asociadas a estructuras (funciones e iteración controlada).
+
+    Inventar algo para referirse a los parámetros dentro de una función es una parte importante de esto.
+
 *   Hacer que haya correspondencia entre lo implementado y lo que dice acá.  Seguro que corriendo para la primera entrega hubo cambios que no volvieron a la especificación. :(
 
 *   Especificar el pasaje de parámetros y el retorno de valores… y definir la instrucción de retorno.  Oops.

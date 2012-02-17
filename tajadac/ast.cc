@@ -269,12 +269,6 @@ namespace Tajada {
                                         + (elems->size() == 0 ? "" : std::get<0>(*elems->back())->show(depth))
                                         + std::string(u8"»");
                         }
-
-/*
-                        Tuple::~Tuple() {
-        //                      delete type;
-                        }
-*/
                 }
 
                 TupleAccessByInteger::TupleAccessByInteger(

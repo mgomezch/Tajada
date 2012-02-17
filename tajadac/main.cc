@@ -63,7 +63,7 @@ int main(int argc, char * argv[]) {
                 Tajada::lex::Scanner scanner = { &in };
                 Tajada::Scope scope;
                 Tajada::AST::AST * tree = NULL;
-                if (Tajada::yy::parser(&tree, &scanner, &scope).parse()) {
+                if (Tajada::yy::parser(&scanner, &scope, &tree).parse()) {
                         std::cout << u8"Parse error." << std::endl;
                 } else {
                         std::cout

@@ -32,7 +32,7 @@ defines = _GNU_SOURCE TAJADA_DEBUG=0
 all: tajadac
 
 clean:
-	rm -f ./*.d ./*.o ./*.gch ./*.out ./*.yy tajadac location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml position.hh stack.hh
+	rm -f ./*.o ./*.gch ./*.out ./*.yy tajadac location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml position.hh stack.hh
 
 
 

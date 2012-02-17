@@ -13,9 +13,8 @@
 
 
 
-//%name-prefix "Tajada::lex::yy"
-
 %code {
+        /* Forward‐declaration of lexer function.  Don’t ask. */
         namespace Tajada {
                 namespace lex {
 #undef yylex
@@ -25,9 +24,12 @@
         }
 }
 
+/* This doesn’t work.  We’d have to pollute the lexer code with forward‐declarations for …well, everything.  Fuck that. */
+/* %name-prefix "Tajada::lex::yy" */
 
 
 %code requires {
+        /* Forward‐declaration of lexer data structure.  Don’t ask. */
         namespace Tajada {
                 namespace lex {
                         struct Scanner;
@@ -35,14 +37,19 @@
         }
 }
 
-%parse-param { Tajada::AST::AST     ** tree    }
-%parse-param { Tajada::lex::Scanner *  scanner }
-%lex-param   { Tajada::lex::Scanner *  scanner }
+/* This doesn’t work.  We’d have to pollute the lexer code with forward‐declarations for …well, everything.  Fuck that. */
+/* %code requires { #include "lex.hh" } */
 
+%parse-param { Tajada::lex::Scanner * scanner }
+%lex-param   { Tajada::lex::Scanner * scanner }
 
 
 %code requires { #include "scope.hh" }
 %parse-param { Tajada::Scope * scope }
+
+
+%code requires { #include "ast.hh" }
+%parse-param { Tajada::AST::AST ** tree }
 
 
 
@@ -103,10 +110,9 @@
 %union { std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * tuple_elems; }
 %type <tuple_elems> tuple_elems
 
-%code requires { #include "ast.hh" }
+
+
 %start tajada
-
-
 
 %%
 

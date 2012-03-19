@@ -74,14 +74,14 @@ namespace Tajada {
                                 std::string * domain_name;
                                 Tajada::Type::Type * domain;
                                 Tajada::Type::Type * codomain;
-                                Tajada::AST::Block * body;
+                                Tajada::AST::Statement * body;
 
                                 FunctionDefinition(
                                         std::string * name,
                                         std::string * domain_name,
                                         Tajada::Type::Type * domain,
                                         Tajada::Type::Type * codomain,
-                                        Tajada::AST::Block * body
+                                        Tajada::AST::Statement * body
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);
@@ -103,27 +103,32 @@ namespace Tajada {
                 class Expression : public virtual Tajada::AST::AST {
                         public:
                                 Tajada::Type::Type * type;
-                                bool lvalue;
+                                bool is_lvalue;
 
-                                Expression(Tajada::Type::Type * type, bool lvalue);
+                                Expression(
+                                        Tajada::Type::Type * type,
+                                        bool is_lvalue
+                                );
+                };
+
+                class Argument : public virtual Tajada::AST::Expression {
+                        public:
+                                
+
+                                Argument(
+                                        Tajada::Type::Type * type,
+                                        bool is_lvalue
+                                );
                 };
 
                 namespace Literal {
                         class Boolean : public virtual Tajada::AST::Expression {
                                 public:
-                                        Boolean();
-                        };
+                                        bool value;
 
-                        class True : public virtual Boolean {
-                                public:
-                                        True();
-
-                                        virtual std::string show(unsigned int depth = 0);
-                        };
-
-                        class False : public virtual Boolean {
-                                public:
-                                        False();
+                                        Boolean(
+                                                bool p_value
+                                        );
 
                                         virtual std::string show(unsigned int depth = 0);
                         };

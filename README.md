@@ -17,7 +17,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 [Unicode]: <http://www.unicode.org/versions/Unicode6.0.0> (The Unicode Consortium. The Unicode Standard, Version 6.0.0, (Mountain View, CA: The Unicode Consortium, 2011. ISBN 978‒1‒936213‒01‒6))
 [UTF-8]:   <http://www.ietf.org/rfc/rfc3629>              (Yergeau, F., “UTF‐8, a transformation format of ISO 10646”, RFC 2279, January 1998.)
 
-    [Nota: Este documento se basa en y hace referencia a la versión 6.0.0 del estándar Unicode únicamente porque es la más reciente disponible, y la intención es que la especificación de Tajada sea independiente de versiones específicas de otros documentos. —fin de la nota]
+    [Nota: Este documento se basa en y hace referencia a la versión 6.0.0 del estándar Unicode únicamente porque es la más reciente disponible al momento de su redacción, y la intención es que la especificación de Tajada sea independiente de versiones específicas de otros documentos. —fin de la nota]
 
     Los **símbolos reservados** de Tajada son ciertas secuencias no vacías de puntos de código Unicode usadas por el lenguaje como parte de su sintaxis.  Los **símbolos** son aquellas secuencias no vacías de puntos de código Unicode consecutivos que ocurren en una tajada, no tienen como subsecuencia a ningún símbolo reservado, y son delimitados por símbolos reservados o el inicio o el final de la tajada.
 
@@ -33,7 +33,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         Un **escapador de caracter** es un punto de código “REVERSE SOLIDUS” (U+005C, **\\**).
 
-        Un **escapado de caracter** es una secuencia de dos puntos de código en la que el primero es un escapador de caracter, y si le precede (no inclusive) alguna secuencia consecutiva de escapadores de caracteres, la secuencia tiene un número par de puntos de código (y podría, por lo tanto, ser vacía).  El último punto de código de un escapado de caracter se denomina su **caracter escapado**.
+        Un **escapado de caracter** es una secuencia de dos puntos de código en la que el primero es un escapador de caracter, y si le precede (no inclusive) alguna secuencia consecutiva de escapadores de caracteres, la secuencia tiene un número par de puntos de código (en particular, podría ser vacía).  El último punto de código de un escapado de caracter se denomina su **caracter escapado**.
 
         Un **elemento de literal de cadena de caracteres** es un escapado de caracter, o un punto de código distinto de un fin de literal de cadena de caracteres y de un escapador de caracter.
 
@@ -49,7 +49,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         1.  #### Comentarios de bloque
 
-            Un **inicio de comentario de bloque** es un punto de código “SINGLE LEFT-POINTING ANGLE QUOTATION MARK” (U+2039: **‹**).
+            Un **inicio de comentario de bloque** es un punto de código “SINGLE LEFT-POINTING ANGLE QUOTATION MARK” (U+2039, **‹**).
 
             Un **fin de comentario de bloque** es un punto de código “SINGLE RIGHT-POINTING ANGLE QUOTATION MARK” (U+203A, **›**).
 
@@ -61,21 +61,23 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **fin de línea** es [cualquiera de los siguientes puntos de código][UNL].
 
-            *   “LINE FEED (LF)”       (U+000A)
+            ----------------------- --------
+            “LINE FEED (LF)”        (U+000A)
 
-            *   “LINE TABULATION”      (U+000B)
+            “LINE TABULATION”       (U+000B)
 
-            *   “FORM FEED (FF)”       (U+000C)
+            “FORM FEED (FF)”        (U+000C)
 
-            *   “CARRIAGE RETURN (CR)” (U+000D)
+            “CARRIAGE RETURN (CR)”  (U+000D)
 
-            *   “NEXT LINE (NEL)”      (U+0085)
+            “NEXT LINE (NEL)”       (U+0085)
 
-            *   “LINE SEPARATOR”       (U+2028)
+            “LINE SEPARATOR”        (U+2028)
 
-            *   “PARAGRAPH SEPARATOR”  (U+2029)
+            “PARAGRAPH SEPARATOR”   (U+2029)
+            ----------------------- --------
 
-            [Nota: Los nombres mostrados para los puntos de código anteriormente enumerados, exceptuando a los dos últimos, no corresponden a la propiedad “Name” (que es vacía para todos ellos) sino a la propiedad “Unicode\_1\_Name”. —fin de la nota]
+            [Nota: Los nombres mostrados para estos puntos de código, exceptuando a los dos últimos, no corresponden a la propiedad “Name” (que es vacía para todos ellos) sino a la propiedad “Unicode\_1\_Name”. —fin de la nota]
 
             Un **inicio de comentario de línea** es un punto de código “DOUBLE SOLIDUS OPERATOR” (U+2AFD, **⫽**).
 
@@ -103,25 +105,27 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **dígito** es cualquiera de los siguientes puntos de código:
 
-            *   “DIGIT ZERO”  (U+0030, **0**)
+            -------------- ---------------
+            “DIGIT ZERO”   (U+0030, **0**)
 
-            *   “DIGIT ONE”   (U+0031, **1**)
+            “DIGIT ONE”    (U+0031, **1**)
 
-            *   “DIGIT TWO”   (U+0032, **2**)
+            “DIGIT TWO”    (U+0032, **2**)
 
-            *   “DIGIT THREE” (U+0033, **3**)
+            “DIGIT THREE”  (U+0033, **3**)
 
-            *   “DIGIT FOUR”  (U+0034, **4**)
+            “DIGIT FOUR”   (U+0034, **4**)
 
-            *   “DIGIT FIVE”  (U+0035, **5**)
+            “DIGIT FIVE”   (U+0035, **5**)
 
-            *   “DIGIT SIX”   (U+0036, **6**)
+            “DIGIT SIX”    (U+0036, **6**)
 
-            *   “DIGIT SEVEN” (U+0037, **7**)
+            “DIGIT SEVEN”  (U+0037, **7**)
 
-            *   “DIGIT EIGHT” (U+0038, **8**)
+            “DIGIT EIGHT”  (U+0038, **8**)
 
-            *   “DIGIT NINE”  (U+0039, **9**)
+            “DIGIT NINE”   (U+0039, **9**)
+            -------------- ---------------
 
             Un **fragmento de literal entero** es una secuencia de uno o más dígitos.  Un **literal entero** es un fragmento de literal entero que no es una subsecuencia de ningún *otro* fragmento de literal entero, ni de un literal de cadena de caracteres, ni de un espacio en blanco, y su primer punto de código sigue inmediatamente al último punto de código de algún símbolo reservado, o al inicio del documento.  Un literal entero es un símbolo reservado.  Se interpreta como un número natural escrito en notación posicional en base decimal.
 
@@ -129,9 +133,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **separador de literal de punto flotante** es un punto de código “MIDDLE DOT” (U+00B7, **·**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un separador de literal de punto flotante es un símbolo reservado.
 
-            Un **literal de punto flotante** es una secuencia compuesta de un literal entero, seguido de un separador de literal de punto flotante, seguido de otro literal entero.  Un literal de punto flotante representa un valor numérico de punto flotante.  El primer literal entero especifica la parte entera del valor representado.  El valor del segundo literal entero es igual a la parte fraccional del número de punto flotante representado multiplicada por 10ⁿ⁺¹, donde `n` es el número de dígitos que componen a ese literal entero.
+            Un **literal de punto flotante** es una secuencia compuesta de un literal entero, seguido de un separador de literal de punto flotante, seguido de otro literal entero.  Un literal de punto flotante representa un valor numérico de punto flotante.  El primer literal entero especifica la parte entera del valor representado.  El valor del segundo literal entero es igual a la parte fraccional del número de punto flotante representado multiplicada por $10^{n + 1}$, donde $n$ es el número de dígitos que componen a ese literal entero.
 
-            TODO: overflow, underflow, NaN, infinitos, etc
+@@//TODO: overflow, underflow, NaN, infinitos, etc
 
     4.  ### Identificadores
 
@@ -141,9 +145,11 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
 2.  ## Tipos de datos
 
-    Cada tipo de datos tiene asociada una **especificación de tipo**.
+    Cada tipo de datos tiene asociada una **especificación de tipo** y una **especificación completa de tipo**.
 
     1.  ### Escalares
+
+        La especificación completa de todo tipo escalar tiene la misma forma de su especificación de tipo.
 
         1.  #### Café
 
@@ -153,17 +159,15 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `café` es una palabra reservada.
 
-            El **café** es un tipo enumerado que representa valores booleanos.  Solo puede tomar dos valores: `tetero` representa un valor “verdadero”, y `negrito` representa un valor “falso”.
+            El **café** es un tipo escalar que representa valores booleanos.  Solo puede tomar dos valores: `negrito` representa un valor “falso”, y `tetero` representa un valor “verdadero”.
 
             La especificación de tipo del café es `café`.
-
-            `tetero` y `negrito` son literales de café.
 
         2.  #### Caraota
 
             `caraota` es una palabra reservada.
 
-            La **caraota** es un tipo que almacena exactamente un punto de código Unicode cualquiera.
+            La **caraota** es un tipo escalar que almacena exactamente un punto de código Unicode cualquiera.
 
             La especificación de tipo de la caraota es `caraota`.
 
@@ -173,7 +177,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `queso` es una palabra reservada.
 
-            El **queso** es un tipo que almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque ese es el rango de un entero de 32 bits en C, y C nos gusta).  El rango específico es definido por la implementación.
+            El **queso** es un tipo escalar que almacena un número entero con un rango de valores válidos que incluye al menos todos los valores comprendidos entre los números decimales −2147483648 y 2147483647, ambos inclusive (porque ese es el rango de un entero de 32 bits en C, y C nos gusta).  El rango específico es definido por la implementación.
 
             La especificación de tipo del queso es `queso`.
 
@@ -183,21 +187,25 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `papelón` es una palabra reservada.
 
-            El **papelón** es un tipo que almacena un número de punto flotante con al menos la precisión y el rango de un `float` de 32 bits de C.  El rango específico es definido por la implementación.
+            El **papelón** es un tipo escalar que almacena un número de punto flotante con al menos la precisión y el rango de un `float` de 32 bits de C.  El rango específico es definido por la implementación.
+
+@@//TODO: especificar bien la precisión (“hazlo como C” en este caso probablemente tiene tanto contenido semántico como “purple monkey dishwasher”); hablar, quizás, de ISO/IEC/IEEE 60559:2011
 
             La especificación de tipo del papelón es `papelón`.
 
             Un literal de punto flotante especifica un valor de tipo papelón.  El valor de tipo papelón correspondiente a un literal de punto flotante es el valor más cercano representable en la implementación de valores de punto flotante, y si hay más de uno igualmente cercano, se toma el de menor valor absoluto.
 
-            TODO: especificar bien la precisión (“hazlo como C” en este caso probablemente tiene tanto contenido semántico como “purple monkey dishwasher”); hablar, quizás, de ISO/IEC/IEEE 60559:2011
-
-            TODO: overflow, underflow, NaN, infinitos, etc; y si el valor del literal se sale del rango del tipo?  Se toma el valor máximo finito, o infinito, o qué?  Es un error?  Un warning?  Nada?
+@@//TODO: overflow, underflow, NaN, infinitos, etc; y si el valor del literal se sale del rango del tipo?  Se toma el valor máximo finito, o infinito, o qué?  Es un error?  Un warning?  Nada?
 
     2.  ### Arepa
 
         La **arepa** es un tipo de tipos estructurados que asocian en un mismo ente a una cantidad *fija* de valores de otros tipos particulares en un orden específico.  Los tipos asociados por una arepa son sus **ingredientes**.  Los ingredientes de una arepa están implícitamente enumerados por enteros desde el cero en el orden en el que se especifican, y pueden tener opcionalmente un identificador asociado (su **nombre**).  Una arepa puede tener cualquier cantidad de ingredientes del mismo tipo, y cada uno es independiente de los demás.  Ningún par de ingredientes con nombre en una arepa puede compartir un mismo nombre.
 
-        Un **literal de ingrediente** es una secuencia compuesta de una especificación de tipo, o una secuencia compuesta de un inicio de paréntesis, seguido de una especificación de tipo, seguido de un identificador, seguido de un fin de paréntesis.
+        Un **literal de ingrediente** es una especificación de tipo, o una secuencia compuesta de un inicio de paréntesis, seguido de una especificación de tipo, seguido de un identificador, seguido de un fin de paréntesis.
+
+        Un **literal de ingrediente completo** es una especificación completa de tipo, o una secuencia compuesta de un inicio de paréntesis, seguido de una especificación de tipo, seguido de un identificador, seguido de un fin de paréntesis.
+
+@@// ¿Cuándo es equivalente escribir el completo?  ¿Alguno es sustituible por el otro en algún contexto, o en todos?  ¿Esta forma de definición no es ilógica y hace todo sea ambiguo? :(
 
         `arepa` es una palabra reservada.
 
@@ -209,15 +217,15 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         La especificación de tipo correspondiente a una arepa con cero ingredientes es `arepa` seguida de `viuda`.
 
-        La especificación de tipo correspondiente a una arepa con exactamente un ingrediente es `arepa` seguida de `de`, a su vez seguida del literal de ingrediente correspondiente a su único ingrediente.
+        La especificación de tipo correspondiente a una arepa con exactamente un ingrediente es `arepa` seguida de `de`, a su vez seguida del literal de ingrediente completo correspondiente a su único ingrediente.
 
         Un **separador de lista** es un punto de código “COMMA” (U+002C, **,**).  Un separador de lista es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
 
         `y` es una palabra reservada.
 
-        La especificación de tipo correspondiente a una arepa con más de un ingrediente es `arepa` seguida de `con`, a su vez seguida de cada uno de los literales de ingrediente correspondientes a los ingredientes de la arepa desde el primero y exceptuando el último, siendo seguido cada literal de ingrediente por un separador de lista salvo por el penúltimo ingrediente de la arepa, todo seguido de `y` seguida del literal de ingrediente correspondiente al último ingrediente de la arepa.
+        La especificación de tipo correspondiente a una arepa con más de un ingrediente es `arepa` seguida de `con`, a su vez seguida de cada uno de los literales de ingrediente correspondientes a los ingredientes de la arepa desde el primero y exceptuando el último, siendo seguido cada literal de ingrediente completo por un separador de lista salvo por el penúltimo ingrediente de la arepa, todo seguido de `y` seguida del literal de ingrediente completo correspondiente al último ingrediente de la arepa.
 
-        Por ejemplo, cada una de las siguientes líneas contiene una especificación de tipo válida para una arepa:
+        [Ejemplo: Cada una de las siguientes líneas contiene una especificación de tipo válida para una arepa:
 
             arepa
 
@@ -227,11 +235,11 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             arepa con papelón, queso, café, café, café marrón, queso guayanés, arepa de arepa de arepa de arepa de arepa viuda ‹arepaception!›, caraota, arepa con papelón, café marrón y queso y queso
 
+        —fin del ejemplo]
+
         Una **arepa rellena** es un valor de algún tipo de arepa.  Un **relleno** de una arepa rellena es cualquiera de los valores asociados por la arepa rellena.  Cada relleno de una arepa rellena corresponde a exactamente un ingrediente de la arepa correspondiente a la arepa rellena, y se puede identificar por el índice de su ingrediente correspondiente, o por su nombre, si existe.
 
     3.  ### Cachapa
-
-        TODO: cachapas con arroz requieren tipos completos, no tipos
 
         La **cachapa** es un tipo de tipos unión que asocian en un mismo ente a exactamente *un* valor cuyo tipo puede ser alguno de un cierto conjunto de al menos dos elementos.  Los tipos asociados por una cachapa son sus **ingredientes**.  Los ingredientes de una cachapa están implícitamente enumerados por enteros desde el cero en el órden en el que se especifican, y pueden tener opcionalmente un identificador asociado.
 
@@ -256,6 +264,16 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
         La **especificación completa de tipo** para un valor cuyo tipo sea un arroz es un literal entero seguido de `tazas`, seguida de `de`, seguida de `arroz`, seguida de `con`, seguida de la especificación completa del tipo de contenido del arroz.
 
         La cantidad de entes asociados por un arroz no es parte de su definición ni está asociada a él, pero sí es parte de la definición de sus valores.  El número de entes del tipo de contenido de su tipo que un valor de un arroz asocia es su **tamaño**.  El tamaño de un valor de un arroz es inmutable.
+
+    5.  ### Referencias
+
+        La **referencia** es un tipo de tipos que almacenan una identificación del ente que almacena un valor (el **valor referido**) de algún otro tipo que no sea una referencia (su **tipo referido**).  El valor de un ente cuyo tipo sea una referencia se determina al momento de su creación y no puede ser modificado.  Una tajada no define entes cuyos tipos sean referencias y cuyos valores sean indefinidos.
+
+        Un **inicio de referencia** es un punto de código “VERY MUCH LESS-THAN” (U+22D8, **⋘**).  Un separador de lista es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+
+        Un **fin de referencia** es un punto de código “VERY MUCH GREATER-THAN” (U+22D9, **⋙**).  Un separador de lista es un símbolo reservado si no ocurre dentro de un literal de cadena de caracteres, ni dentro de un comentario de línea, ni dentro de un comentario de bloque.
+
+        La especificación de un tipo de referencia es un inicio de referencia, seguido de la especificación de tipo del tipo referido de la referencia, seguida de un fin de referencia.
 
 3.  ## Estructura
 
@@ -293,6 +311,8 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Una **declaración de plato** es una especificación de plato seguida de un terminador de frase.  Una declaración de plato hace que ese plato se considere declarado desde el punto en el que aparece en la tajada con el identificador y los tipos usados en su especificación de plato.
 
+            Una tajada no define platos cuyos rangos sean referencias.
+
         3.  #### Cubiertos
 
             Un **cubierto** es una función que tiene asociado un operador específico, recibe entes de algún tipo específico, ejecuta una secuencia de instrucciones en orden, y produce un resultado de un tipo específico.  Una tajada no tiene más de un cubierto asociado a un mismo símbolo reservado y a tipos equivalentes de entes recibidos y producidos, pero puede tener más de un cubierto asociado a un mismo identificador, o más de un cubierto asociado a tipos equivalentes de entes recibidos y/o producidos.
@@ -317,21 +337,53 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             La especificación completa de tipo de cualquier tipo que no haga referencia a otros tipos es su especificación de tipo.  La especificación completa de tipo de una arepa o cachapa es de la misma forma que su especificación de tipo, pero en vez de escribirse la especificación de tipo de sus ingredientes, se escriben sus especificaciones completas de tipo.
 
-            Una **definición de variable** es una secuencia compuesta por un identificador (su **nombre**), una `es`, una especificación completa de tipo (su **tipo**) y un terminador de frase.  Una definición de variable establece la existencia de una variable con ese nombre y ese tipo; por ejemplo,
+            Una **definición de variable** es una secuencia compuesta por un identificador (su **nombre**), una `es`, una especificación completa de tipo (su **tipo**) y un terminador de frase.  Una definición de variable establece la existencia de una variable con ese nombre y ese tipo.  [Ejemplo:
 
                 telita es queso.
 
-            define una variable llamada `telita` de tipo `queso`.  La variable es un ente que almacena un **valor** del tipo de su definición y tiene asociado el nombre de su definición.
+            define una variable llamada `telita` de tipo `queso`. —fin del ejemplo]  La variable es un ente que almacena un **valor** del tipo de su definición y tiene asociado el nombre de su definición.
 
-            Una tajada no define más de una variable con un mismo nombre fuera de un bloque.
+            Una tajada no define más de una variable con un mismo nombre fuera de todo bloque.
 
             Una tajada no define ninguna variable cuyo nombre sea igual al de algún dulce.
 
-            El valor almacenado por una variable es indefinido desde su definición hasta que se le asigne un valor en una asignación.  El comportamiento de una tajada es indefinido si utiliza un valor indefinido.  La implementación está en libertad de asignar un valor por defecto a la variable al definirla, reportar un error, hacer explotar al disco duro, invocar a Beelzebub, o hacer cualquier otra cosa.
+@@//TODO: ¿por qué no?
+
+            El valor almacenado en una ubicación de una variable es indefinido desde la definición de la variable hasta que se le asigne un valor en una asignación a esa ubicación.  El comportamiento de una tajada es indefinido si utiliza un valor indefinido.  [Nota: La implementación está en libertad de asignar un valor por defecto a la variable al definirla, reportar un error, hacer explotar al disco duro, invocar a Beelzebub, o hacer cualquier otra cosa. —fin de la nota]
+
+            Un **inicializador** es una secuencia de símbolos y símbolos reservados que representa el cálculo de ciertos valores, y tiene una cierta estructura; los valores calculados se asignan a ciertas partes de una variable en el momento de su definición.  Cada inicializador es **compatible** con ciertos tipos.
+
+            Una **inicialización indefinida** es un punto de código “OPEN BOX” (U+2423, **␣**) que no ocurra dentro de un literal de cadena de caracteres, ni dentro de un escapado de caracter, ni de un espacio en blanco.  Una inicialización indefinida es un símbolo reservado.
+
+            Una inicialización indefinida es un inicializador compatible con cualquier tipo.
+
+            Un **inicializador de arepa** es una secuencia compuesta de un inicio de literal estructurado, seguido de una lista de cero o más inicializadores separados por separadores de lista (sus **ingredientes**), cada uno de las cuales puede opcionalmente estar seguido de un indicador de etiqueta seguido de un identificador (los **nombres** de cada ingrediente), y todo finalizado con un fin de literal estructurado.  Un inicializador de arepa es compatible con cualquier tipo de arepa cuyo número de ingredientes sea el mismo número de ingredientes del inicializador, y si los ingredientes del inicializador son compatibles con los ingredientes de la arepa en las posiciones respectivas, y si alguno de estos últimos tiene un nombre, que sea igual al nombre del ingrediente correspondiente del inicializador de arepa o que ese ingrediente sea una inicialización indefinida.
+
+            Una expresión es un inicializador compatible con el tipo de la expresión.
+
+            [Ejemplo: Los inicializadores
+
+                ␣
+
+                «␣, ␣, ␣, ␣»
+
+                «␣, 3, ␣ ← ignorado, negrito ← americano»
+
+                «negrito ← colombiano, 42, «␣, 7.5», ␣»
+
+            son compatibles con la arepa especificada por
+
+                «café colombiano, queso, arepa con queso y papelón, café americano»
+
+            —fin del ejemplo.]
+
+            Una **definición inicializada de variable** es una secuencia compuesta por un identificador (su **nombre**), una `es`, una especificación de tipo (su **tipo**), un indicador de asignación, y un inicializador compatible con el tipo especificado en esa definición inicializada de variable.  Una definición inicializada de variable define la variable al igual que una definición de variable, pero además evalúa las expresiones del inicializador y asigna sus valores a las partes correspondientes de la variable; las partes de la variable que no correspondan a alguna expresión evaluada contienen valores indefinidos luego de la inicialización.
+
+            Una tajada no define variables fuera de un bloque cuyo tipo sea una referencia.
 
         2.  #### Platos
 
-            Una **definición de plato** es una especificación de plato seguida de un bloque.
+            Una **definición de plato** es una especificación de plato seguida de un bloque (el **cuerpo** del plato).
 
             Si una tajada contiene una declaración de plato, debe contener también una definición para ese mismo plato (con el mismo nombre y dominios y rangos equivalentes pero ignorando el identificador opcional asociado al dominio).
 
@@ -359,7 +411,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     4.  ### Expresiones
 
-        Una **expresión** es una secuencia de símbolos y símbolos reservados que representa el cálculo de un valor y tiene una cierta estructura.  Una expresión tiene asociado un tipo que se infiere de su estructura, y es el mismo tipo del valor asociado a la expresión.
+        Una **expresión** es una secuencia de símbolos y símbolos reservados que representa el cálculo de un valor y tiene una cierta estructura.  Una expresión tiene asociada un tipo que se infiere de su estructura, y es el mismo tipo del valor asociado a la expresión.
 
         1.  #### Literales
 
@@ -367,7 +419,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 Un literal de cadena de caracteres es una expresión, y su tipo es el especificado por `arroz con caraota`.  Por esto, también se denominarán **literales de arroz con caraota**.  El valor de un literal de arroz con caraota es un arroz cuyo tipo de contenido es la caraota y cuyo tamaño no es menor que el número de puntos de código especificados por el literal de arroz con caraota.
 
-                Un literal de café es una expresión cuyo tipo es el café y cuyo valor es aquel que el literal de café representa.
+                Un literal de café es una expresión cuyo tipo es el café y cuyo valor es aquel que el literal de café representa.  `tetero` y `negrito` son literales de café.
 
                 Un literal de caraota es una expresión cuyo tipo es la caraota y cuyo valor es el último punto de código que conforme al literal de caraota.
 
@@ -387,27 +439,23 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 Un literal de arepa rellena es una expresión cuyo tipo es una arepa cuyos ingredientes son los tipos de las expresiones sucesivas del literal de arepa rellena en el mismo orden de aparición y, si en alguna de ellas ocurre el identificador opcional, su correspondiente ingrediente tendrá ese identificador como nombre.  El valor de un literal de arepa rellena es una arepa rellena de su tipo, y los valores de sus rellenos son los valores de sus expresiones correspondientes.
 
-                TODO: ¿literales de arroz?  ¿literales de cachapa?
+@@//TODO: ¿literales de arroz?  ¿literales de cachapa?
 
         2.  #### Platos
 
-            Un **indicador de referencia** es un punto de código “AMPERSAND” (U+0026, **&**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un indicador de referencia es un símbolo reservado.
+            Un **indicador de llamada** es un punto de código “DOLLAR SIGN” (U+0024, **$**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un indicador de llamada es un símbolo reservado.
 
-            Un **literal condimentado de arepa rellena** es una secuencia compuesta de un inicio de literal estructurado, seguido de una lista de cero o más expresiones separadas por separadores de lista, cada una de las cuales puede opcionalmente estar seguida de un indicador de etiqueta seguido de un identificador, y también puede opcionalmente estar precedida de un indicador de referencia, y todo finalizado con un fin de literal estructurado.  La **arepa asociada** a un literal condimentado de arepa rellena es el tipo de la arepa rellena que resultaría de escribir el literal condimentado de arepa rellena sin indicadores de referencia.
-
-            Un **argumento** es una secuencia compuesta de una expresión opcionalmente precedida de un indicador de referencia (en cuyo caso su **tipo** es el tipo de la expresión), o un literal condimentado de arepa rellena (en cuyo caso su tipo es la arepa asociada al literal condimentado de arepa rellena).
-
-            Un **indicador de llamada** es un punto de código “COMMERCIAL AT” (U+0040, **@**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un indicador de llamada es un símbolo reservado.
-
-            Con cada plato declarado se pueden construir **expresiones de plato**, que son expresiones, con el identificador del plato, seguido de un indicador de llamada, seguido de un argumento cuyo tipo sea equivalente al del dominio del plato.
+            Con cada plato declarado se pueden construir **expresiones de plato**, que son expresiones, con el identificador del plato, seguido de un indicador de llamada, seguido de una expresión (el **argumento**) cuyo tipo sea equivalente al dominio del plato.
 
             El tipo de una expresión de plato es el rango del plato.
 
-            TODO: ¿cuál es el valor?  ¿cómo se evalúa un plato?  ¿cómo se describe formalmente la ejecución de un procedimiento que toma parámetros (por valor y/o por referencia) y produce un resultado? :(
+            Dentro del cuerpo de un plato se define automáticamente una variable cuyo identificador asociado es `@`.  El tipo de la variable `@` en un plato es el dominio del plato.  La variable `@` se crea al momento de la evaluación de una expresión de plato: primero es evaluado el argumento, y luego se crea la variable `@` en el alcance del cuerpo del plato como si se hubiera inicializado con el valor ya calculado del argumento.  Luego se ejecuta el cuerpo del plato hasta que ejecute una instrucción de retorno.  El valor de la expresión de plato será el valor de la expresión de retorno de la instrucción de retorno que el plato ejecutó.
+
+            Los efectos de la evaluación del argumento de una expresión de plato sobre el estado manejado por la ejecución de una tajada y su entorno de ejecución se realizan completamente antes del comienzo de la ejecución del cuerpo del plato.
 
         3.  #### Cubiertos
 
-            TODO: más operadores!  Pero ¿cuáles?  Algún otro unario, al menos!
+@@//TODO: más operadores!  Pero ¿cuáles?  Algún otro unario, al menos!
 
             1. ##### Unarios
 
@@ -416,8 +464,6 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
                 1.  Un **operador de resta** es un punto de código “MINUS SIGN” (U+2212, **−**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
                 Si existe un cubierto declarado para un cierto operador unario, entonces se puede construir una expresión con el operador seguido de una expresión cuyo tipo sea equivalente al del ingrediente de la arepa del dominio del operador.  El tipo de la expresión resultante es el tipo del rango del cubierto.  El valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena cuyo único relleno sea el valor de la expresión.
-
-                TODO: ¿cuál es el valor?  ¿cómo se evalúa un cubierto?  ¿cómo se describe formalmente la ejecución de un procedimiento que toma parámetros (por valor y/o por referencia) y produce un resultado? :(
 
             2. ##### Binarios
 
@@ -437,27 +483,39 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 7.  Un **operador de no‐igualdad**, que es un punto de código “NOT EQUAL TO” (U+2260, **≠**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                Con cada cubierto declarado para un operador binario se pueden construir **expresiones de operador binario infijo**, que son expresiones, con un argumento cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido del operador del cubierto, seguido de un argumento cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
+                Con cada cubierto declarado para un operador binario se pueden construir **expresiones de operador binario infijo**, que son expresiones, con una expresión (el **primer argumento** cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido del operador del cubierto, seguido de una expresión (el **segundo argumento**) cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
 
-                Con cada cubierto declarado para un operador binario se pueden construir **expresiones de operador binario prefijo**, que son expresiones, con un inicio de paréntesis, seguido por el operador del cubierto, seguido por un fin de paréntesis, seguido por un argumento cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido de un argumento cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
+                Con cada cubierto declarado para un operador binario se pueden construir **expresiones de operador binario prefijo**, que son expresiones, con un inicio de paréntesis, seguido por el operador del cubierto, seguido por un fin de paréntesis, seguido por una expresión cuyo tipo sea el dominio del cubierto.
 
-                En ambos casos, el tipo de la expresión resultante es el tipo del rango del cubierto, y el valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena cuyos primer y segundo rellenos sean los valores del primero y el segundo argumento, respectivamente.
-
-                TODO: pasaje por referencia
-
-                TODO: ¿cuál es el valor?  ¿cómo se evalúa un cubierto?  ¿cómo se describe formalmente la ejecución de un procedimiento que toma parámetros (por valor y/o por referencia) y produce un resultado? :(
+                En ambos casos, el tipo de la expresión resultante es el tipo del rango del cubierto, y el valor de la expresión será el que resultaría de evaluar una expresión de plato sobre el mismo argumento, usando un plato con el mismo dominio, rango y cuerpo que el cubierto.
 
         4.  #### Variables
 
-            Una variable es **alcanzable** en una instrucción en los siguientes casos.
+            Una variable es **alcanzable** en una instrucción en los siguientes casos.  [Nota: otras partes de este documento especifican otras condiciones que hacen que una variable sea alcanzable en una instrucción; estos casos no son exhaustivos. —fin de la nota]
 
             *   La definición de la variable está en el mismo bloque que la instrucción, y ocurre antes de la instrucción.
 
             *   El bloque en el que está la instrucción no define ninguna variable con el nombre de la variable de interés, pero el bloque está contenido directamente en otro bloque en el que la variable sería alcanzable si ocurriera una instrucción en el lugar donde aparece el bloque en el que está la instrucción de interés.
 
-            Se puede construir una expresión con el nombre de una variable alcanzable.  Su tipo es el tipo de la variable y su valor es el valor de la variable.
+            *   El bloque en el que está la instrucción no define ninguna variable con el nombre de la variable de interés, pero el bloque es el cuerpo de un caso de tipo cuyo caso identifica a un ingrediente de la selección por tipo a la que pertenece ese caso de tipo y ese ingrediente es equivalente al tipo de la variable de interés, y el nombre de la variable de interés es igual al identificador de la misma selección por tipo.
 
-        5.  #### Otras
+            *   El nombre de la variable es `@` y la instrucción está contenida directa o indirectamente en el cuerpo de un plato o un cubierto.
+
+            Se puede construir una expresión con el nombre de una variable alcanzable.  Si el tipo de la variable es una referencia, el tipo y el valor de la expresión son el tipo referido y el valor referido de la referencia; si no, el tipo y el valor de la expresión son el tipo y el valor de la variable.
+
+        5.  #### Ubicaciones y expresiones de referencia
+
+            Una **ubicación** es un tipo particular de expresión que representa a un ente que almacena información que puede ser modificada en la ejecución de una tajada.  Cada ubicación tiene asociada un **espacio**, que es el ente que almacena un valor de ese tipo.
+
+            Se puede construir una ubicación con el nombre de una variable alcanzable.  El espacio de este tipo de ubicación es el valor referido si su tipo es una referencia; si no, el espacio es la variable.
+
+            Un acceso a arepa es una ubicación si su fuente es una ubicación; en ese caso, su espacio es el ente que almacena su relleno accedido.
+
+            Un acceso a arroz es una ubicación si su fuente es una ubicación; en ese caso, su espacio es el ente que almacena el ente de su fuente cuya posición sea el valor de la posición accedida.
+
+            Una **expresión de referencia** es una secuencia compuesta de un inicio de referencia, seguido de una ubicación, seguida de un fin de referencia.  Una expresión de referencia es una expresión.
+
+        6.  #### Otras
 
             Un **inicio de paréntesis** es un punto de código “LEFT PARENTHESIS” (U+0028, **(**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un inicio de paréntesis es un símbolo reservado.
 
@@ -479,15 +537,17 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Se puede construir una expresión con una secuencia de dos o más expresiones separadas por separadores de lista de expresiones.  El valor y el tipo de la expresión son los de la última de la lista.  Las acciones de las expresiones se efectúan en secuencia: se terminan de efectuar todas las acciones de una expresión de la lista antes de comenzar a efectuar las acciones de la siguiente expresión, y el valor de la expresión completa se considera calculado luego de efectuar las acciones de todas las expresiones de la lista..
 
-            TODO: inline if
+@@//TODO: inline if?
 
-            TODO: precedencias
+@@//TODO: precedencias!
 
     5.  ### Instrucciones
 
         Una **instrucción** es una secuencia de símbolos y símbolos reservados que representa una acción y tiene una cierta estructura.  Las instrucciones se ejecutan en secuencia, y al ejecutarse tienen ciertos efectos sobre el estado manejado por la ejecución de una tajada.
 
-        Los efectos de una instrucción sobre el estado manejado por la ejecución de una tajada y su entorno de ejecución se realizan completamente antes del comienzo de la ejecución de otra instrucción.  Si no se especifica explícitamente, el orden en el que se efectúan las acciones de una instrucción es indefinido.  Por ejemplo:
+        Una expresión seguida de un terminador de frase es una instrucción.
+
+        Los efectos de una instrucción sobre el estado manejado por la ejecución de una tajada y su entorno de ejecución se realizan completamente antes del comienzo de la ejecución de otra instrucción.  Si no se especifica explícitamente, el orden en el que se efectúan las acciones de una instrucción es indefinido.  [Ejemplo:
 
             telita es queso.
 
@@ -516,19 +576,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
                 «pabellón «», chupe «»».
             }
 
-        entonces el comportamiento de esa tajada es indefinido, porque en este caso no se define orden alguno para efectuar las acciones de los dos platos.  La implementación está en libertad de seleccionar un orden de evaluación, reportar un error, hacer explotar al disco duro, liberar a Cthulhu, o hacer cualquier otra cosa.
+        entonces el comportamiento de esa tajada es indefinido, porque en este caso no se define orden alguno para efectuar las acciones de los dos platos.  La implementación está en libertad de seleccionar un orden de evaluación, reportar un error, hacer explotar al disco duro, liberar a Cthulhu, o hacer cualquier otra cosa. —fin del ejemplo]
 
-        1.  #### Simples
-
-            Una expresión seguida de un terminador de frase es una instrucción.
-
-            Una **ubicación** es un tipo particular de expresión que representa a un ente que almacena información que puede ser modificada por la ejecución de una tajada.  Cada ubicación tiene asociado un **tipo*, que es el mismo que tendría si se tratara como expresión, y un **espacio**, que es el ente que almacena un valor de ese tipo.
-
-            Se puede construir una ubicación con el nombre de una variable alcanzable.  El espacio de este tipo de ubicación es la variable.
-
-            Un acceso a arepa es una ubicación si su fuente es una ubicación; en ese caso, su espacio es el ente que almacena su relleno accedido.
-
-            Un acceso a arroz es una ubicación si su fuente es una ubicación; en ese caso, su espacio es el ente que almacena el ente de su fuente cuya posición sea el valor de la posición accedida.
+        1.  #### Asignaciones
 
             Un **indicador de asignación** es un punto de código “COLON EQUALS” (U+2254, **≔**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un indicador de asignación es un símbolo reservado.
 
@@ -556,8 +606,6 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 La acción especificada por una iteración condicionada es efectuar las acciones indicadas por la condición, y si su valor es verdadero, efectuar las acciones indicadas por el cuerpo y repetir el proceso.
 
-                TODO: break, continue
-
             3.  ##### Iteración controlada
 
                 `for` es una palabra reservada.
@@ -574,7 +622,41 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             4.  ##### Selección por tipo
 
-                TODO: case of para cachapas
+                Un **indicador de selección por tipo** es un punto de código “PROPORTION” (U+2237, **∷**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un selector por tipo es un símbolo reservado.
+
+                Un **indicador de caso de tipo** es un punto de código “RATIO” (U+2236, **∶**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un indicador de caso de tipo es un símbolo reservado.
+
+                Un **caso de tipo** es una secuencia compuesta de un identificador o un literal entero (su **caso**), seguido de un indicador de caso de tipo, seguido de un bloque (su **cuerpo**).
+
+                Una **selección por tipo** es una secuencia compuesta de una expresión (su **fuente**) cuyo tipo sea una cachapa, seguida de un indicador de selección por tipo, seguido de un identificador, seguido de otro indicador de selección por tipo, seguido de una secuencia de casos de tipo cuyos casos identifiquen a ingredientes del tipo de la fuente, seguida de un terminador de frase.
+
+                Una tajada no contiene selecciones por tipo con más de un caso de tipo cuyos casos identifiquen a un mismo ingrediente del tipo de su fuente.
+
+                Una selección por tipo evalúa su fuente, y luego ejecuta el cuerpo del caso de tipo cuyo caso identifique al ingrediente del tipo de la fuente que sea equivalente al tipo del último valor asignado al valor de la fuente.
+
+            5.  ##### Retorno de valores de platos y cubiertos
+
+                `retorna` es una palabra reservada.
+
+                Una **instrucción de retorno** es una `retorna`, seguida de una expresión (la **expresión retornada**), seguida de un terminador de frase.  Una instrucción de retorno es una instrucción.
+
+                Si una instrucción de retorno ocurre directa o indirectamente en el cuerpo de un plato o un cubierto, se evalúa su expresión retornada, e inmediatamente después ese plato o cubierto finaliza su ejecución.  El valor retornado por el plato o cubierto será el valor de la expresión retornada.  Una instrucción de retorno no ocurre en el cuerpo de un plato o un cubierto de una tajada si el tipo de su expresión retornada es equivalente al rango del plato o cubierto en cuyo cuerpo ocurre.
+
+                Una instrucción de retorno solo ocurre fuera del cuerpo de un plato o cubierto si el tipo de su expresión retornada es el queso.  En ese caso, ejecutarla evalúa su expresión retornada, e inmediatamente después finaliza la ejecución de la tajada.  El valor de la expresión retornada se hará disponible al invocador de la tajada mediante algún mecanismo definido por la implementación.
+
+            6.  ##### Saltos estructurados
+
+                `fin` es una palabra reservada.
+
+                Un **salto estructurado** es una `fin` seguida de un terminador de frase.  Un salto estructurado es una instrucción.
+
+                Una tajada no contiene saltos estructurados que no ocurran directa o indirectamente dentro del cuerpo de alguna iteración controlada o una iteración condicionada.
+
+                Cada instrucción y cada bloque que ocurran directa o indirectamente dentro de una iteración controlada o condicionada tiene asociada una iteración controlada o condicionada, que es su **estructura controladora**.  La estructura controladora de una instrucción o un bloque que ocurre directamente en una iteración controlada o condicionada es esa iteración controlada o condicionada.  La estructura controladora de una instrucción o un bloque que ocurre indirectamente en una iteración controlada o condicionada es la estructura controladora de la instrucción de la cual es el cuerpo o el bloque en el que ocurre.
+
+                La ejecución de un salto estructurado causa el fin de la ejecución de su estructura controladora.
+
+@@//TODO: continue, labels, etc
 
 4.  ## Librería
 
@@ -590,47 +672,47 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Retorna la suma de dos valores.
 
-            TODO: overflow
+@@//TODO: overflow
 
         2.  `hay un cubierto − para arepa con queso y queso y salsa de queso.`
 
             Retorna la resta del primer valor menos el segundo.
 
-            TODO: overflow
+@@//TODO: overflow
 
         2.  `hay un cubierto − para arepa de queso y salsa de queso.`
 
             Retorna el inverso aditivo del valor.
 
-            TODO: overflow
+@@//TODO: overflow
 
         3.  `hay un cubierto × para arepa con queso y queso y salsa de queso.`
 
             Retorna la multiplicación de los valores.
 
-            TODO: overflow
+@@//TODO: overflow
 
         4.  `hay un cubierto ÷ para arepa con queso y queso y salsa de queso.`
 
             Retorna el resultado de la división entera del primer valor entre el segundo.
 
-            TODO: zero division
+@@//TODO: zero division
 
         5.  `hay un cubierto \~ para arepa con queso y queso y salsa de queso.`
 
             Retorna el resto de la división entera del primer valor entre el segundo.
 
-            TODO: zero division
+@@//TODO: zero division
 
         6.  `hay un cubierto = para arepa con queso y queso y salsa de café.`
 
-            Retorna `tetero` si los valores son iguales y `negrito` si no.
+            Retorna `negrito` si los valores son iguales y `tetero` si no.
 
         7.  `hay un cubierto ≠ para arepa con queso y queso y salsa de café.`
 
-            Retorna `negrito` si los valores son iguales y `tetero` si no.
+            Retorna `tetero` si los valores son iguales y `tetero` si no.
 
-        TODO: escribir los otros 98237509873093725092375 que hacen falta para que los tipos del lenguaje sirvan de algo
+@@//TODO: escribir los otros 98237509873093725092375 que hacen falta para que los tipos del lenguaje sirvan de algo
 
 * * *
 

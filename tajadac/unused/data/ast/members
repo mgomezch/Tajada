@@ -1,0 +1,22 @@
+std::list<Tajada::AST::Statement *> *
+        statements
+
+std::string *
+        domain_name
+        name
+
+Tajada::AST::Expression *
+        condition
+        expression
+        lhs
+        rhs
+
+Tajada::AST::Statement *
+        body
+        body_false
+        body_true
+
+Tajada::Type::Type *
+        codomain
+        domain
+        type

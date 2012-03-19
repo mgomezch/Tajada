@@ -4,7 +4,6 @@
 #include "ast.hh"
 #include "debug.hh"
 #include "type.hh"
-#include "util.hh"
 
 #ifdef TAJADA_DEBUG
 #       define TAJADA_DEBUG_AST TAJADA_DEBUG
@@ -20,29 +19,30 @@
 #       define TAJADA_DEBUG_AST_DO(x)
 #endif
 
+#define TAJADA_UNUSED_PARAMETER(p) static_cast<void>(p);
+
 namespace Tajada {
         namespace AST {
                 AST::~AST() {}
 
-                Program::Program(
-                                std::list<Tajada::AST::Statement *> * statements,
-                                Tajada::AST::Block * main
+                Block::Block(
+                        std::list<Tajada::AST::Statement *> * statements
                 ):
-                        statements(statements),
-                        main(main)
+                        statements(statements)
                 {}
 
-                std::string Program::show(unsigned int depth) {
+                std::string Block::show(unsigned int depth) {
                         return
-                                std::accumulate(
+                                std::string(depth * 8, ' ') + u8"{\n"
+                                + std::accumulate(
                                         statements->begin(),
                                         statements->end(),
                                         std::string(),
                                         [depth](std::string acc, Tajada::AST::Statement *statement) {
-                                                return acc + statement->show(depth);
+                                                return acc + statement->show(depth + 1);
                                         }
                                 )
-                                + main->show(depth);
+                                + std::string(depth * 8, ' ') + u8"}\n";
                 }
 
                 TypeAlias::TypeAlias(
@@ -105,7 +105,7 @@ namespace Tajada {
                         std::string * domain_name,
                         Tajada::Type::Type * domain,
                         Tajada::Type::Type * codomain,
-                        Tajada::AST::Block * body
+                        Tajada::AST::Statement * body
                 ):
                         name(name),
                         domain_name(domain_name),
@@ -128,60 +128,48 @@ namespace Tajada {
                                 + std::string(u8"\n");
                 }
 
-                Block::Block(
-                        std::list<Tajada::AST::Statement *> * statements
+                Program::Program(
+                                std::list<Tajada::AST::Statement *> * statements,
+                                Tajada::AST::Block * main
                 ):
-                        statements(statements)
+                        statements(statements),
+                        main(main)
                 {}
 
-                std::string Block::show(unsigned int depth) {
+                std::string Program::show(unsigned int depth) {
                         return
-                                std::string(depth * 8, ' ') + u8"{\n"
-                                + std::accumulate(
+                                std::accumulate(
                                         statements->begin(),
                                         statements->end(),
                                         std::string(),
                                         [depth](std::string acc, Tajada::AST::Statement *statement) {
-                                                return acc + statement->show(depth + 1);
+                                                return acc + statement->show(depth);
                                         }
                                 )
-                                + std::string(depth * 8, ' ') + u8"}\n";
+                                + main->show(depth);
                 }
 
-                Expression::Expression(Tajada::Type::Type * type, bool lvalue):
+                Expression::Expression(Tajada::Type::Type * type, bool is_lvalue):
                         type(type),
-                        lvalue(lvalue)
+                        is_lvalue(is_lvalue)
+                {}
+
+                Argument::Argument(Tajada::Type::Type * type, bool is_lvalue):
+                        type(type),
+                        is_lvalue(is_lvalue)
                 {}
 
                 namespace Literal {
-                        String::String(
-                                std::string * value
+                        Boolean::Boolean(
+                                bool p_value
                         ):
-                                Tajada::AST::Expression(new Tajada::Type::Array(new Tajada::Type::Character()), false),
-                                value(value)
+                                Tajada::AST::Expression(new Tajada::Type::Boolean(), false),
+                                value(p_value)
                         {}
 
-                        std::string String::show(unsigned int depth) {
-                                return
-                                        std::string(u8"“")
-                                        + *value
-                                        + std::string(u8"”");
-                        }
-
-                        Boolean::Boolean():
-                                Tajada::AST::Expression(new Tajada::Type::Boolean(), false)
-                        {}
-
-                        // ¿Por qué coño la llamada al constructor del padre indirecto no la puedo delegar al padre directo?
-                        True ::True (): Tajada::AST::Expression(new Tajada::Type::Boolean(), false) {}
-                        False::False(): Tajada::AST::Expression(new Tajada::Type::Boolean(), false) {}
-
-                        std::string True::show(unsigned int depth) {
-                                return std::string(u8"tetero");
-                        }
-
-                        std::string False::show(unsigned int depth) {
-                                return std::string(u8"negrito");
+                        std::string Boolean::show(unsigned int depth) {
+                                TAJADA_UNUSED_PARAMETER(depth);
+                                return value ? std::string(u8"tetero") : std::string(u8"negrito");
                         }
 
                         Character::Character(
@@ -192,38 +180,53 @@ namespace Tajada {
                         {}
 
                         std::string Character::show(unsigned int depth) {
+                                TAJADA_UNUSED_PARAMETER(depth);
                                 return
                                         std::string(u8"caraota(")
                                         + *value
                                         + std::string(u8")");
                         }
 
-                        Integer::Integer(
+                        String::String(
                                 std::string * value
                         ):
+                                Tajada::AST::Expression(new Tajada::Type::Array(new Tajada::Type::Character()), false),
+                                value(value)
+                        {}
+
+                        std::string String::show(unsigned int depth) {
+                                TAJADA_UNUSED_PARAMETER(depth);
+                                return
+                                        std::string(u8"“")
+                                        + *value
+                                        + std::string(u8"”");
+                        }
+
+                        Integer::Integer(
+                                std::string * p_value
+                        ):
                                 Tajada::AST::Expression(new Tajada::Type::Integer(), false),
-                                value(0) // TODO: convert
+                                value(stoi(*p_value))
                         {}
 
                         std::string Integer::show(unsigned int depth) {
-                                return
-                                        std::string(u8"queso(")
-                                        + to_string(value)
-                                        + std::string(u8")");
+                                TAJADA_UNUSED_PARAMETER(depth);
+                                return std::to_string(value);
                         }
 
                         Float::Float(
-                                std::string * integer,
-                                std::string * fractional
+                                std::string * p_integer,
+                                std::string * p_fractional
                         ):
                                 Tajada::AST::Expression(new Tajada::Type::Float(), false),
-                                value(0.0) // TODO: convert
+                                value(stof(*p_integer + "." + *p_fractional))
                         {}
 
                         std::string Float::show(unsigned int depth) {
+                                TAJADA_UNUSED_PARAMETER(depth);
                                 return
                                         std::string(u8"papelón(")
-                                        + to_string(value)
+                                        + std::to_string(value)
                                         + std::string(u8")");
                         }
 
@@ -245,7 +248,7 @@ namespace Tajada {
                                                 elems->end(),
                                                 true,
                                                 [](bool acc, std::tuple<Tajada::AST::Expression *, std::string *> * x) {
-                                                        return acc && std::get<0>(*x)->lvalue;
+                                                        return acc && std::get<0>(*x)->is_lvalue;
                                                 }
                                         )
                                 ),
@@ -269,38 +272,6 @@ namespace Tajada {
                                         + (elems->size() == 0 ? "" : std::get<0>(*elems->back())->show(depth))
                                         + std::string(u8"»");
                         }
-                }
-
-                TupleAccessByInteger::TupleAccessByInteger(
-                        Tajada::AST::Expression * source,
-                        Tajada::AST::Literal::Integer * field
-                ):
-                        Tajada::AST::Expression(dynamic_cast<Tajada::Type::Tuple &>(*source->type)[field->value], source->lvalue),
-                        source(source),
-                        field(field)
-                {}
-
-                std::string TupleAccessByInteger::show(unsigned int depth) {
-                        return
-                                source->show(depth)
-                                + std::string(u8" → ")
-                                + field->show(depth);
-                }
-
-                TupleAccessByName::TupleAccessByName(
-                        Tajada::AST::Expression * source,
-                        std::string * field
-                ):
-                        Tajada::AST::Expression(dynamic_cast<Tajada::Type::Tuple &>(*source->type)[*field], source->lvalue),
-                        source(source),
-                        field(field)
-                {}
-
-                std::string TupleAccessByName::show(unsigned int depth) {
-                        return
-                                source->show(depth)
-                                + std::string(u8" → ")
-                                + *field;
                 }
 
                 Call::Call(
@@ -330,17 +301,47 @@ namespace Tajada {
                 {}
 
                 std::string VariableUse::show(unsigned int depth) {
+                        TAJADA_UNUSED_PARAMETER(depth);
+                        return *name;
+                }
+
+                TupleAccessByInteger::TupleAccessByInteger(
+                        Tajada::AST::Expression * source,
+                        Tajada::AST::Literal::Integer * field
+                ):
+                        Tajada::AST::Expression(dynamic_cast<Tajada::Type::Tuple &>(*source->type)[field->value], source->is_lvalue),
+                        source(source),
+                        field(field)
+                {}
+
+                std::string TupleAccessByInteger::show(unsigned int depth) {
                         return
-                                std::string(u8"variable(")
-                                + *name
-                                + std::string(u8")");
+                                source->show(depth)
+                                + std::string(u8" → ")
+                                + field->show(depth);
+                }
+
+                TupleAccessByName::TupleAccessByName(
+                        Tajada::AST::Expression * source,
+                        std::string * field
+                ):
+                        Tajada::AST::Expression(dynamic_cast<Tajada::Type::Tuple &>(*source->type)[*field], source->is_lvalue),
+                        source(source),
+                        field(field)
+                {}
+
+                std::string TupleAccessByName::show(unsigned int depth) {
+                        return
+                                source->show(depth)
+                                + std::string(u8" → ")
+                                + *field;
                 }
 
                 ArrayAccess::ArrayAccess(
                         Tajada::AST::Expression * source,
                         Tajada::AST::Expression * position
                 ):
-                        Tajada::AST::Expression(dynamic_cast<Tajada::Type::Array &>(*source->type).contents, source->lvalue),
+                        Tajada::AST::Expression(dynamic_cast<Tajada::Type::Array &>(*source->type).contents, source->is_lvalue),
                         source(source),
                         position(position)
                 {}
@@ -357,7 +358,7 @@ namespace Tajada {
                         Tajada::AST::Expression * first,
                         Tajada::AST::Expression * second
                 ):
-                        Tajada::AST::Expression(second->type, second->lvalue),
+                        Tajada::AST::Expression(second->type, second->is_lvalue),
                         first(first),
                         second(second)
                 {}

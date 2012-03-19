@@ -61,6 +61,7 @@
 %nonassoc TUPLE_ARROW
 %nonassoc ARRAY_ACCESS_OP
 %nonassoc PAREN_CL
+%nonassoc REF_MARK
 
 %right ELSE
 
@@ -463,11 +464,11 @@ expr
 
 /* §3.4.1.1p2 */
 | TETERO
-{ $$ = new Tajada::AST::Literal::True(); }
+{ $$ = new Tajada::AST::Literal::False(); }
 
 /* §3.4.1.1p2 */
 | NEGRITO
-{ $$ = new Tajada::AST::Literal::False(); }
+{ $$ = new Tajada::AST::Literal::True(); }
 
 /* §3.4.1.1p3 */
 | LIT_CHR[token]
@@ -491,8 +492,9 @@ expr
 
 /* TODO: arreglar el peo del pasaje por referenca */
 
-/* §3.4.2p5 */
+/* §3.4.2p2 */
 | IDENT[nombre] CALL expr[argumento]
+| IDENT[nombre] CALL REF_MARK expr[argumento]
 {
         auto s = scope;
         decltype(s->functions.begin()) it;
@@ -514,34 +516,46 @@ expr
 }
 
 /* TODO: operadores unarios */
+| OP_MINUS expr
+| OP_MINUS REF_OP expr REF_CL
 
 /* §3.4.3.2l1.1 */
-/* | expr[l] OP_MINUS expr[r] */
-/* | PAREN_OP OP_MINUS PAREN_CL expr[l] expr[r] */
+|        expr[l]        OP_MINUS        expr[r]
+| REF_OP expr[l] REF_CL OP_MINUS        expr[r]
+|        expr[l]        OP_MINUS REF_OP expr[r] REF_CL
+| REF_OP expr[l] REF_CL OP_MINUS REF_OP expr[r] REF_CL
+| PAREN_OP OP_MINUS PAREN_CL        expr[parametros]
+| PAREN_OP OP_MINUS PAREN_CL REF_OP expr[parametros] REF_CL
+/*| ref expr[l] OP_MINUS ref expr[r]*/
+/*| PAREN_OP OP_MINUS PAREN_CL ref expr[parametros]*/
 
 /* §3.4.3.2l1.2 */
-/* | expr[l] OP_PLUS expr[r] */
-/* | PAREN_OP OP_PLUS PAREN_CL expr[l] expr[r] */
+|        expr[l]        OP_PLUS        expr[r]
+| REF_OP expr[l] REF_CL OP_PLUS        expr[r]
+|        expr[l]        OP_PLUS REF_OP expr[r] REF_CL
+| REF_OP expr[l] REF_CL OP_PLUS REF_OP expr[r] REF_CL
+| PAREN_OP OP_PLUS PAREN_CL        expr[parametros]
+| PAREN_OP OP_PLUS REF_CL PAREN_OP expr[parametros] REF_CL
 
 /* §3.4.3.2l1.3 */
-/* | expr[l] OP_MULT expr[r] */
-/* | PAREN_OP OP_MULT PAREN_CL expr[l] expr[r] */
+/*| ref expr[l] OP_MULT ref expr[r]*/
+/*| PAREN_OP OP_MULT PAREN_CL ref expr[parametros]*/
 
 /* §3.4.3.2l1.4 */
-/* | expr[l] OP_DIV expr[r] */
-/* | PAREN_OP OP_DIV PAREN_CL expr[l] expr[r] */
+/*| ref expr[l] OP_DIV ref expr[r]*/
+/*| PAREN_OP OP_DIV PAREN_CL ref expr[parametros]*/
 
 /* §3.4.3.2l1.5 */
-/* | expr[l] OP_MOD expr[r] */
-/* | PAREN_OP OP_MOD PAREN_CL expr[l] expr[r] */
+/*| ref expr[l] OP_MOD ref expr[r]*/
+/*| PAREN_OP OP_MOD PAREN_CL ref expr[parametros]*/
 
 /* §3.4.3.2l1.6 */
-/* | expr[l] OP_EQ expr[r] */
-/* | PAREN_OP OP_EQ PAREN_CL expr[l] expr[r] */
+/*| ref expr[l] OP_EQ ref expr[r]*/
+/*| PAREN_OP OP_EQ PAREN_CL ref expr[parametros]*/
 
 /* §3.4.3.2l1.7 */
-/* | expr[l] OP_NEQ expr[r] */
-/* | PAREN_OP OP_NEQ PAREN_CL expr[l] expr[r] */
+/*| ref expr[l] OP_NEQ ref expr[r]*/
+/*| PAREN_OP OP_NEQ PAREN_CL ref expr[parametros]*/
 
 /* §3.4.4p2 */
 | IDENT[nombre]
@@ -562,11 +576,11 @@ expr
         $$ = new Tajada::AST::VariableUse($[nombre], it->second);
 }
 
-/* §3.4.5p3 */
+/* §3.4.6p3 */
 | PAREN_OP expr[in] PAREN_CL
 { $$ = $[in]; }
 
-/* §3.4.5p5 */
+/* §3.4.6p5 */
 | expr[source] TUPLE_ARROW intlit[field]
 {
         auto tp = dynamic_cast<Tajada::Type::Tuple *>($[source]->type);
@@ -584,7 +598,7 @@ expr
         $$ = new Tajada::AST::TupleAccessByInteger($[source], $[field]);
 }
 
-/* §3.4.5p5 */
+/* §3.4.6p5 */
 | expr[source] TUPLE_ARROW IDENT[field]
 {
         auto tp = dynamic_cast<Tajada::Type::Tuple *>($[source]->type);
@@ -602,7 +616,7 @@ expr
         $$ = new Tajada::AST::TupleAccessByName($[source], $[field]);
 }
 
-/* §3.4.5p8 */
+/* §3.4.6p8 */
 | expr[source] ARRAY_ACCESS_OP expr[position] ARRAY_ACCESS_CL
 {
         auto ap = dynamic_cast<Tajada::Type::Array *>($[source]->type);
@@ -622,10 +636,17 @@ expr
         $$ = new Tajada::AST::ArrayAccess($[source], $[position]);
 }
 
-/* §3.4.5p10 */
+/* §3.4.6p10 */
 | expr[l] EXPR_LIST_SEP expr[r]
 { $$ = new Tajada::AST::Sequence($[l], $[r]); }
 
+;
+
+
+
+ref
+: REF_MARK
+|
 ;
 
 
@@ -745,7 +766,7 @@ statement
 /* TODO: check for lvalue in action */
 | expr[l] ASSIGN expr[r] STMT_END
 {
-        if (!$[l]->lvalue) {
+        if (!$[l]->is_lvalue) {
                 error(@$, u8"Attempt to assign to expression without l‐value");
                 YYERROR;
         }
@@ -789,27 +810,24 @@ body
 
 
 
-/* TODO: Pasaje por referencia que no funciona */
-/*
-arg
-: expr
-| REF_MARK expr
-| TUPLE_OP arg_tuple_elems TUPLE_CL
-;
+%%
 
-arg_tuple_elems
-: REF_MARK expr
-| arg_tuple_elems   LIST_SEP expr
-| mixed_tuple_elems LIST_SEP REF_MARK expr
-;
 
-mixed_tuple_elems
-: mixed_tuple_elem
-| mixed_tuple_elems LIST_SEP mixed_tuple_elem
-;
 
-mixed_tuple_elem
-: expr
-| REF_MARK expr
-;
-*/
+void Tajada::yy::parser::error(location_type const & l, std::string const & msg) {
+        if (l.begin.line == l.end.line) {
+                if (l.begin.column == l.end.column - 1) {
+                        std::cerr << u8"At line " << l.begin.line << u8", column " << l.begin.column;
+                } else {
+                        std::cerr
+                                << u8"At line " << l.begin.line
+                                << u8", columns " << l.begin.column << u8"–" << l.end.column;
+                }
+        } else {
+                std::cerr
+                        << u8"Between line " << l.begin.line << u8", column " << l.begin.column
+                        << u8" and line "    << l.end  .line << u8", column " << l.end  .column;
+        }
+
+        std::cerr << u8": " << msg << std::endl;
+}

@@ -12,25 +12,6 @@
 #include "scope.hh"
 #include "tokens.hh"
 
-// Aquí porque no sé dónde ponerla:
-void Tajada::yy::parser::error(location_type const & l, std::string const & msg) {
-        if (l.begin.line == l.end.line) {
-                if (l.begin.column == l.end.column - 1) {
-                        std::cerr << u8"At line " << l.begin.line << u8", column " << l.begin.column;
-                } else {
-                        std::cerr
-                                << u8"At line " << l.begin.line
-                                << u8", columns " << l.begin.column << u8"–" << l.end.column;
-                }
-        } else {
-                std::cerr
-                        << u8"Between line " << l.begin.line << u8", column " << l.begin.column
-                        << u8" and line "    << l.end  .line << u8", column " << l.end  .column;
-        }
-
-        std::cerr << u8": " << msg << std::endl;
-}
-
 int main(int argc, char * argv[]) {
         Tajada::lex::init();
 

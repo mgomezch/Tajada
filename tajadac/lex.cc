@@ -211,7 +211,7 @@ namespace Tajada {
                                 }
                         }
                         std::cerr
-                                << u8"Skipping unrecognized "
+                                << u8"Unrecognized "
                                 << bytes
                                 << u8"‐byte character ‘";
                         for (int i = 0; i < bytes; ++i) std::cerr << scanner->in->data()[i];

@@ -1,10 +1,10 @@
 SHELL     = bash
 
 CC        = gcc
-CFLAGS    = -g -Wall $(DEFINES:%=-D%)
+CFLAGS    = -g -Wall -Wextra $(DEFINES:%=-D%)
 
 CXX       = g++
-CXXFLAGS  = -g -Wall $(DEFINES:%=-D%) --std=gnu++0x
+CXXFLAGS  = -g -Wall -Wextra $(DEFINES:%=-D%) --std=gnu++0x
 
 YACC      = bison
 YACCFLAGS = --warnings=all --report=all -g -x
@@ -32,21 +32,24 @@ defines = _GNU_SOURCE TAJADA_DEBUG=0
 all: tajadac
 
 clean:
-	rm -f ./*.o ./*.gch ./*.out ./*.yy tajadac location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml position.hh stack.hh
+	rm -f ./*.o ./*.gch ./*.out ./*.yy ./*.gen.* tajadac location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml position.hh stack.hh
 
 
 
 tajadac : ast.o lex.o main.o parser.tab.o scope.o type.o ; $(build-exec)
 
 
-#          .o:           .cc tokens.hh scope.hh ast.hh type.hh lex.hh debug.hh util.hh parser.tab.hh stack.hh location.hh position.hh
-        ast.o:        ast.cc                    ast.hh type.hh        debug.hh util.hh
-        lex.o:        lex.cc tokens.hh scope.hh ast.hh type.hh lex.hh debug.hh         parser.tab.hh stack.hh location.hh position.hh
-       main.o:       main.cc tokens.hh scope.hh ast.hh type.hh lex.hh                  parser.tab.hh stack.hh location.hh position.hh
- parser.tab.o: parser.tab.cc           scope.hh ast.hh type.hh                         parser.tab.hh stack.hh location.hh position.hh
+#          .o:           .cc tokens.hh scope.hh ast.hh type.hh lex.hh debug.hh parser.tab.hh stack.hh location.hh position.hh
+        ast.o:        ast.cc                    ast.hh type.hh        debug.hh
+    ast.gen.o:    ast.gen.cc                    ast.hh type.hh
+        lex.o:        lex.cc tokens.hh scope.hh ast.hh type.hh lex.hh debug.hh parser.tab.hh stack.hh location.hh position.hh
+       main.o:       main.cc tokens.hh scope.hh ast.hh type.hh lex.hh          parser.tab.hh stack.hh location.hh position.hh
+ parser.tab.o: parser.tab.cc           scope.hh ast.hh type.hh                 parser.tab.hh stack.hh location.hh position.hh
       scope.o:      scope.cc           scope.hh ast.hh type.hh
        type.o:       type.cc                           type.hh
 
+#ast.gen.cc ast.gen.hh: make_ast_classes data/ast/classes data/ast/members
+#	./make_ast_classes data/ast/classes data/ast/members ast.gen.cc ast.gen.hh
 
 location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml position.hh stack.hh token_data.out token_data_line.out: parser.y tokens.hh Makefile
 	@printf '%s\n'                                                                    \
@@ -93,4 +96,3 @@ location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml posi
                 'q'                                               \
                 | ed -s ./$<
 	$(YACC) $(YACCFLAGS) ./$<y
-	@if [ "$$($(YACC) -V | head -n 1)" = 'bison (GNU Bison) 2.4.1' ]; then printf '%s\n' '/||\(.*\)/s//||(\1)/' wq | ed -s position.hh; fi

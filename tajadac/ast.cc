@@ -19,7 +19,9 @@
 #       define TAJADA_DEBUG_AST_DO(x)
 #endif
 
-#define TAJADA_UNUSED_PARAMETER(p) static_cast<void>(p);
+#ifndef TAJADA_UNUSED_PARAMETER
+#       define TAJADA_UNUSED_PARAMETER(p) static_cast<void>(p);
+#endif
 
 namespace Tajada {
         namespace AST {
@@ -81,10 +83,12 @@ namespace Tajada {
 
                 FunctionDeclaration::FunctionDeclaration(
                         std::string * name,
+                        std::string * domain_name,
                         Tajada::Type::Type * domain,
                         Tajada::Type::Type * codomain
                 ):
                         name(name),
+                        domain_name(domain_name),
                         domain(domain),
                         codomain(codomain)
                 {}
@@ -95,6 +99,8 @@ namespace Tajada {
                                 + *name
                                 + std::string(u8" es un plato de ")
                                 + domain->show(depth)
+                                + u8" "
+                                + *domain_name
                                 + std::string(u8" y salsa de ")
                                 + codomain->show(depth)
                                 + std::string(u8".\n");
@@ -120,7 +126,8 @@ namespace Tajada {
                                 + *name
                                 + std::string(u8" es un plato de ")
                                 + domain->show(depth)
-                                + (*domain_name == std::string("") ? std::string("") : std::string(u8" ") + *domain_name)
+                                + std::string(u8" ")
+                                + *domain_name
                                 + std::string(u8" y salsa de ")
                                 + codomain->show(depth)
                                 + std::string(u8" ")
@@ -149,13 +156,11 @@ namespace Tajada {
                                 + main->show(depth);
                 }
 
-                Expression::Expression(Tajada::Type::Type * type, bool is_lvalue):
-                        type(type),
-                        is_lvalue(is_lvalue)
-                {}
-
-                Argument::Argument(Tajada::Type::Type * type, bool is_lvalue):
-                        type(type),
+                Expression::Expression(
+                        Tajada::Type::Type * type,
+                        bool is_lvalue
+                ):
+                        type     (type     ),
                         is_lvalue(is_lvalue)
                 {}
 
@@ -231,13 +236,13 @@ namespace Tajada {
                         }
 
                         Tuple::Tuple(
-                                std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * elems
+                                std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *> * elems
                         ):
                                 Tajada::AST::Expression(
                                         std::accumulate(
                                                 elems->begin(),
                                                 elems->end(),
-                                                new Tajada::Type::Tuple(new std::list<std::tuple<Tajada::Type::Type *, std::string *> *>()),
+                                                new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *>()),
                                                 [](Tajada::Type::Tuple * acc, std::tuple<Tajada::AST::Expression *, std::string *> * x) {
                                                         acc->elems->push_back(new std::tuple<Tajada::Type::Type *, std::string *>(std::get<0>(*x)->type, std::get<1>(*x)));
                                                         return acc;
@@ -258,16 +263,18 @@ namespace Tajada {
                         std::string Tuple::show(unsigned int depth) {
                                 return
                                         std::string(u8"«")
-                                        + std::accumulate(
-                                                elems->begin(),
-                                                --elems->end(),
-                                                std::string(),
-                                                [depth](std::string acc, std::tuple<Tajada::AST::Expression *, std::string *> * x) {
-                                                        return
-                                                                acc
-                                                                + std::get<0>(*x)->show(depth)
-                                                                + ", ";
-                                                }
+                                        + (elems->size() == 0 ? "" :
+                                                std::accumulate(
+                                                        elems->begin(),
+                                                        --elems->end(),
+                                                        std::string(),
+                                                        [depth](std::string acc, std::tuple<Tajada::AST::Expression *, std::string *> * x) {
+                                                                return
+                                                                        acc
+                                                                        + std::get<0>(*x)->show(depth)
+                                                                        + ", ";
+                                                        }
+                                                )
                                         )
                                         + (elems->size() == 0 ? "" : std::get<0>(*elems->back())->show(depth))
                                         + std::string(u8"»");

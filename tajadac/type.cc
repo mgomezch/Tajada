@@ -9,34 +9,85 @@
 
 #include "type.hh"
 
+#ifndef TAJADA_UNUSED_PARAMETER
+#       define TAJADA_UNUSED_PARAMETER(p) static_cast<void>(p);
+#endif
+
 namespace Tajada {
         namespace Type {
+                Type::Type(Type::Complete p_is_complete): is_complete(p_is_complete) {}
                 Type::~Type() {}
 
-                std::string Boolean  ::show(unsigned int depth) { return u8"café"   ; }
-                std::string Character::show(unsigned int depth) { return u8"caraota"; }
-                std::string Integer  ::show(unsigned int depth) { return u8"queso"  ; }
-                std::string Float    ::show(unsigned int depth) { return u8"papelón"; }
+                std::string Boolean  ::show(unsigned int depth) { TAJADA_UNUSED_PARAMETER(depth); return u8"café"   ; }
+                std::string Character::show(unsigned int depth) { TAJADA_UNUSED_PARAMETER(depth); return u8"caraota"; }
+                std::string Integer  ::show(unsigned int depth) { TAJADA_UNUSED_PARAMETER(depth); return u8"queso"  ; }
+                std::string Float    ::show(unsigned int depth) { TAJADA_UNUSED_PARAMETER(depth); return u8"papelón"; }
 
-                Tuple::Tuple(std::list<std::tuple<Tajada::Type::Type *, std::string *> *> * elems):
-                        elems(elems)
-                {}
+                Boolean  ::Boolean  (): Type(Tajada::Type::Type::Complete::complete) {}
+                Character::Character(): Type(Tajada::Type::Type::Complete::complete) {}
+                Integer  ::Integer  (): Type(Tajada::Type::Type::Complete::complete) {}
+                Float    ::Float    (): Type(Tajada::Type::Type::Complete::complete) {}
 
-                Tajada::Type::Type * Tuple::operator [] (int n) const {
-                        if (static_cast<unsigned long>(n) >= elems->size()) return NULL;
+#define TAJADA_TYPE_STRUCTURE_TYPE_CONSTRUCTOR_CALL                                     \
+        Type(                                                                           \
+                std::accumulate(                                                        \
+                        p_elems->begin(),                                               \
+                        p_elems->end(),                                                 \
+                        Tajada::Type::Type::Complete::complete,                         \
+                        [](                                                             \
+                                Tajada::Type::Type::Complete acc,                       \
+                                decltype(*p_elems->begin()) elem                        \
+                        ) {                                                             \
+                                return                                                  \
+                                        acc == Tajada::Type::Type::Complete::incomplete \
+                                        ? acc                                           \
+                                        : std::get<0>(*elem)->is_complete;              \
+                        }                                                               \
+                )                                                                       \
+        )
+                Structure::Structure(
+                        std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> * p_elems
+                ):
+                        TAJADA_TYPE_STRUCTURE_TYPE_CONSTRUCTOR_CALL,
+                        elems(p_elems)
+                {
+                        /* Boring maintainable/readable/unobfuscated/traditional programming is boring. ☹ */
+                        auto n = p_elems->size();
 
-                        // Coño.  Coño.  Coño.  ¿Por qué coño no usé std::vector para todo desde el principio?  Coño, ¿std::list?  A qué clase de imbécil se le ocurre hacer un std::list para esto en C++11, con move constructors y rvalue references?  A mí.  Ahora hay que cambiar todo, coño.  Piratería temporal:
-                        for (auto it = elems->begin(); it != elems->end() && n >= 0; ++it, --n) {
-                                if (n == 0) return std::get<0>(**it);
+                        for (unsigned int i = 0; i < n; ++i) {
+                                auto nameptr = std::get<1>(*(*p_elems)[i]);
+                                if (nameptr) names[*nameptr] = i;
                         }
-                        return NULL;
                 }
 
-                Tajada::Type::Type * Tuple::operator [] (std::string const name) const {
-                        for (auto it = elems->begin(); it != elems->end(); ++it) {
-                                if (name == *std::get<1>(**it)) return std::get<0>(**it);
-                        }
-                        return NULL;
+                Tuple::Tuple(
+                        std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> * p_elems
+                ):
+                        TAJADA_TYPE_STRUCTURE_TYPE_CONSTRUCTOR_CALL,
+                        Structure(p_elems)
+                {}
+
+                Union::Union(
+                        std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> * p_elems
+                ):
+                        TAJADA_TYPE_STRUCTURE_TYPE_CONSTRUCTOR_CALL,
+                        Structure(p_elems)
+                {}
+#undef TAJADA_TYPE_STRUCTURE_TYPE_CONSTRUCTOR_CALL
+
+                Tajada::Type::Type * Structure::operator [] (int n) const {
+                        if (static_cast<unsigned long>(n) >= elems->size()) return nullptr;
+
+                        return std::get<0>(*(*elems)[n]);
+                }
+
+                Tajada::Type::Type * Structure::operator [] (std::string const name) const {
+                        auto r = names.find(name);
+
+                        return
+                                r == names.end()
+                                ? nullptr
+                                : (*this)[r->second];
                 }
 
                 std::string Tuple::show(unsigned int depth) {
@@ -104,7 +155,7 @@ namespace Tajada {
                                                 + std::get<0>(t)->show(depth)
                                                 + (*std::get<1>(t) == "" ? "" : " " + *std::get<1>(t) + ")");
                                 } (*(--(--elems->back())))
-                                + u8"o "
+                                + u8" o "
                                 + [depth](std::tuple<Type *, std::string *> t) {
                                         return
                                                 std::string(*std::get<1>(t) == "" ? "" : "(")
@@ -113,12 +164,27 @@ namespace Tajada {
                                 } (*(--elems->back()));
                 }
 
-                Array::Array(Type * contents):
-                        contents(contents)
+                Array::Array(
+                        Type * p_contents
+                ):
+                        Type(Tajada::Type::Type::Complete::incomplete),
+                        contents(p_contents),
+                        length(0)
+                {}
+
+                Array::Array(
+                        Type * p_contents,
+                        unsigned int p_length
+                ):
+                        Type(p_contents->is_complete),
+                        contents(p_contents),
+                        length(p_length)
                 {}
 
                 std::string Array::show(unsigned int depth) {
-                        return u8"arroz con " + contents->show(depth);
+                        return
+                                u8"arroz con "
+                                + contents->show(depth);
                 }
 
                 bool operator == (Type const & l, Type const & r) {

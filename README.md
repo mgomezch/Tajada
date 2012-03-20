@@ -19,7 +19,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     [Nota: Este documento se basa en y hace referencia a la versión 6.0.0 del estándar Unicode únicamente porque es la más reciente disponible al momento de su redacción, y la intención es que la especificación de Tajada sea independiente de versiones específicas de otros documentos. —fin de la nota]
 
-    Los **símbolos reservados** de Tajada son ciertas secuencias no vacías de puntos de código Unicode usadas por el lenguaje como parte de su sintaxis.  Los **símbolos** son aquellas secuencias no vacías de puntos de código Unicode consecutivos que ocurren en una tajada, no tienen como subsecuencia a ningún símbolo reservado, y son delimitados por símbolos reservados o el inicio o el final de la tajada.
+    Los **símbolos reservados** de Tajada son ciertas secuencias no vacías de puntos de código Unicode usadas por el lenguaje como parte de su sintaxis.  Los **símbolos** son aquellas secuencias no vacías de puntos de código Unicode consecutivos que puedan ocurrir en una tajada, no tienen como subsecuencia a ningún símbolo reservado, y son delimitados por símbolos reservados o el inicio o el final de la tajada.
 
     [Nota: Este documento utiliza el término “punto de código”, a veces “punto de código Unicode”, para hacer explícita la distinción entre bytes, caracteres y grafemas.  El término se usa en el mismo sentido que “character” y “code point” en el estándar Unicode. —fin de la nota]
 
@@ -133,7 +133,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **separador de literal de punto flotante** es un punto de código “MIDDLE DOT” (U+00B7, **·**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un separador de literal de punto flotante es un símbolo reservado.
 
-            Un **literal de punto flotante** es una secuencia compuesta de un literal entero, seguido de un separador de literal de punto flotante, seguido de otro literal entero.  Un literal de punto flotante representa un valor numérico de punto flotante.  El primer literal entero especifica la parte entera del valor representado.  El valor del segundo literal entero es igual a la parte fraccional del número de punto flotante representado multiplicada por $10^{n + 1}$, donde $n$ es el número de dígitos que componen a ese literal entero.
+            Un **literal de punto flotante** es una secuencia compuesta de un literal entero, seguido de un separador de literal de punto flotante, seguido de otro literal entero.  Un literal de punto flotante representa un valor numérico particular de punto flotante.  El primer literal entero especifica la parte entera del valor representado.  El valor del segundo literal entero es igual a la parte fraccional del número de punto flotante representado multiplicada por $10^{n}$, donde $n$ es el número de dígitos que componen a ese literal entero.
 
 @@//TODO: overflow, underflow, NaN, infinitos, etc
 
@@ -307,7 +307,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `salsa` es una palabra reservada.
 
-            Una **especificación de plato** es una secuencia compuesta por un identificador (el **nombre**), seguido de una `es`, seguido de una `un`, seguido de una `plato`, seguido de una `de`, seguido de una especificación de tipo (el **dominio** del plato) opcionalmente seguida de un identificador (el **nombre del dominio**), seguidos de una `con`, seguida de una `salsa`, seguida de una `de`, seguida de una especificación de tipo (el **rango** del plato).
+            Una **especificación de plato** es una secuencia compuesta por un identificador (el **nombre**), seguido de una `es`, seguido de una `un`, seguido de una `plato`, seguido de una `de`, seguido de una especificación de tipo (el **dominio** del plato), seguida de un identificador (el **nombre del dominio**), seguidos de una `con`, seguida de una `salsa`, seguida de una `de`, seguida de una especificación de tipo (el **rango** del plato).
 
             Una **declaración de plato** es una especificación de plato seguida de un terminador de frase.  Una declaración de plato hace que ese plato se considere declarado desde el punto en el que aparece en la tajada con el identificador y los tipos usados en su especificación de plato.
 
@@ -323,7 +323,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             `para` es una palabra reservada.
 
-            Una **especificación de cubierto** es una secuencia compuesta por una `hay`, seguida de una `un`, seguida de una `cubierto`, seguida de un operador, seguido de una `para`, seguida de una especificación de tipo (el *dominio* del cubierto), seguida de una `y`, seguida de una `salsa`, seguida de una `de`, seguida de una especificación de tipo (el *rango* del cubierto).
+            Una **especificación de cubierto** es una secuencia compuesta por una `hay`, seguida de una `un`, seguida de una `cubierto`, seguida de un operador, seguido de una `para`, seguida de una especificación de tipo (el *dominio* del cubierto), seguida de un identificador (el **nombre del dominio**, seguida de una `y`, seguida de una `salsa`, seguida de una `de`, seguida de una especificación de tipo (el *rango* del cubierto).
 
             Una **declaración de cubierto** es una especificación de cubierto seguida de un terminador de frase.  Una declaración de cubierto hace que ese cubierto se considere declarado desde el punto en el que aparece en la tajada con el operador y los tipos usados en su especificación de cubierto.
 
@@ -344,10 +344,6 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
             define una variable llamada `telita` de tipo `queso`. —fin del ejemplo]  La variable es un ente que almacena un **valor** del tipo de su definición y tiene asociado el nombre de su definición.
 
             Una tajada no define más de una variable con un mismo nombre fuera de todo bloque.
-
-            Una tajada no define ninguna variable cuyo nombre sea igual al de algún dulce.
-
-@@//TODO: ¿por qué no?
 
             El valor almacenado en una ubicación de una variable es indefinido desde la definición de la variable hasta que se le asigne un valor en una asignación a esa ubicación.  El comportamiento de una tajada es indefinido si utiliza un valor indefinido.  [Nota: La implementación está en libertad de asignar un valor por defecto a la variable al definirla, reportar un error, hacer explotar al disco duro, invocar a Beelzebub, o hacer cualquier otra cosa. —fin de la nota]
 
@@ -445,11 +441,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Un **indicador de llamada** es un punto de código “DOLLAR SIGN” (U+0024, **$**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.  Un indicador de llamada es un símbolo reservado.
 
-            Con cada plato declarado se pueden construir **expresiones de plato**, que son expresiones, con el identificador del plato, seguido de un indicador de llamada, seguido de una expresión (el **argumento**) cuyo tipo sea equivalente al dominio del plato.
+            Con cada plato declarado se pueden construir **expresiones de plato**, que son expresiones, con el identificador del plato, seguido de un indicador de llamada, seguido de una expresión (el **argumento**) cuyo tipo sea equivalente al dominio del plato.  El tipo de una expresión de plato es el rango del plato.
 
-            El tipo de una expresión de plato es el rango del plato.
-
-            Dentro del cuerpo de un plato se define automáticamente una variable cuyo identificador asociado es `@`.  El tipo de la variable `@` en un plato es el dominio del plato.  La variable `@` se crea al momento de la evaluación de una expresión de plato: primero es evaluado el argumento, y luego se crea la variable `@` en el alcance del cuerpo del plato como si se hubiera inicializado con el valor ya calculado del argumento.  Luego se ejecuta el cuerpo del plato hasta que ejecute una instrucción de retorno.  El valor de la expresión de plato será el valor de la expresión de retorno de la instrucción de retorno que el plato ejecutó.
+            Dentro del cuerpo de un plato se define automáticamente una variable (el **parámetro formal**) cuyo identificador asociado es el nombre del dominio del plato que ocurre en su definición.  El tipo del parámetro formal de un plato es el dominio del plato.  El parámetro formal se crea al momento de la evaluación de una expresión de plato: primero es evaluado el argumento, y luego se crea el parámetro formal en el alcance del cuerpo del plato como si se hubiera inicializado con el valor ya calculado del argumento.  Luego se ejecuta el cuerpo del plato hasta que ejecute una instrucción de retorno.  El valor de la expresión de plato será el valor de la expresión de retorno de la instrucción de retorno que el plato ejecutó.
 
             Los efectos de la evaluación del argumento de una expresión de plato sobre el estado manejado por la ejecución de una tajada y su entorno de ejecución se realizan completamente antes del comienzo de la ejecución del cuerpo del plato.
 
@@ -463,7 +457,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 1.  Un **operador de resta** es un punto de código “MINUS SIGN” (U+2212, **−**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                Si existe un cubierto declarado para un cierto operador unario, entonces se puede construir una expresión con el operador seguido de una expresión cuyo tipo sea equivalente al del ingrediente de la arepa del dominio del operador.  El tipo de la expresión resultante es el tipo del rango del cubierto.  El valor de la expresión será el valor de la evaluación del cubierto al pasarle como parámetro una arepa rellena cuyo único relleno sea el valor de la expresión.
+                Con cada cubierto declarado para un cierto operador unario se pueden construir **expresiones de cubierto unario**, que son expresiones, con el operador seguido de una expresión (el **argumento**) cuyo tipo sea equivalente al del ingrediente de la arepa del dominio del cubierto.  El tipo de la expresión resultante es el rango del cubierto.  El valor de la expresión de cubierto unario será el que resultaría de evaluar una expresión de plato sobre el mismo argumento, usando un plato con el mismo dominio, nombre del dominio, rango y cuerpo que el cubierto.
 
             2. ##### Binarios
 
@@ -483,11 +477,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 7.  Un **operador de no‐igualdad**, que es un punto de código “NOT EQUAL TO” (U+2260, **≠**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
-                Con cada cubierto declarado para un operador binario se pueden construir **expresiones de operador binario infijo**, que son expresiones, con una expresión (el **primer argumento** cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido del operador del cubierto, seguido de una expresión (el **segundo argumento**) cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.
+                Con cada cubierto declarado para un operador binario se pueden construir **expresiones de cubierto binario infijo**, que son expresiones, con una expresión (el **primer argumento** cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido del operador del cubierto, seguido de una expresión (el **segundo argumento**) cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.  El tipo de la expresión resultante es el rango del cubierto, y el valor de la expresión será el que resultaría de evaluar una expresión de plato sobre una arepa rellena cuyos únicos rellenos fueran el primer y el segundo argumento, usando un plato con el mismo dominio, nombre del dominio, rango y cuerpo que el cubierto.
 
-                Con cada cubierto declarado para un operador binario se pueden construir **expresiones de operador binario prefijo**, que son expresiones, con un inicio de paréntesis, seguido por el operador del cubierto, seguido por un fin de paréntesis, seguido por una expresión cuyo tipo sea el dominio del cubierto.
-
-                En ambos casos, el tipo de la expresión resultante es el tipo del rango del cubierto, y el valor de la expresión será el que resultaría de evaluar una expresión de plato sobre el mismo argumento, usando un plato con el mismo dominio, rango y cuerpo que el cubierto.
+                Con cada cubierto declarado para un operador binario se pueden construir **expresiones de cubierto binario prefijo**, que son expresiones, con un inicio de paréntesis, seguido por el operador del cubierto, seguido por un fin de paréntesis, seguido por un indicador de llamada, seguido por una expresión (el **argumento**) cuyo tipo sea el dominio del cubierto.  El tipo de la expresión resultante es el rango del cubierto, y el valor de la expresión será el que resultaría de evaluar una expresión de plato sobre el mismo argumento, usando un plato con el mismo dominio, nombre del dominio, rango y cuerpo que el cubierto.
 
         4.  #### Variables
 
@@ -499,7 +491,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             *   El bloque en el que está la instrucción no define ninguna variable con el nombre de la variable de interés, pero el bloque es el cuerpo de un caso de tipo cuyo caso identifica a un ingrediente de la selección por tipo a la que pertenece ese caso de tipo y ese ingrediente es equivalente al tipo de la variable de interés, y el nombre de la variable de interés es igual al identificador de la misma selección por tipo.
 
-            *   El nombre de la variable es `@` y la instrucción está contenida directa o indirectamente en el cuerpo de un plato o un cubierto.
+            *   La variable es el parámetro formal de un plato o cubierto y la instrucción está contenida directa o indirectamente en el cuerpo de ese plato o un cubierto.
 
             Se puede construir una expresión con el nombre de una variable alcanzable.  Si el tipo de la variable es una referencia, el tipo y el valor de la expresión son el tipo referido y el valor referido de la referencia; si no, el tipo y el valor de la expresión son el tipo y el valor de la variable.
 

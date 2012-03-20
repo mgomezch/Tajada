@@ -1,10 +1,12 @@
+defines   = nullptr=NULL _GNU_SOURCE TAJADA_DEBUG=0
+
 SHELL     = bash
 
 CC        = gcc
-CFLAGS    = -g -Wall -Wextra $(DEFINES:%=-D%)
+CFLAGS    = -ggdb -Wall -Wextra $(defines:%=-D%)
 
 CXX       = g++
-CXXFLAGS  = -g -Wall -Wextra $(DEFINES:%=-D%) --std=gnu++0x
+CXXFLAGS  = -ggdb -Wall -Wextra $(defines:%=-D%) --std=gnu++0x
 
 YACC      = bison
 YACCFLAGS = --warnings=all --report=all -g -x
@@ -17,8 +19,6 @@ LDLIBS    = re2
 
 
 build-exec = $(CXX) $(CXXFLAGS) -o $@ $^ $(LDLIBS:%=-l%)
-
-defines = _GNU_SOURCE TAJADA_DEBUG=0
 
 
 

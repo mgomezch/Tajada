@@ -4,14 +4,14 @@
 /* §1.2.2.1 */
 #define TAJADA_ENDLINES       "\u000A\u000B\u000C\u000D\u0085\u2028\u2029"
 
-#define TAJADA_RESERVED_START u8"][←→()=≠+−×÷~&«»{}≔.,;…\\\\·‹⫽“\u0009-\u000D\u0020\u0085\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000"
+#define TAJADA_RESERVED_START u8"][←→()$+−×÷~=≠«»⋘⋙␣{}≔.,;…∷∶·‹⫽“\\\\\u0009-\u000D\u0020\u0085\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000"
 
-#define TAJADA_RESERVED_WORD(TOKEN, tag, word)                                          \
-        TOKEN(                                                                          \
-                tag,                                                                    \
-                u8"palabra reservada “" word u8"”",                                     \
-                u8"(" word u8")(?P<lookahead>[" TAJADA_RESERVED_START u8"]|$)",         \
-                void                                                                    \
+#define TAJADA_RESERVED_WORD(TOKEN, tag, word)                                  \
+        TOKEN(                                                                  \
+                tag,                                                            \
+                u8"palabra reservada “" word u8"”",                             \
+                u8"(" word u8")(?P<lookahead>[" TAJADA_RESERVED_START u8"]|$)", \
+                void                                                            \
         )
 
 #define TAJADA_TOKEN_DATA(TOKEN)                                               \
@@ -132,7 +132,7 @@
                                                                                \
         /* §2.5p2 */                                                           \
         TOKEN(                                                                 \
-                STMT_END,                                                      \
+                REF_OP,                                                        \
                 u8"inicio de referencia",                                      \
                 u8"(⋘)",                                                       \
                 void                                                           \
@@ -140,7 +140,7 @@
                                                                                \
         /* §2.5p3 */                                                           \
         TOKEN(                                                                 \
-                STMT_END,                                                      \
+                REF_CL,                                                        \
                 u8"fin de referencia",                                         \
                 u8"(⋙)",                                                       \
                 void                                                           \
@@ -183,7 +183,7 @@
                                                                                \
         /* §3.2.1p8 */                                                         \
         TOKEN(                                                                 \
-                BLOCK_OP,                                                      \
+                UNDEF_INIT,                                                    \
                 u8"inicialización indefinida",                                 \
                 u8"(␣)",                                                       \
                 void                                                           \
@@ -374,7 +374,7 @@
                                                                                \
         /* §3.5.2.4p1 */                                                       \
         TOKEN(                                                                 \
-                RANGE_SEP,                                                     \
+                SWITCH,                                                        \
                 u8"indicador de selección por tipo",                           \
                 u8"(∷)",                                                       \
                 void                                                           \
@@ -382,7 +382,7 @@
                                                                                \
         /* §3.5.2.4p2 */                                                       \
         TOKEN(                                                                 \
-                RANGE_SEP,                                                     \
+                CASE,                                                          \
                 u8"indicador de caso de tipo",                                 \
                 u8"(∶)",                                                       \
                 void                                                           \

@@ -1,12 +1,23 @@
 #ifndef TAJADA_AST_HH
 #define TAJADA_AST_HH
 
+#include <list>
 #include <string>
 
 #include "type.hh"
 
 namespace Tajada {
         namespace AST {
+                enum class Operator : unsigned int {
+                        minus,
+                        plus,
+                        mult,
+                        div,
+                        mod,
+                        eq,
+                        neq
+                };
+
                 class AST {
                         public:
                                 virtual std::string show(unsigned int depth = 0) = 0;
@@ -56,11 +67,13 @@ namespace Tajada {
                 class FunctionDeclaration : public virtual Tajada::AST::Statement {
                         public:
                                 std::string * name;
+                                std::string * domain_name;
                                 Tajada::Type::Type * domain;
                                 Tajada::Type::Type * codomain;
 
                                 FunctionDeclaration(
                                         std::string * name,
+                                        std::string * domain_name,
                                         Tajada::Type::Type * domain,
                                         Tajada::Type::Type * codomain
                                 );
@@ -106,16 +119,6 @@ namespace Tajada {
                                 bool is_lvalue;
 
                                 Expression(
-                                        Tajada::Type::Type * type,
-                                        bool is_lvalue
-                                );
-                };
-
-                class Argument : public virtual Tajada::AST::Expression {
-                        public:
-                                
-
-                                Argument(
                                         Tajada::Type::Type * type,
                                         bool is_lvalue
                                 );
@@ -171,9 +174,9 @@ namespace Tajada {
 
                         class Tuple : public virtual Tajada::AST::Expression {
                                 public:
-                                        std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * elems;
+                                        std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *> * elems;
 
-                                        Tuple(std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * elems);
+                                        Tuple(std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *> * elems);
 
                                         virtual std::string show(unsigned int depth = 0);
                         };

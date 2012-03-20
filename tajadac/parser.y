@@ -40,6 +40,31 @@
 /* This doesn’t work.  We’d have to pollute the lexer code with forward‐declarations for …well, everything.  Fuck that. */
 /* %code requires { #include "lex.hh" } */
 
+
+
+%code {
+#define TAJADA_CALL_UNARY(nombre, argumento, out, loc)                          \
+        auto s = scope;                                                         \
+        decltype(s->functions.begin()) it;                                      \
+                                                                                \
+        while (s != nullptr) {                                                  \
+                if (                                                            \
+                        (it = s->functions.find(*nombre)) != s->functions.end() \
+                        && *argumento->type == *std::get<0>(it->second)         \
+                ) break;                                                        \
+                s = s->parent;                                                  \
+        }                                                                       \
+                                                                                \
+        if (s == nullptr) {                                                     \
+                error(loc, "Attempt to use an undefined function");             \
+                YYERROR;                                                        \
+        }                                                                       \
+                                                                                \
+        out = new Tajada::AST::Call(nombre, &it->second, argumento);
+}
+
+
+
 %parse-param { Tajada::lex::Scanner * scanner }
 %lex-param   { Tajada::lex::Scanner * scanner }
 
@@ -61,7 +86,6 @@
 %nonassoc TUPLE_ARROW
 %nonassoc ARRAY_ACCESS_OP
 %nonassoc PAREN_CL
-%nonassoc REF_MARK
 
 %right ELSE
 
@@ -84,7 +108,7 @@
 %union { Tajada::AST::Block * block; }
 %type <block> block
 
-%union { std::string * op; }
+%union { std::tuple<std::string *, Tajada::AST::Operator> * op; }
 %type <op> operator
 
 %union { Tajada::Type::Type * typespec; }
@@ -93,8 +117,8 @@
 %union { std::tuple<Tajada::Type::Type *, std::string *> * structure_typespec; }
 %type <structure_typespec> structure_typespec
 
-%union { std::list<std::tuple<Tajada::Type::Type *, std::string *> *> * structure_typespecs; }
-%type <structure_typespecs> structure_typespecs
+%union { std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> * structure_typespecs; }
+%type <structure_typespecs> structure_typespecs structure_types
 
 %union { Tajada::AST::VariableDefinition * var_def; }
 %type <var_def> var_def
@@ -108,8 +132,11 @@
 %union { std::tuple<Tajada::AST::Expression *, std::string *> * tuple_elem; }
 %type <tuple_elem> tuple_elem
 
-%union { std::list<std::tuple<Tajada::AST::Expression *, std::string *> *> * tuple_elems; }
+%union { std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *> * tuple_elems; }
 %type <tuple_elems> tuple_elems
+
+%union {  std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::FunctionDefinition **> * func_spec; }
+%type <func_spec> func_spec
 
 
 
@@ -126,7 +153,7 @@ tajada
 {
         bool found_undefined = false;
         for (auto it = scope->functions.begin(); it != scope->functions.end(); ++it) {
-                if (std::get<2>(it->second) == NULL) {
+                if (std::get<2>(it->second) == nullptr) {
                         error(
                                 @[main],
                                 std::string(u8"Function ")
@@ -143,7 +170,7 @@ tajada
 
         if (found_undefined) YYERROR;
 
-        *tree = new Tajada::AST::Program($[statements], $[main]);
+        *tree = $$ = new Tajada::AST::Program($[statements], $[main]);
 }
 
 ;
@@ -168,6 +195,7 @@ toplevels
 
 /* §3p1 */
 toplevel
+
 : var_def[def]
 { $$ = $[def]; }
 
@@ -175,159 +203,206 @@ toplevel
 | IDENT[identificador] ES DULCE DE typespec[tipo] STMT_END
 {
         if (scope->aliases.find(*$[identificador]) != scope->aliases.end()) {
-                error(@[identificador], "Attempt to redefine a type alias");
+                error(
+                        @[identificador],
+                        u8"Attempt to redefine type alias "
+                        + *$[identificador]
+                );
                 YYERROR;
         }
         scope->aliases[*$[identificador]] = $[tipo];
         $$ = new Tajada::AST::TypeAlias($[identificador], $[tipo]);
 }
 
-/* §3.1.2p5,6 */
-| IDENT[nombre] ES UN PLATO DE typespec[dominio] IDENT[nombre_dominio] CON SALSA DE typespec[codominio] STMT_END
+/* §3.1.2p6, §3.1.3p6 */
+| func_spec STMT_END
 {
-        auto bucket = scope->functions.bucket(*$[nombre]);
-        bool insert = true;
-
-        for (auto it = scope->functions.begin(bucket); it != scope->functions.end(bucket); ++it) {
-                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
-                insert = false;
-                break;
-        }
-
-        if (insert) {
-                scope->functions.insert(
-                        std::make_pair(
-                                *$[nombre],
-                                std::make_tuple(
-                                        $[dominio],
-                                        $[codominio],
-                                        reinterpret_cast<Tajada::AST::FunctionDefinition *>(NULL)
-                                )
-                        )
-                );
-        }
-
-        $$ = new Tajada::AST::FunctionDeclaration($[nombre], $[dominio], $[codominio]);
+        $$ = std::get<0>(*$[func_spec]);
+        delete $[func_spec];
 }
 
-| IDENT[nombre] ES UN PLATO DE typespec[dominio] CON SALSA DE typespec[codominio] STMT_END
+/* §3.2.2p1, §3.2.3p1 */
+| func_spec block[cuerpo]
 {
-        auto bucket = scope->functions.bucket(*$[nombre]);
-        bool insert = true;
-
-        for (auto it = scope->functions.begin(bucket); it != scope->functions.end(bucket); ++it) {
-                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
-                insert = false;
-                break;
-        }
-
-        if (insert) {
-                scope->functions.insert(
-                        std::make_pair(
-                                *$[nombre],
-                                std::make_tuple(
-                                        $[dominio],
-                                        $[codominio],
-                                        reinterpret_cast<Tajada::AST::FunctionDefinition *>(NULL)
-                                )
-                        )
-                );
-        }
-
-        $$ = new Tajada::AST::FunctionDeclaration($[nombre], $[dominio], $[codominio]);
-}
-
-/* §3.1.3p5,6 */
-| HAY UN CUBIERTO operator[nombre] PARA typespec[dominio] Y SALSA DE typespec[codominio] STMT_END
-{
-        auto bucket = scope->functions.bucket(*$[nombre]);
-        bool insert = true;
-
-        for (auto it = scope->functions.begin(bucket); it != scope->functions.end(bucket); ++it) {
-                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
-                insert = false;
-                break;
-        }
-
-        if (insert) {
-                scope->functions.insert(
-                        std::make_pair(
-                                *$[nombre],
-                                std::make_tuple(
-                                        $[dominio],
-                                        $[codominio],
-                                        reinterpret_cast<Tajada::AST::FunctionDefinition *>(NULL)
-                                )
-                        )
-                );
-        }
-
-        $$ = new Tajada::AST::FunctionDeclaration($[nombre], $[dominio], $[codominio]);
-}
-
-/* §3.2.2p1 */
-| IDENT[nombre] ES UN PLATO DE typespec[dominio] IDENT[nombre_dominio] CON SALSA DE typespec[codominio] block[body]
-{
-        auto bucket = scope->functions.bucket(*$[nombre]);
-        bool insert = true;
-
-        auto it = scope->functions.begin(bucket);
-        for (; it != scope->functions.end(bucket); ++it) {
-                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
-                insert = false;
-                break;
-        }
-
-        auto ret = new Tajada::AST::FunctionDefinition($[nombre], $[nombre_dominio], $[dominio], $[codominio], $[body]);
-
-        if (insert) scope->functions.insert(std::make_pair(*$[nombre], std::make_tuple($[dominio], $[codominio], ret)));
-        else std::get<2>(it->second) = ret;
-
+        // TODO: enter_scope y exit_scope con nombre_dominio y dominio
+        auto d = std::get<0>(*$[func_spec]);
+        auto ret = new Tajada::AST::FunctionDefinition(d->name, d->domain_name, d->domain, d->codomain, $[cuerpo]);
+        *std::get<1>(*$[func_spec]) = ret;
         $$ = ret;
-}
-
-| IDENT[nombre] ES UN PLATO DE typespec[dominio] CON SALSA DE typespec[codominio] block[body]
-{
-        auto bucket = scope->functions.bucket(*$[nombre]);
-        bool insert = true;
-
-        auto it = scope->functions.begin(bucket);
-        for (; it != scope->functions.end(bucket); ++it) {
-                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
-                insert = false;
-                break;
-        }
-
-        auto ret = new Tajada::AST::FunctionDefinition($[nombre], new std::string(), $[dominio], $[codominio], $[body]);
-
-        if (insert) scope->functions.insert(std::make_pair(*$[nombre], std::make_tuple($[dominio], $[codominio], ret)));
-        else std::get<2>(it->second) = ret;
-
-        $$ = ret;
-}
-
-/* §3.2.3p1 */
-| HAY UN CUBIERTO operator[nombre] PARA typespec[dominio] Y SALSA DE typespec[codominio] block[body]
-{
-        auto bucket = scope->functions.bucket(*$[nombre]);
-        bool insert = true;
-
-        auto it = scope->functions.begin(bucket);
-        for (; it != scope->functions.end(bucket); ++it) {
-                if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
-                insert = false;
-                break;
-        }
-
-        auto ret = new Tajada::AST::FunctionDefinition($[nombre], new std::string(), $[dominio], $[codominio], $[body]);
-
-        if (insert) scope->functions.insert(std::make_pair(*$[nombre], std::make_tuple($[dominio], $[codominio], ret)));
-        else std::get<2>(it->second) = ret;
-
-        $$ = ret;
+        delete $[func_spec];
 }
 
 ;
+
+
+
+func_spec[spec]
+
+/* §3.1.2p5 */
+: IDENT[nombre] ES UN PLATO DE typespec[dominio] IDENT[nombre_dominio] CON SALSA DE typespec[codominio]
+{
+        auto bucket = scope->functions.bucket(*$[nombre]);
+        bool insert = true;
+
+        auto it = scope->functions.begin(bucket);
+        for (; it != scope->functions.end(bucket); ++it) {
+                // TODO: ponerlo así para meterle polimorfismo más bonito
+                // if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
+                if (*$[dominio] != *std::get<0>(it->second)) continue;
+                if (*$[codominio] != *std::get<1>(it->second)) {
+                        error(
+                                @[spec],
+                                u8"Conflicting return types for “"
+                                + *$[nombre]
+                                + u8"” taking “"
+                                + $[dominio]->show()
+                                + u8"”"
+                        );
+                        YYERROR;
+                }
+                insert = false;
+                break;
+        }
+
+        Tajada::AST::FunctionDefinition ** r;
+
+        if (insert) {
+                auto it = scope->functions.insert(
+                        std::make_pair(
+                                *$[nombre],
+                                std::make_tuple(
+                                        $[dominio],
+                                        $[codominio],
+                                        reinterpret_cast<Tajada::AST::FunctionDefinition *>(nullptr)
+                                )
+                        )
+                );
+                r = &std::get<2>(it->second);
+        } else {
+                r = &std::get<2>(it->second);
+        }
+
+        $$ = new std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::FunctionDefinition **>(
+                new Tajada::AST::FunctionDeclaration($[nombre], $[nombre_dominio], $[dominio], $[codominio]),
+                r
+        );
+}
+
+/* §3.1.3p5 */
+| HAY UN CUBIERTO operator[operador] PARA typespec[dominio] IDENT[nombre_dominio] Y SALSA DE typespec[codominio]
+{
+        auto t = dynamic_cast<Tajada::Type::Tuple *>($[dominio]);
+
+        if (!t) {
+                error(
+                        @[dominio],
+                        u8"Domain of operator “"
+                        + *std::get<0>(*$[operador])
+                        + u8"” declared as non‐tuple type “"
+                        + $[dominio]->show()
+                        + u8"”"
+                );
+                YYERROR;
+        }
+
+        switch (t->elems->size()) {
+                case 1:
+                        switch (std::get<1>(*$[operador])) {
+                                case Tajada::AST::Operator::minus:
+                                        break;
+
+                                default:
+                                        error(
+                                                @[spec],
+                                                u8"Invalid unary operator “"
+                                                + *std::get<0>(*$[operador])
+                                                + u8"”"
+                                        );
+                                        YYERROR;
+                        }
+                        break;
+
+                case 2:
+                        switch (std::get<1>(*$[operador])) {
+                                case Tajada::AST::Operator::minus:
+                                case Tajada::AST::Operator::plus:
+                                case Tajada::AST::Operator::mult:
+                                case Tajada::AST::Operator::div:
+                                case Tajada::AST::Operator::mod:
+                                case Tajada::AST::Operator::eq:
+                                case Tajada::AST::Operator::neq:
+                                        break;
+
+                                default:
+                                        error(
+                                                @[spec],
+                                                u8"Invalid binary operator “"
+                                                + *std::get<0>(*$[operador])
+                                                + u8"”"
+                                        );
+                                        YYERROR;
+                        }
+                        break;
+
+                default:
+                        error(
+                                @[spec],
+                                u8"Operator “"
+                                + *std::get<0>(*$[operador])
+                                + u8"” declared with invalid arity "
+                                + std::to_string(t->elems->size())
+                        );
+                        YYERROR;
+        }
+
+        auto bucket = scope->functions.bucket(*std::get<0>(*$[operador]));
+        bool insert = true;
+
+        auto it = scope->functions.begin(bucket);
+        for (; it != scope->functions.end(bucket); ++it) {
+                // TODO: ponerlo así para meterle polimorfismo más bonito
+                // if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
+                if (*$[dominio] != *std::get<0>(it->second)) continue;
+                if (*$[codominio] != *std::get<1>(it->second)) {
+                        error(
+                                @[spec],
+                                u8"Conflicting return types for “"
+                                + *std::get<0>(*$[operador])
+                                + u8"” taking “"
+                                + $[dominio]->show()
+                                + u8"”"
+                        );
+                        YYERROR;
+                }
+                insert = false;
+                break;
+        }
+
+        Tajada::AST::FunctionDefinition ** r;
+
+        if (insert) {
+                auto it = scope->functions.insert(
+                        std::make_pair(
+                                *std::get<0>(*$[operador]),
+                                std::make_tuple(
+                                        $[dominio],
+                                        $[codominio],
+                                        reinterpret_cast<Tajada::AST::FunctionDefinition *>(nullptr)
+                                )
+                        )
+                );
+                r = &std::get<2>(it->second);
+        } else {
+                r = &std::get<2>(it->second);
+        }
+
+        $$ = new std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::FunctionDefinition **>(
+                new Tajada::AST::FunctionDeclaration(std::get<0>(*$[operador]), $[nombre_dominio], $[dominio], $[codominio]),
+                r
+        );
+
+        delete $[operador];
+}
 
 
 
@@ -355,12 +430,12 @@ typespec
         auto s = scope;
         decltype(s->aliases.begin()) it;
 
-        while (s != NULL) {
+        while (s != nullptr) {
                 if ((it = s->aliases.find(*$[nombre])) != s->aliases.end()) break;
                 s = s->parent;
         }
 
-        if (s == NULL) {
+        if (s == nullptr) {
                 error(@[nombre], "Attempt to use an undefined type alias");
                 YYERROR;
         }
@@ -384,33 +459,15 @@ typespec
 | PAPELON
 { $$ = new Tajada::Type::Float(); }
 
-/* §2.2p7 */
-| AREPA VIUDA
-{ $$ = new Tajada::Type::Tuple(new std::list<std::tuple<Tajada::Type::Type *, std::string *> *>()); }
-
-/* §2.2p8 */
-| AREPA DE structure_typespec[ingrediente]
-{
-        auto ret = new Tajada::Type::Tuple(new std::list<std::tuple<Tajada::Type::Type *, std::string *> *>());
-        ret->elems->push_back($[ingrediente]);
-        $$ = ret;
-}
-
-/* §2.2p11 */
-| AREPA CON structure_typespecs[ingredientes] Y structure_typespec[ingrediente]
-{
-        auto ret = new Tajada::Type::Tuple($[ingredientes]);
-        ret->elems->push_back($[ingrediente]);
-        $$ = ret;
-}
+/* §2.2 */
+| AREPA structure_types[ingredientes]
+{ $$ = new Tajada::Type::Tuple($[ingredientes]); }
 
 /* §2.3p6 */
 | CACHAPA CON structure_typespecs[ingredientes] O structure_typespec[ingrediente]
 {
-        auto ret = new Tajada::Type::Union();
         $[ingredientes]->push_back($[ingrediente]);
-        ret->elems = $[ingredientes];
-        $$ = ret;
+        $$ = new Tajada::Type::Union($[ingredientes]);
 }
 
 /* §2.4p3 */
@@ -418,9 +475,8 @@ typespec
 { $$ = new Tajada::Type::Array($[contenido]); }
 
 /* §2.4p4 */
-/* TODO: Y con el tamaño ¿qué hago?  Hay que definir todo eso mejor. */
-| intlit TAZAS DE ARROZ CON typespec[contenido]
-{ $$ = new Tajada::Type::Array($[contenido]); }
+| intlit[longitud] TAZAS DE ARROZ CON typespec[contenido]
+{ $$ = new Tajada::Type::Array($[contenido], $[longitud]->value); }
 
 ;
 
@@ -436,10 +492,30 @@ structure_typespecs
 }
 
 | structure_typespec[ingrediente]
-{ $$ = new std::list<std::tuple<Tajada::Type::Type *, std::string *> *>(1, $[ingrediente]); }
-
+{ $$ = new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *>(1, $[ingrediente]); }
 
 ;
+
+
+
+structure_types
+
+/* §2.2p8 */
+: VIUDA
+{ $$ = new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *>(); }
+
+/* §2.2p9 */
+| DE structure_typespec[ingrediente]
+{
+        $$ = new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *>({$[ingrediente]});
+}
+
+/* §2.2p12 */
+| CON structure_typespecs[ingredientes] Y structure_typespec[ingrediente]
+{
+        $[ingredientes]->push_back($[ingrediente]);
+        $$ = $[ingredientes];
+}
 
 
 
@@ -462,15 +538,15 @@ expr
 : LIT_STR[token]
 { $$ = new Tajada::AST::Literal::String($[token]); }
 
-/* §3.4.1.1p2 */
+/* §2.1.1p4, §3.4.1.1p2 */ /* TODO: CHECK LAST REF */
 | TETERO
-{ $$ = new Tajada::AST::Literal::False(); }
+{ $$ = new Tajada::AST::Literal::Boolean(false); }
 
-/* §3.4.1.1p2 */
+/* §2.1.1p4, §3.4.1.1p2 */ /* TODO: CHECK LAST REF */
 | NEGRITO
-{ $$ = new Tajada::AST::Literal::True(); }
+{ $$ = new Tajada::AST::Literal::Boolean(true); }
 
-/* §3.4.1.1p3 */
+/* §2.1.2p4, §3.4.1.1p3 */
 | LIT_CHR[token]
 { $$ = new Tajada::AST::Literal::Character($[token]); }
 
@@ -478,84 +554,28 @@ expr
 | intlit[literal]
 { $$ = $[literal]; }
 
-/* §3.4.1.1p5, §2.1.4p4 */
+/* old ref: §3.4.1.1p5, §2.1.4p4 */
+/* §1.3.2p2 */
 | LIT_INT[integer] FLOAT_SEP LIT_INT[fractional]
 { $$ = new Tajada::AST::Literal::Float($[integer], $[fractional]); }
 
 /* §3.4.1.2p4 */
 | TUPLE_OP TUPLE_CL
-{ $$ = new Tajada::AST::Literal::Tuple(new std::list<std::tuple<Tajada::AST::Expression *, std::string *> *>()); }
+{ $$ = new Tajada::AST::Literal::Tuple(new std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *>()); }
 
 /* §3.4.1.2p4 */
 | TUPLE_OP tuple_elems TUPLE_CL
 { $$ = new Tajada::AST::Literal::Tuple($[tuple_elems]); }
 
-/* TODO: arreglar el peo del pasaje por referenca */
-
-/* §3.4.2p2 */
-| IDENT[nombre] CALL expr[argumento]
-| IDENT[nombre] CALL REF_MARK expr[argumento]
-{
-        auto s = scope;
-        decltype(s->functions.begin()) it;
-
-        while (s != NULL) {
-                if (
-                        (it = s->functions.find(*$[nombre])) != s->functions.end()
-                        && *$[argumento]->type == *std::get<0>(it->second)
-                ) break;
-                s = s->parent;
-        }
-
-        if (s == NULL) {
-                error(@[nombre], "Attempt to use an undefined function");
-                YYERROR;
-        }
-
-        $$ = new Tajada::AST::Call($[nombre], &it->second, $[argumento]);
-}
-
-/* TODO: operadores unarios */
-| OP_MINUS expr
-| OP_MINUS REF_OP expr REF_CL
-
-/* §3.4.3.2l1.1 */
-|        expr[l]        OP_MINUS        expr[r]
-| REF_OP expr[l] REF_CL OP_MINUS        expr[r]
-|        expr[l]        OP_MINUS REF_OP expr[r] REF_CL
-| REF_OP expr[l] REF_CL OP_MINUS REF_OP expr[r] REF_CL
-| PAREN_OP OP_MINUS PAREN_CL        expr[parametros]
-| PAREN_OP OP_MINUS PAREN_CL REF_OP expr[parametros] REF_CL
-/*| ref expr[l] OP_MINUS ref expr[r]*/
-/*| PAREN_OP OP_MINUS PAREN_CL ref expr[parametros]*/
-
-/* §3.4.3.2l1.2 */
-|        expr[l]        OP_PLUS        expr[r]
-| REF_OP expr[l] REF_CL OP_PLUS        expr[r]
-|        expr[l]        OP_PLUS REF_OP expr[r] REF_CL
-| REF_OP expr[l] REF_CL OP_PLUS REF_OP expr[r] REF_CL
-| PAREN_OP OP_PLUS PAREN_CL        expr[parametros]
-| PAREN_OP OP_PLUS REF_CL PAREN_OP expr[parametros] REF_CL
-
-/* §3.4.3.2l1.3 */
-/*| ref expr[l] OP_MULT ref expr[r]*/
-/*| PAREN_OP OP_MULT PAREN_CL ref expr[parametros]*/
-
-/* §3.4.3.2l1.4 */
-/*| ref expr[l] OP_DIV ref expr[r]*/
-/*| PAREN_OP OP_DIV PAREN_CL ref expr[parametros]*/
-
-/* §3.4.3.2l1.5 */
-/*| ref expr[l] OP_MOD ref expr[r]*/
-/*| PAREN_OP OP_MOD PAREN_CL ref expr[parametros]*/
-
-/* §3.4.3.2l1.6 */
-/*| ref expr[l] OP_EQ ref expr[r]*/
-/*| PAREN_OP OP_EQ PAREN_CL ref expr[parametros]*/
-
-/* §3.4.3.2l1.7 */
-/*| ref expr[l] OP_NEQ ref expr[r]*/
-/*| PAREN_OP OP_NEQ PAREN_CL ref expr[parametros]*/
+/* §3.4.2p2                 */ |             IDENT[nombre]          CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) }
+/* TODO: operadores unarios */ |          OP_MINUS[nombre]               expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) }
+/* §3.4.3.2l1.1             */ | PAREN_OP OP_MINUS[nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MINUS[nombre] expr[r]
+/* §3.4.3.2l1.2             */ | PAREN_OP OP_PLUS [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_PLUS [nombre] expr[r]
+/* §3.4.3.2l1.3             */ | PAREN_OP OP_MULT [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MULT [nombre] expr[r]
+/* §3.4.3.2l1.4             */ | PAREN_OP OP_DIV  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_DIV  [nombre] expr[r]
+/* §3.4.3.2l1.5             */ | PAREN_OP OP_MOD  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MOD  [nombre] expr[r]
+/* §3.4.3.2l1.6             */ | PAREN_OP OP_EQ   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_EQ   [nombre] expr[r]
+/* §3.4.3.2l1.7             */ | PAREN_OP OP_NEQ  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_NEQ  [nombre] expr[r]
 
 /* §3.4.4p2 */
 | IDENT[nombre]
@@ -563,12 +583,12 @@ expr
         auto s = scope;
         decltype(s->variables.begin()) it;
 
-        while (s != NULL) {
+        while (s != nullptr) {
                 if ((it = s->variables.find(*$[nombre])) != s->variables.end()) break;
                 s = s->parent;
         }
 
-        if (s == NULL) {
+        if (s == nullptr) {
                 error(@[nombre], "Attempt to use an undefined variable");
                 YYERROR;
         }
@@ -585,12 +605,12 @@ expr
 {
         auto tp = dynamic_cast<Tajada::Type::Tuple *>($[source]->type);
 
-        if (tp == NULL) {
+        if (tp == nullptr) {
                 error(@$, u8"Attempt to access numbered tuple field by number on expression of non‐tuple type");
                 YYERROR;
         }
 
-        if ((*tp)[$[field]->value] == NULL) {
+        if ((*tp)[$[field]->value] == nullptr) {
                 error(@$, u8"Attempt to access nonexistent tuple field");
                 YYERROR;
         }
@@ -603,12 +623,12 @@ expr
 {
         auto tp = dynamic_cast<Tajada::Type::Tuple *>($[source]->type);
 
-        if (tp == NULL) {
+        if (tp == nullptr) {
                 error(@$, u8"Attempt to access tuple field by name on expression of non‐tuple type");
                 YYERROR;
         }
 
-        if ((*tp)[*$[field]] == NULL) {
+        if ((*tp)[*$[field]] == nullptr) {
                 error(@$, u8"Attempt to access nonexistent named tuple field");
                 YYERROR;
         }
@@ -621,14 +641,14 @@ expr
 {
         auto ap = dynamic_cast<Tajada::Type::Array *>($[source]->type);
 
-        if (ap == NULL) {
+        if (ap == nullptr) {
                 error(@$, u8"Attempt to access array element on expression of non‐array type");
                 YYERROR;
         }
 
         auto ip = dynamic_cast<Tajada::Type::Integer *>($[position]->type);
 
-        if (ip == NULL) {
+        if (ip == nullptr) {
                 error(@$, u8"Attempt to access array element on non‐integer position");
                 YYERROR;
         }
@@ -644,13 +664,6 @@ expr
 
 
 
-ref
-: REF_MARK
-|
-;
-
-
-
 intlit
 : LIT_INT[token]
 { $$ = new Tajada::AST::Literal::Integer($[token]); }
@@ -659,33 +672,13 @@ intlit
 
 operator
 
-/* §3.4.3.2l1.1 */
-: OP_MINUS[op]
-{ $$ = $[op]; }
-
-/* §3.4.3.2l1.2 */
-| OP_PLUS[op]
-{ $$ = $[op]; }
-
-/* §3.4.3.2l1.3 */
-| OP_MULT[op]
-{ $$ = $[op]; }
-
-/* §3.4.3.2l1.4 */
-| OP_DIV[op]
-{ $$ = $[op]; }
-
-/* §3.4.3.2l1.5 */
-| OP_MOD[op]
-{ $$ = $[op]; }
-
-/* §3.4.3.2l1.6 */
-| OP_EQ[op]
-{ $$ = $[op]; }
-
-/* §3.4.3.2l1.7 */
-| OP_NEQ[op]
-{ $$ = $[op]; }
+/* §3.4.3.2l1.1 */ : OP_MINUS[op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::minus); }
+/* §3.4.3.2l1.2 */ | OP_PLUS [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::plus ); }
+/* §3.4.3.2l1.3 */ | OP_MULT [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mult ); }
+/* §3.4.3.2l1.4 */ | OP_DIV  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::div  ); }
+/* §3.4.3.2l1.5 */ | OP_MOD  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mod  ); }
+/* §3.4.3.2l1.6 */ | OP_EQ   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::eq   ); }
+/* §3.4.3.2l1.7 */ | OP_NEQ  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::neq  ); }
 
 ;
 
@@ -698,7 +691,7 @@ tuple_elems
 { $[xs]->push_back($[x]); $$ = $[xs]; }
 
 | tuple_elem[x]
-{ $$ = new std::list<std::tuple<Tajada::AST::Expression *, std::string *> *>(1, $[x]); }
+{ $$ = new std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *>(1, $[x]); }
 
 ;
 

@@ -6,7 +6,7 @@ CC        = gcc
 CFLAGS    = -ggdb -Wall -Wextra $(defines:%=-D%)
 
 CXX       = g++
-CXXFLAGS  = -ggdb -Wall -Wextra $(defines:%=-D%) --std=gnu++0x
+CXXFLAGS  = -ggdb -Wall -Wextra $(defines:%=-D%) -std=gnu++0x
 
 YACC      = bison
 YACCFLAGS = --warnings=all --report=all -g -x
@@ -41,11 +41,10 @@ tajadac : ast.o lex.o main.o parser.tab.o scope.o type.o ; $(build-exec)
 
 #          .o:           .cc tokens.hh scope.hh ast.hh type.hh lex.hh debug.hh parser.tab.hh stack.hh location.hh position.hh
         ast.o:        ast.cc                    ast.hh type.hh        debug.hh
-    ast.gen.o:    ast.gen.cc                    ast.hh type.hh
         lex.o:        lex.cc tokens.hh scope.hh ast.hh type.hh lex.hh debug.hh parser.tab.hh stack.hh location.hh position.hh
        main.o:       main.cc tokens.hh scope.hh ast.hh type.hh lex.hh          parser.tab.hh stack.hh location.hh position.hh
  parser.tab.o: parser.tab.cc           scope.hh ast.hh type.hh                 parser.tab.hh stack.hh location.hh position.hh
-      scope.o:      scope.cc           scope.hh ast.hh type.hh
+      scope.o:      scope.cc           scope.hh ast.hh type.hh                                        location.hh
        type.o:       type.cc                           type.hh
 
 #ast.gen.cc ast.gen.hh: make_ast_classes data/ast/classes data/ast/members

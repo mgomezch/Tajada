@@ -1,6 +1,7 @@
 #ifndef TAJADA_AST_HH
 #define TAJADA_AST_HH
 
+#include <functional>
 #include <list>
 #include <string>
 
@@ -81,20 +82,39 @@ namespace Tajada {
                                 virtual std::string show(unsigned int depth = 0);
                 };
 
-                class FunctionDefinition : public virtual Tajada::AST::Statement {
+                class Call;
+
+                class Function : public virtual Tajada::AST::Statement {
                         public:
-                                std::string * name;
-                                std::string * domain_name;
-                                Tajada::Type::Type * domain;
-                                Tajada::Type::Type * codomain;
+                                Tajada::AST::FunctionDeclaration * declaration;
+                                std::function<bool (Tajada::AST::Call *)> evaluator;
+
+                                Function(
+                                        Tajada::AST::FunctionDeclaration * p_declaration,
+                                        std::function<bool (Tajada::AST::Call *)> p_evaluator = nullptr
+                                );
+
+                                virtual std::string show(unsigned int depth = 0) = 0;
+                };
+
+                class BuiltinFunction : public virtual Tajada::AST::Function {
+                        public:
+                                BuiltinFunction(
+                                        Tajada::AST::FunctionDeclaration * p_declaration,
+                                        std::function<bool (Tajada::AST::Call *)> p_evaluator = nullptr
+                                );
+
+                                virtual std::string show(unsigned int depth = 0);
+                };
+
+                class FunctionDefinition : public virtual Tajada::AST::Function {
+                        public:
                                 Tajada::AST::Statement * body;
 
                                 FunctionDefinition(
-                                        std::string * name,
-                                        std::string * domain_name,
-                                        Tajada::Type::Type * domain,
-                                        Tajada::Type::Type * codomain,
-                                        Tajada::AST::Statement * body
+                                        Tajada::AST::FunctionDeclaration * p_declaration,
+                                        Tajada::AST::Statement * p_body,
+                                        std::function<bool (Tajada::AST::Call *)> p_evaluator = nullptr
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);
@@ -185,13 +205,14 @@ namespace Tajada {
                 class Call : public virtual Tajada::AST::Expression {
                         public:
                                 std::string * name;
-                                std::tuple<Tajada::Type::Type *, Tajada::Type::Type *, Tajada::AST::FunctionDefinition *> * data;
+                                Tajada::AST::Function ** definition_ptr;
                                 Tajada::AST::Expression * argument;
 
                                 Call(
-                                        std::string * name,
-                                        std::tuple<Tajada::Type::Type *, Tajada::Type::Type *, Tajada::AST::FunctionDefinition *> * data,
-                                        Tajada::AST::Expression * argument
+                                        std::string * p_name,
+                                        Tajada::AST::Function ** p_definition_ptr,
+                                        Tajada::AST::Expression * p_argument,
+                                        Tajada::Type::Type * p_return_type
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);

@@ -127,7 +127,7 @@ namespace Tajada {
                                                 + u8" y "
                                                 + [depth](std::tuple<Type *, std::string *> * tp) {
                                                         return
-                                                                + (*std::get<1>(*tp) == "" ? "" : "(")
+                                                                (*std::get<1>(*tp) == "" ? "" : "(")
                                                                 + std::get<0>(*tp)->show(depth)
                                                                 + (*std::get<1>(*tp) == "" ? "" : " " + *std::get<1>(*tp) + ")");
                                                 } (*(--elems->end()));

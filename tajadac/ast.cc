@@ -106,31 +106,45 @@ namespace Tajada {
                                 + std::string(u8".\n");
                 }
 
-                FunctionDefinition::FunctionDefinition(
-                        std::string * name,
-                        std::string * domain_name,
-                        Tajada::Type::Type * domain,
-                        Tajada::Type::Type * codomain,
-                        Tajada::AST::Statement * body
+                Function::Function(
+                        Tajada::AST::FunctionDeclaration * p_declaration,
+                        std::function<bool (Tajada::AST::Call *)> p_evaluator
                 ):
-                        name(name),
-                        domain_name(domain_name),
-                        domain(domain),
-                        codomain(codomain),
-                        body(body)
+                        declaration(p_declaration),
+                        evaluator(p_evaluator)
+                {}
+
+                std::string Function::show(unsigned int depth) {
+                        return declaration->show(depth);
+                }
+
+                BuiltinFunction::BuiltinFunction(
+                        Tajada::AST::FunctionDeclaration * p_declaration,
+                        std::function<bool (Tajada::AST::Call *)> p_evaluator
+                ):
+                        Tajada::AST::Function(p_declaration, p_evaluator)
+                {}
+
+                std::string BuiltinFunction::show(unsigned int depth) {
+                        return
+                                Function::show(depth)
+                                + u8" (builtin"
+                                + (evaluator != nullptr ? u8", constexpr" : "")
+                                + u8")";
+                }
+
+                FunctionDefinition::FunctionDefinition(
+                        Tajada::AST::FunctionDeclaration * p_declaration,
+                        Tajada::AST::Statement * p_body,
+                        std::function<bool (Tajada::AST::Call *)> p_evaluator
+                ):
+                        Tajada::AST::Function(p_declaration, p_evaluator),
+                        body(p_body)
                 {}
 
                 std::string FunctionDefinition::show(unsigned int depth) {
                         return
-                                std::string(depth * 8, ' ')
-                                + *name
-                                + std::string(u8" es un plato de ")
-                                + domain->show(depth)
-                                + std::string(u8" ")
-                                + *domain_name
-                                + std::string(u8" y salsa de ")
-                                + codomain->show(depth)
-                                + std::string(u8" ")
+                                Function::show(depth)
                                 + body->show(depth)
                                 + std::string(u8"\n");
                 }
@@ -157,11 +171,11 @@ namespace Tajada {
                 }
 
                 Expression::Expression(
-                        Tajada::Type::Type * type,
-                        bool is_lvalue
+                        Tajada::Type::Type * p_type,
+                        bool p_is_lvalue
                 ):
-                        type     (type     ),
-                        is_lvalue(is_lvalue)
+                        type(p_type),
+                        is_lvalue(p_is_lvalue)
                 {}
 
                 namespace Literal {
@@ -282,20 +296,21 @@ namespace Tajada {
                 }
 
                 Call::Call(
-                        std::string * name,
-                        std::tuple<Tajada::Type::Type *, Tajada::Type::Type *, Tajada::AST::FunctionDefinition *> * data,
-                        Tajada::AST::Expression * argument
+                        std::string * p_name,
+                        Tajada::AST::Function ** p_definition_ptr,
+                        Tajada::AST::Expression * p_argument,
+                        Tajada::Type::Type * p_return_type
                 ):
-                        Tajada::AST::Expression(std::get<1>(*data), false),
-                        name(name),
-                        data(data),
-                        argument(argument)
+                        Tajada::AST::Expression(p_return_type, false),
+                        name(p_name),
+                        definition_ptr(p_definition_ptr),
+                        argument(p_argument)
                 {}
 
                 std::string Call::show(unsigned int depth) {
                         return
                                 *name
-                                + std::string(u8" @ ")
+                                + u8" $ "
                                 + argument->show(depth);
                 }
 

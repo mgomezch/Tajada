@@ -56,11 +56,25 @@
         }                                                                       \
                                                                                 \
         if (s == nullptr) {                                                     \
-                error(loc, "Attempt to use an undefined function");             \
+                error(loc, "Attempt to use an undeclared function");            \
                 YYERROR;                                                        \
         }                                                                       \
                                                                                 \
-        out = new Tajada::AST::Call(nombre, &it->second, argumento);
+        out = new Tajada::AST::Call(                                            \
+                nombre,                                                         \
+                std::get<2>(it->second),                                        \
+                argumento,                                                      \
+                std::get<1>(it->second)                                         \
+        );
+
+#define TAJADA_CALL_BINARY(nombre, l, r, out, loc)                                                        \
+        auto argumento = new Tajada::AST::Literal::Tuple(                                                 \
+                new std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *> {                 \
+                        new std::tuple<Tajada::AST::Expression *, std::string *>(l, new std::string("")), \
+                        new std::tuple<Tajada::AST::Expression *, std::string *>(r, new std::string("")), \
+                }                                                                                         \
+        );                                                                                                \
+        TAJADA_CALL_UNARY(nombre, argumento, out, loc)
 }
 
 
@@ -135,7 +149,7 @@
 %union { std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *> * tuple_elems; }
 %type <tuple_elems> tuple_elems
 
-%union {  std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::FunctionDefinition **> * func_spec; }
+%union {  std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::Function **> * func_spec; }
 %type <func_spec> func_spec
 
 
@@ -153,16 +167,20 @@ tajada
 {
         bool found_undefined = false;
         for (auto it = scope->functions.begin(); it != scope->functions.end(); ++it) {
-                if (std::get<2>(it->second) == nullptr) {
+                if (*std::get<2>(it->second) == nullptr) {
                         error(
-                                @[main],
-                                std::string(u8"Function ")
+                                @$,
+                                std::string(u8"Missing definition for function “")
                                 + it->first
-                                + std::string(u8" was declared for type “")
+                                + std::string(u8"” taking “")
                                 + std::get<0>(it->second)->show()
-                                + std::string(u8"”, returning “")
+                                + std::string(u8"” and returning “")
                                 + std::get<1>(it->second)->show()
-                                + std::string(u8"”, but it was never defined")
+                                + std::string(u8"”")
+                        );
+                        error(
+                                std::get<3>(it->second),
+                                u8"First declared here"
                         );
                         found_undefined = true;
                 }
@@ -225,8 +243,7 @@ toplevel
 | func_spec block[cuerpo]
 {
         // TODO: enter_scope y exit_scope con nombre_dominio y dominio
-        auto d = std::get<0>(*$[func_spec]);
-        auto ret = new Tajada::AST::FunctionDefinition(d->name, d->domain_name, d->domain, d->codomain, $[cuerpo]);
+        auto ret = new Tajada::AST::FunctionDefinition(std::get<0>(*$[func_spec]), $[cuerpo]);
         *std::get<1>(*$[func_spec]) = ret;
         $$ = ret;
         delete $[func_spec];
@@ -236,7 +253,7 @@ toplevel
 
 
 
-func_spec[spec]
+func_spec
 
 /* §3.1.2p5 */
 : IDENT[nombre] ES UN PLATO DE typespec[dominio] IDENT[nombre_dominio] CON SALSA DE typespec[codominio]
@@ -251,12 +268,16 @@ func_spec[spec]
                 if (*$[dominio] != *std::get<0>(it->second)) continue;
                 if (*$[codominio] != *std::get<1>(it->second)) {
                         error(
-                                @[spec],
-                                u8"Conflicting return types for “"
+                                @$,
+                                u8"Conflicting types for “"
                                 + *$[nombre]
                                 + u8"” taking “"
                                 + $[dominio]->show()
                                 + u8"”"
+                        );
+                        error(
+                                std::get<3>(it->second),
+                                u8"First declared here"
                         );
                         YYERROR;
                 }
@@ -264,7 +285,7 @@ func_spec[spec]
                 break;
         }
 
-        Tajada::AST::FunctionDefinition ** r;
+        Tajada::AST::Function ** r;
 
         if (insert) {
                 auto it = scope->functions.insert(
@@ -273,16 +294,17 @@ func_spec[spec]
                                 std::make_tuple(
                                         $[dominio],
                                         $[codominio],
-                                        reinterpret_cast<Tajada::AST::FunctionDefinition *>(nullptr)
+                                        new Tajada::AST::Function * (nullptr),
+                                        @$
                                 )
                         )
                 );
-                r = &std::get<2>(it->second);
+                r = std::get<2>(it->second);
         } else {
-                r = &std::get<2>(it->second);
+                r = std::get<2>(it->second);
         }
 
-        $$ = new std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::FunctionDefinition **>(
+        $$ = new std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::Function **>(
                 new Tajada::AST::FunctionDeclaration($[nombre], $[nombre_dominio], $[dominio], $[codominio]),
                 r
         );
@@ -313,7 +335,7 @@ func_spec[spec]
 
                                 default:
                                         error(
-                                                @[spec],
+                                                @$,
                                                 u8"Invalid unary operator “"
                                                 + *std::get<0>(*$[operador])
                                                 + u8"”"
@@ -335,7 +357,7 @@ func_spec[spec]
 
                                 default:
                                         error(
-                                                @[spec],
+                                                @$,
                                                 u8"Invalid binary operator “"
                                                 + *std::get<0>(*$[operador])
                                                 + u8"”"
@@ -346,7 +368,7 @@ func_spec[spec]
 
                 default:
                         error(
-                                @[spec],
+                                @$,
                                 u8"Operator “"
                                 + *std::get<0>(*$[operador])
                                 + u8"” declared with invalid arity "
@@ -365,7 +387,7 @@ func_spec[spec]
                 if (*$[dominio] != *std::get<0>(it->second)) continue;
                 if (*$[codominio] != *std::get<1>(it->second)) {
                         error(
-                                @[spec],
+                                @$,
                                 u8"Conflicting return types for “"
                                 + *std::get<0>(*$[operador])
                                 + u8"” taking “"
@@ -378,7 +400,7 @@ func_spec[spec]
                 break;
         }
 
-        Tajada::AST::FunctionDefinition ** r;
+        Tajada::AST::Function ** r;
 
         if (insert) {
                 auto it = scope->functions.insert(
@@ -387,16 +409,17 @@ func_spec[spec]
                                 std::make_tuple(
                                         $[dominio],
                                         $[codominio],
-                                        reinterpret_cast<Tajada::AST::FunctionDefinition *>(nullptr)
+                                        new Tajada::AST::Function * (nullptr),
+                                        @$
                                 )
                         )
                 );
-                r = &std::get<2>(it->second);
+                r = std::get<2>(it->second);
         } else {
-                r = &std::get<2>(it->second);
+                r = std::get<2>(it->second);
         }
 
-        $$ = new std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::FunctionDefinition **>(
+        $$ = new std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::Function **>(
                 new Tajada::AST::FunctionDeclaration(std::get<0>(*$[operador]), $[nombre_dominio], $[dominio], $[codominio]),
                 r
         );
@@ -569,13 +592,13 @@ expr
 
 /* §3.4.2p2                 */ |             IDENT[nombre]          CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) }
 /* TODO: operadores unarios */ |          OP_MINUS[nombre]               expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) }
-/* §3.4.3.2l1.1             */ | PAREN_OP OP_MINUS[nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MINUS[nombre] expr[r]
-/* §3.4.3.2l1.2             */ | PAREN_OP OP_PLUS [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_PLUS [nombre] expr[r]
-/* §3.4.3.2l1.3             */ | PAREN_OP OP_MULT [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MULT [nombre] expr[r]
-/* §3.4.3.2l1.4             */ | PAREN_OP OP_DIV  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_DIV  [nombre] expr[r]
-/* §3.4.3.2l1.5             */ | PAREN_OP OP_MOD  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MOD  [nombre] expr[r]
-/* §3.4.3.2l1.6             */ | PAREN_OP OP_EQ   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_EQ   [nombre] expr[r]
-/* §3.4.3.2l1.7             */ | PAREN_OP OP_NEQ  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_NEQ  [nombre] expr[r]
+/* §3.4.3.2l1.1             */ | PAREN_OP OP_MINUS[nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MINUS[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+/* §3.4.3.2l1.2             */ | PAREN_OP OP_PLUS [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_PLUS [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+/* §3.4.3.2l1.3             */ | PAREN_OP OP_MULT [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MULT [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+/* §3.4.3.2l1.4             */ | PAREN_OP OP_DIV  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_DIV  [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+/* §3.4.3.2l1.5             */ | PAREN_OP OP_MOD  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MOD  [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+/* §3.4.3.2l1.6             */ | PAREN_OP OP_EQ   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_EQ   [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+/* §3.4.3.2l1.7             */ | PAREN_OP OP_NEQ  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_NEQ  [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
 
 /* §3.4.4p2 */
 | IDENT[nombre]
@@ -808,19 +831,35 @@ body
 
 
 void Tajada::yy::parser::error(location_type const & l, std::string const & msg) {
+        if (l.begin.filename) std::cerr << *l.begin.filename << u8":";
         if (l.begin.line == l.end.line) {
                 if (l.begin.column == l.end.column - 1) {
-                        std::cerr << u8"At line " << l.begin.line << u8", column " << l.begin.column;
+                        std::cerr
+                                << l.begin.line
+                                << u8":"
+                                << l.begin.column
+                                << u8": ";
                 } else {
                         std::cerr
-                                << u8"At line " << l.begin.line
-                                << u8", columns " << l.begin.column << u8"–" << l.end.column;
+                                << l.begin.line
+                                << u8":"
+                                << l.begin.column
+                                << u8"–"
+                                << l.end.column
+                                << u8": ";
                 }
         } else {
                 std::cerr
-                        << u8"Between line " << l.begin.line << u8", column " << l.begin.column
-                        << u8" and line "    << l.end  .line << u8", column " << l.end  .column;
+                        << u8"("
+                        << l.begin.line
+                        << u8","
+                        << l.begin.column
+                        << u8")–("
+                        << l.end.line
+                        << u8","
+                        << l.end.column
+                        << u8"): ";
         }
 
-        std::cerr << u8": " << msg << std::endl;
+        std::cerr << msg << std::endl;
 }

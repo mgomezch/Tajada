@@ -98,6 +98,17 @@ namespace Tajada {
                                 virtual std::string show(unsigned int depth = 0);
                 };
 
+                class Reference : public virtual Type {
+                        public:
+                                Type * target;
+
+                                Reference(
+                                        Type * p_target
+                                );
+
+                                virtual std::string show(unsigned int depth = 0);
+                };
+
                 bool operator == (Type const &, Type const &);
                 bool operator != (Type const &, Type const &);
         }

@@ -52,11 +52,6 @@
                 }                                                                         \
         } while (0)
 
-#define TAJADA_CASE_STRING(token)                                         \
-        case Tajada::lex::Token::token:                                   \
-                s->token = new std::string(scanner->match[1].ToString()); \
-                break;
-
 namespace Tajada {
         namespace lex {
                 int nmatch = -1;
@@ -176,8 +171,8 @@ namespace Tajada {
                                                 return yylex(s, l, scanner);
 
                                         case Tajada::lex::Token::LIT_STR:
-                                                // TODO: eliminar delimitadores del string y backslashes escapadores
-                                                s->LIT_STR = new std::string(scanner->match[1].ToString().substr(2, scanner->match[1].length() - 2));
+                                                // TODO: eliminar delimitadores del string (con un método menos caimán y backslashes escapadores)
+                                                s->LIT_STR = new std::string(scanner->match[1].ToString().substr(3, scanner->match[1].length() - 6));
                                                 TAJADA_DEBUG_LEXER_PRINT("Encontré un string y su contenido sin las comillas es:\n" << s->LIT_STR);
                                                 break;
 
@@ -185,6 +180,10 @@ namespace Tajada {
                                                 s->LIT_CHR = new std::string(scanner->match[1].ToString().substr(1));
                                                 break;
 
+#define TAJADA_CASE_STRING(token)                                         \
+        case Tajada::lex::Token::token:                                   \
+                s->token = new std::string(scanner->match[1].ToString()); \
+                break;
                                         TAJADA_CASE_STRING(LIT_INT )
                                         TAJADA_CASE_STRING(OP_MINUS)
                                         TAJADA_CASE_STRING(OP_PLUS )
@@ -194,6 +193,7 @@ namespace Tajada {
                                         TAJADA_CASE_STRING(OP_EQ   )
                                         TAJADA_CASE_STRING(OP_NEQ  )
                                         TAJADA_CASE_STRING(IDENT   )
+#undef TAJADA_CASE_STRING
 
                                         default:
                                                 break;

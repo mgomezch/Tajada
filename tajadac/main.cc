@@ -30,7 +30,7 @@ int main(int argc, char * argv[]) {
         else {
                 in_file = new std::ifstream(argv[1], std::ifstream::in);
                 if (in_file->fail()) {
-                        std::cerr << "No se pudo abrir el archivo a analizar." << std::endl;
+                        std::cerr << argv[0] << ": " << argv[1] << ": error abriendo el archivo" << std::endl;
                         std::exit(EX_NOINPUT);
                 }
         }

@@ -501,6 +501,10 @@ typespec
 | intlit[longitud] TAZAS DE ARROZ CON typespec[contenido]
 { $$ = new Tajada::Type::Array($[contenido], $[longitud]->value); }
 
+/* §2.5p4 */
+| REF_OP typespec[referido]
+{ $$ = new Tajada::Type::Reference($[referido]); }
+
 ;
 
 

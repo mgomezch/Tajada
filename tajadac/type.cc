@@ -51,7 +51,7 @@ namespace Tajada {
                         TAJADA_TYPE_STRUCTURE_TYPE_CONSTRUCTOR_CALL,
                         elems(p_elems)
                 {
-                        /* Boring maintainable/readable/unobfuscated/traditional programming is boring. ☹ */
+                        /* Boring traditional/readable/maintainable/unobfuscated programming is boring. ☹ */
                         auto n = p_elems->size();
 
                         for (unsigned int i = 0; i < n; ++i) {
@@ -187,6 +187,20 @@ namespace Tajada {
                                 + contents->show(depth);
                 }
 
+                Reference::Reference(
+                        Type * p_target
+                ):
+                        Type(Tajada::Type::Type::Complete::complete),
+                        target(p_target)
+                {}
+
+                std::string Reference::show(unsigned int depth) {
+                        return
+                                u8"⋘"
+                                + target->show(depth)
+                                + u8"⋙";
+                }
+
                 bool operator == (Type const & l, Type const & r) {
                         if (typeid(l) != typeid(r)) {
                                 return false;
@@ -210,6 +224,8 @@ namespace Tajada {
                                 return true;
                         } else if (typeid(l) == typeid(Array)) {
                                 return *dynamic_cast<Array const &>(l).contents == *dynamic_cast<Array const &>(r).contents;
+                        } else if (typeid(l) == typeid(Reference)) {
+                                return *dynamic_cast<Reference const &>(l).target == *dynamic_cast<Reference const &>(r).target;
                         } else {
                                 return true;
                         }

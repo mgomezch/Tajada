@@ -41,7 +41,10 @@ namespace Tajada {
                                         statements->end(),
                                         std::string(),
                                         [depth](std::string acc, Tajada::AST::Statement *statement) {
-                                                return acc + statement->show(depth + 1);
+                                                return
+                                                        acc
+                                                        + statement->show(depth + 1)
+                                                        + (dynamic_cast<Block *>(statement) ? u8"\n" : u8".\n");
                                         }
                                 )
                                 + std::string(depth * 8, ' ') + u8"}\n";
@@ -60,8 +63,7 @@ namespace Tajada {
                                 std::string(depth * 8, ' ')
                                 + *name
                                 + std::string(u8" es dulce de ")
-                                + type->show(depth)
-                                + std::string(u8".\n");
+                                + type->show(depth);
                 }
 
                 VariableDefinition::VariableDefinition(
@@ -77,8 +79,7 @@ namespace Tajada {
                                 std::string(depth * 8, ' ')
                                 + *name
                                 + std::string(u8" es ")
-                                + type->show(depth)
-                                + std::string(u8".\n");
+                                + type->show(depth);
                 }
 
                 FunctionDeclaration::FunctionDeclaration(
@@ -102,8 +103,7 @@ namespace Tajada {
                                 + u8" "
                                 + *domain_name
                                 + std::string(u8" y salsa de ")
-                                + codomain->show(depth)
-                                + std::string(u8".\n");
+                                + codomain->show(depth);
                 }
 
                 Function::Function(
@@ -145,8 +145,9 @@ namespace Tajada {
                 std::string FunctionDefinition::show(unsigned int depth) {
                         return
                                 Function::show(depth)
+                                + u8" "
                                 + body->show(depth)
-                                + std::string(u8"\n");
+                                + u8"\n";
                 }
 
                 Program::Program(
@@ -164,7 +165,14 @@ namespace Tajada {
                                         statements->end(),
                                         std::string(),
                                         [depth](std::string acc, Tajada::AST::Statement *statement) {
-                                                return acc + statement->show(depth);
+                                                return
+                                                        acc
+                                                        + statement->show(depth)
+                                                        + (
+                                                                (dynamic_cast<Block *>(statement) || dynamic_cast<FunctionDefinition *>(statement))
+                                                                ? u8"\n"
+                                                                : u8".\n"
+                                                        );
                                         }
                                 )
                                 + main->show(depth);
@@ -401,8 +409,7 @@ namespace Tajada {
                 std::string ExpressionStatement::show(unsigned int depth) {
                         return
                                 std::string(depth * 8, ' ')
-                                + expression->show(depth)
-                                + std::string(u8".\n");
+                                + expression->show(depth);
                 }
 
                 Assignment::Assignment(
@@ -418,8 +425,7 @@ namespace Tajada {
                                 std::string(depth * 8, ' ')
                                 + lhs->show(depth)
                                 + std::string(u8" ≔ ")
-                                + rhs->show(depth)
-                                + std::string(u8".\n");
+                                + rhs->show(depth);
                 }
 
                 If::If(
@@ -439,9 +445,10 @@ namespace Tajada {
                                 + condition->show(depth)
                                 + std::string(u8") ")
                                 + body_true->show(depth)
-                                + std::string(u8" else ")
+                                + (dynamic_cast<Block *>(body_true) ? u8" " : u8".\n" + std::string(depth * 8, ' '))
+                                + std::string(u8"else ")
                                 + body_false->show(depth)
-                                + std::string(u8"\n");
+                                + (dynamic_cast<Block *>(body_true) ? u8"\n" : u8".\n");
                 }
 
                 While::While(
@@ -460,6 +467,19 @@ namespace Tajada {
                                 + std::string(u8") ")
                                 + body->show(depth)
                                 + std::string(u8"\n");
+                }
+
+                Return::Return(
+                        Tajada::AST::Expression * expression
+                ):
+                        expression(expression)
+                {}
+
+                std::string Return::show(unsigned int depth) {
+                        return
+                                std::string(depth * 8, ' ')
+                                + u8"retorna "
+                                + expression->show(depth);
                 }
         }
 }

@@ -330,6 +330,17 @@ namespace Tajada {
 
                                 virtual std::string show(unsigned int depth = 0);
                 };
+
+                class Return : public virtual Tajada::AST::Statement {
+                        public:
+                                Tajada::AST::Expression * expression;
+
+                                Return(
+                                        Tajada::AST::Expression * expression
+                                );
+
+                                virtual std::string show(unsigned int depth = 0);
+                };
         }
 }
 

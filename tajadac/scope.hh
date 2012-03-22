@@ -12,8 +12,17 @@
 namespace Tajada {
         class Scope {
                 public:
-                        Scope * parent;
-                        std::unordered_set<Scope *> children;
+                        enum class Type : unsigned int {
+                                unspecified,
+                                global,
+                                main,
+                                function,
+                                main_intermediate,
+                                function_intermediate
+                        };
+
+                        Tajada::Scope * parent;
+                        std::unordered_set<Tajada::Scope *> children;
                         std::unordered_map<std::string, Tajada::Type::Type *> variables;
                         std::unordered_map<std::string, Tajada::Type::Type *> aliases;
 
@@ -27,7 +36,15 @@ namespace Tajada {
                                 >
                         > functions;
 
-                        Scope(Scope * parent = nullptr);
+                        Scope::Type type;
+
+                        Tajada::AST::FunctionDeclaration * declaration;
+
+                        Scope(
+                                Tajada::Scope                    * p_parent      = nullptr,
+                                Tajada::Scope::Type                p_type        = Tajada::Scope::Type::unspecified,
+                                Tajada::AST::FunctionDeclaration * p_declaration = nullptr
+                        );
 
                         std::string show(unsigned int depth = 0);
         };

@@ -171,7 +171,7 @@ namespace Tajada {
                                                 return yylex(s, l, scanner);
 
                                         case Tajada::lex::Token::LIT_STR:
-                                                // TODO: eliminar delimitadores del string (con un método menos caimán y backslashes escapadores)
+                                                // TODO: eliminar delimitadores del string con un método menos caimán, y quitar escapadores
                                                 s->LIT_STR = new std::string(scanner->match[1].ToString().substr(3, scanner->match[1].length() - 6));
                                                 TAJADA_DEBUG_LEXER_PRINT("Encontré un string y su contenido sin las comillas es:\n" << s->LIT_STR);
                                                 break;

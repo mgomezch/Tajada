@@ -8,7 +8,6 @@
 %debug
 %defines
 %error-verbose
-%locations
 %verbose
 
 
@@ -43,28 +42,64 @@
 
 
 %code {
-#define TAJADA_CALL_UNARY(nombre, argumento, out, loc)                          \
-        auto s = scope;                                                         \
-        decltype(s->functions.begin()) it;                                      \
-                                                                                \
-        while (s != nullptr) {                                                  \
-                if (                                                            \
-                        (it = s->functions.find(*nombre)) != s->functions.end() \
-                        && *argumento->type == *std::get<0>(it->second)         \
-                ) break;                                                        \
-                s = s->parent;                                                  \
-        }                                                                       \
-                                                                                \
-        if (s == nullptr) {                                                     \
-                error(loc, "Attempt to use an undeclared function");            \
-                YYERROR;                                                        \
-        }                                                                       \
-                                                                                \
-        out = new Tajada::AST::Call(                                            \
-                nombre,                                                         \
-                std::get<2>(it->second),                                        \
-                argumento,                                                      \
-                std::get<1>(it->second)                                         \
+#define TAJADA_CALL_UNARY(nombre, argumento, out, loc)                               \
+        auto s = scope;                                                              \
+        decltype(scope->functions.begin(scope->functions.bucket(std::string()))) it; \
+        std::list<decltype(s->functions.begin()->second) *> candidates;              \
+                                                                                     \
+        while (s != nullptr) {                                                       \
+                auto bucket = s->functions.bucket(*nombre);                          \
+                                                                                     \
+                bool go = true;                                                      \
+                for (                                                                \
+                        it = s->functions.begin(bucket);                             \
+                        it != s->functions.end(bucket);                              \
+                        ++it                                                         \
+                ) {                                                                  \
+                        if (*argumento->type == *std::get<0>(it->second)) {          \
+                                go = false;                                          \
+                                break;                                               \
+                        }                                                            \
+                        candidates.push_back(&it->second);                           \
+                }                                                                    \
+                if (!go) break;                                                      \
+                                                                                     \
+                s = s->parent;                                                       \
+        }                                                                            \
+                                                                                     \
+        if (s == nullptr) {                                                          \
+                error(                                                               \
+                        loc,                                                         \
+                        u8"attempt to use undeclared function “"                     \
+                        + *nombre                                                    \
+                        + u8"” taking “"                                             \
+                        + argumento->type->show()                                    \
+                        + u8"”"                                                      \
+                );                                                                   \
+                if (!candidates.empty()) {                                           \
+                        error(                                                       \
+                                loc,                                                 \
+                                + u8"candidates are:"                                \
+                        );                                                           \
+                        std::for_each(                                               \
+                                candidates.begin(),                                  \
+                                candidates.end(),                                    \
+                                [this](decltype(*candidates.begin()) c) {            \
+                                        error(                                       \
+                                                std::get<3>(*c),                     \
+                                                u8"First declared here"              \
+                                        );                                           \
+                                }                                                    \
+                        );                                                           \
+                }                                                                    \
+                YYERROR;                                                             \
+        }                                                                            \
+                                                                                     \
+        out = new Tajada::AST::Call(                                                 \
+                nombre,                                                              \
+                std::get<2>(it->second),                                             \
+                argumento,                                                           \
+                std::get<1>(it->second)                                              \
         );
 
 #define TAJADA_CALL_BINARY(nombre, l, r, out, loc)                                                        \
@@ -89,6 +124,12 @@
 
 %code requires { #include "ast.hh" }
 %parse-param { Tajada::AST::AST ** tree }
+
+
+
+%locations
+%parse-param { std::string * filename }
+%initial-action { @$.begin.filename = @$.end.filename = filename; };
 
 
 
@@ -240,10 +281,20 @@ toplevel
 }
 
 /* §3.2.2p1, §3.2.3p1 */
-| func_spec block[cuerpo]
-{
-        // TODO: enter_scope y exit_scope con nombre_dominio y dominio
-        auto ret = new Tajada::AST::FunctionDefinition(std::get<0>(*$[func_spec]), $[cuerpo]);
+| func_spec BLOCK_OP {
+        auto ns = new Scope(
+                scope,
+                Tajada::Scope::Type::function,
+                std::get<0>(*$[func_spec])
+        );
+        scope->children.insert(ns);
+        scope = ns;
+        scope->variables[*std::get<0>(*$[func_spec])->domain_name] = std::get<0>(*$[func_spec])->domain;
+} blocklevels[statements] {
+        scope = scope->parent;
+} BLOCK_CL {
+        auto ret = new Tajada::AST::FunctionDefinition(std::get<0>(*$[func_spec]), new Tajada::AST::Block($[statements]));
+
         *std::get<1>(*$[func_spec]) = ret;
         $$ = ret;
         delete $[func_spec];
@@ -434,7 +485,12 @@ var_def
 : IDENT[nombre] ES typespec[tipo] STMT_END
 {
         if (scope->variables.find(*$[nombre]) != scope->variables.end()) {
-                error(@[nombre], "Attempt to redefine a variable");
+                error(
+                        @$,
+                        u8"redefinition of “"
+                        + *$[nombre]
+                        + u8"”"
+                );
                 YYERROR;
         }
         scope->variables[*$[nombre]] = $[tipo];
@@ -616,7 +672,12 @@ expr
         }
 
         if (s == nullptr) {
-                error(@[nombre], "Attempt to use an undefined variable");
+                error(
+                        @[nombre],
+                        u8"“"
+                        + *$[nombre]
+                        + u8"” was not declared in this scope"
+                );
                 YYERROR;
         }
 
@@ -741,8 +802,21 @@ tuple_elem
 
 block
 
-: BLOCK_OP { auto ns = new Scope(scope); scope->children.insert(ns); scope = ns; } blocklevels[statements] { scope = scope->parent; } BLOCK_CL
-{ $$ = new Tajada::AST::Block($[statements]); }
+: BLOCK_OP
+{
+        auto ns = new Scope(
+                scope,
+                scope->type == Tajada::Scope::Type::global
+                ? Tajada::Scope::Type::main
+                : Tajada::Scope::Type::unspecified
+        );
+        scope->children.insert(ns);
+        scope = ns;
+} blocklevels[statements] {
+        scope = scope->parent;
+} BLOCK_CL {
+        $$ = new Tajada::AST::Block($[statements]);
+}
 
 ;
 
@@ -801,19 +875,62 @@ statement
         $$ = new Tajada::AST::Assignment($[l], $[r]);
 }
 
+/* TODO: check for bool condition */
 /* §3.5.2.1p3 */
 | IF PAREN_OP expr[condition] PAREN_CL body[body_true] ELSE body[body_false]
 { $$ = new Tajada::AST::If($[condition], $[body_true], $[body_false]); }
 
+/* TODO: check for bool condition */
 | IF PAREN_OP expr[condition] PAREN_CL body[body_true]
 { $$ = new Tajada::AST::If($[condition], $[body_true], new Tajada::AST::Block(new std::list<Tajada::AST::Statement *>())); }
 
+/* TODO: check for bool condition */
 /* §3.5.2.2p2 */
 | WHILE PAREN_OP expr[condition] PAREN_CL body
 { $$ = new Tajada::AST::While($[condition], $[body]); }
 
+/* TODO */
 /* §3.5.2.3p4 */
 /*| FOR IDENT IN PAREN_OP expr RANGE_SEP expr PAREN_CL body*/
+
+/* §3.5.2.5p2 */
+| RETURN expr[retornado] STMT_END
+{
+        if (
+                scope->type == Tajada::Scope::Type::main
+                || scope->type == Tajada::Scope::Type::main_intermediate
+        ) {
+                if (Tajada::Type::Integer() != *$[retornado]->type) {
+                        error(
+                                @$,
+                                u8"returning “"
+                                + $[retornado]->type->show()
+                                + u8"” from main block; expected “"
+                                + Tajada::Type::Integer().show()
+                                + u8"”"
+                        );
+                        YYERROR;
+                }
+        } else if (
+                scope->type == Tajada::Scope::Type::function
+                || scope->type == Tajada::Scope::Type::function_intermediate
+        ) {
+                if (*scope->declaration->codomain != *$[retornado]->type) {
+                        error(
+                                @$,
+                                u8"returning “"
+                                + $[retornado]->type->show()
+                                + u8"” from function declared as returning “"
+                                + scope->declaration->codomain->show()
+                                + u8"”"
+                        );
+                        YYERROR;
+                }
+        }
+}
+
+/* TODO: union switch/case */
+/* TODO: fin/break */
 
 ;
 

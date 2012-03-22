@@ -1,6 +1,4 @@
-Quitar los 49857394593872598345 memory leaks y accesos inseguros a apuntadores.
-
-
+Quitar los 49857394593872598345 memory leaks y accesos inseguros a apuntadores.  Sería genial usar std::shared_ptr<>
 
 Decidir cuándo hacer delete.
 
@@ -14,6 +12,4 @@ Eliminar la duplicación de código, que ahorita es más bien una exponenciació
 
 *   Update (2012‒03‒16): Lo de ast.{hh,cc} no se arregla con simples macros, pero quizás con un poco de Ruby.
 
-
-
-Mover lo de “inicio de paréntesis” y “fin de paréntesis” hacia arriba, antes de donde se usa para lo de los operadores.
+*   Update (2012‒03‒21): Lo de ast.{hh,cc} se arregló con un poco de Ruby, pero ni valió la pena. :(

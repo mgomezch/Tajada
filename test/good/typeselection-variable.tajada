@@ -1,0 +1,9 @@
+c es cachapa con (queso guayanés) o papelón.
+
+{
+        c⇒0 ≔ 4.
+        c ∷ e {
+                guayanés ∶ retorna e.
+                1 ∶ retorna 10.
+        }
+}

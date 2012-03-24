@@ -477,6 +477,10 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 7.  Un **operador de no‐igualdad**, que es un punto de código “NOT EQUAL TO” (U+2260, **≠**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
 
+                8.  Un **operador menor**, que es un punto de código “LESS-THAN SIGN” (U+003C, **<**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+
+                9.  Un **operador mayor**, que es un punto de código “GREATER-THAN SIGN” (U+003E, **>**) que no ocurra dentro de un literal de cadena de caracteres, un escapado de caracter o un espacio en blanco.
+
                 Con cada cubierto declarado para un operador binario se pueden construir **expresiones de cubierto binario infijo**, que son expresiones, con una expresión (el **primer argumento** cuyo tipo sea equivalente al del primer ingrediente del dominio del cubierto, seguido del operador del cubierto, seguido de una expresión (el **segundo argumento**) cuyo tipo sea equivalente al del segundo ingrediente del dominio del cubierto.  El tipo de la expresión resultante es el rango del cubierto, y el valor de la expresión será el que resultaría de evaluar una expresión de plato sobre una arepa rellena cuyos únicos rellenos fueran el primer y el segundo argumento, usando un plato con el mismo dominio, nombre del dominio, rango y cuerpo que el cubierto.
 
                 Con cada cubierto declarado para un operador binario se pueden construir **expresiones de cubierto binario prefijo**, que son expresiones, con un inicio de paréntesis, seguido por el operador del cubierto, seguido por un fin de paréntesis, seguido por un indicador de llamada, seguido por una expresión (el **argumento**) cuyo tipo sea el dominio del cubierto.  El tipo de la expresión resultante es el rango del cubierto, y el valor de la expresión será el que resultaría de evaluar una expresión de plato sobre el mismo argumento, usando un plato con el mismo dominio, nombre del dominio, rango y cuerpo que el cubierto.
@@ -501,7 +505,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             Se puede construir una ubicación con el nombre de una variable alcanzable.  El espacio de este tipo de ubicación es el valor referido si su tipo es una referencia; si no, el espacio es la variable.
 
-            Un acceso a arepa es una ubicación si su fuente es una ubicación; en ese caso, su espacio es el ente que almacena su relleno accedido.
+            Un acceso a arepa o a cachapa es una ubicación si su fuente es una ubicación; en ese caso, su espacio es el ente que almacena su relleno accedido.
 
             Un acceso a arroz es una ubicación si su fuente es una ubicación; en ese caso, su espacio es el ente que almacena el ente de su fuente cuya posición sea el valor de la posición accedida.
 
@@ -528,6 +532,10 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
             Un **separador de lista de expresiones** es un punto de código “SEMICOLON” (U+003B, **;**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un separador de lista de expresiones es un símbolo reservado.
 
             Se puede construir una expresión con una secuencia de dos o más expresiones separadas por separadores de lista de expresiones.  El valor y el tipo de la expresión son los de la última de la lista.  Las acciones de las expresiones se efectúan en secuencia: se terminan de efectuar todas las acciones de una expresión de la lista antes de comenzar a efectuar las acciones de la siguiente expresión, y el valor de la expresión completa se considera calculado luego de efectuar las acciones de todas las expresiones de la lista..
+
+            Un **indicador de acceso a cachapa** es un punto de código “RIGHTWARDS DOUBLE ARROW” (U+21D2, **⇒**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Una flecha es un símbolo reservado.
+
+            Un **acceso a cachapa** es una expresión compuesta de una expresión (la **fuente**) cuyo tipo sea una cachapa, seguida de un indicador de acceso a cachapa, seguido de un literal entero que corresponda al número o un identificador que corresponda al nombre de algún ingrediente, el **ingrediente accedido**, del tipo de la expresión.  El tipo de un acceso a cachapa es el ingrediente accedido de su fuente.  El valor de un acceso a cachapa es indefinido.  Un acceso a cachapa solo ocurre como la ubicación de una asignación.
 
 @@//TODO: inline if?
 
@@ -618,7 +626,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 Un **indicador de caso de tipo** es un punto de código “RATIO” (U+2236, **∶**) que no ocurra dentro de un literal de cadena de caracteres, dentro de un escapado de caracter, ni dentro de un espacio en blanco.  Un indicador de caso de tipo es un símbolo reservado.
 
-                Un **caso de tipo** es una secuencia compuesta de un identificador o un literal entero (su **caso**), seguido de un indicador de caso de tipo, seguido de un bloque (su **cuerpo**).
+                Un **caso de tipo** es una secuencia compuesta de un identificador o un literal entero (su **caso**), seguido de un indicador de caso de tipo, seguido de un bloque o una instrucción (su **cuerpo**).
 
                 Una **selección por tipo** es una secuencia compuesta de una expresión (su **fuente**) cuyo tipo sea una cachapa, seguida de un indicador de selección por tipo, seguido de un identificador, seguido de un inicio de bloque, seguido de una secuencia de casos de tipo cuyos casos identifiquen a ingredientes del tipo de la fuente, seguida de un fin de bloque.  Una selección por tipo es una instrucción.
 

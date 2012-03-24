@@ -67,7 +67,7 @@
                 s = s->parent;                                                       \
         }                                                                            \
                                                                                      \
-        if (s == nullptr) {                                                          \
+        if (!s) {                                                                    \
                 error(                                                               \
                         loc,                                                         \
                         u8"attempt to use undeclared function “"                     \
@@ -135,7 +135,7 @@
 
 %nonassoc CALL
 %left     EXPR_LIST_SEP
-%nonassoc OP_EQ OP_NEQ
+%nonassoc OP_EQ OP_NEQ OP_LT OP_GT
 %left     OP_PLUS OP_MINUS
 %left     OP_MULT OP_DIV OP_MOD
 %nonassoc TUPLE_ARROW
@@ -196,6 +196,9 @@
 %union { std::vector<Tajada::AST::TypeCase::TypeCase *> * cases; }
 %type <cases> cases
 
+%union { Tajada::AST::Expression * union_access; }
+%type <union_access> union_access
+
 
 
 
@@ -213,7 +216,7 @@ tajada
 {
         bool found_undefined = false;
         for (auto it = scope->functions.begin(); it != scope->functions.end(); ++it) {
-                if (*std::get<2>(it->second) == nullptr) {
+                if (!*std::get<2>(it->second)) {
                         error(
                                 @$,
                                 std::string(u8"Missing definition for function “")
@@ -519,7 +522,7 @@ typespec
                 s = s->parent;
         }
 
-        if (s == nullptr) {
+        if (!s) {
                 error(
                         @[nombre],
                         std::string("type alias “")
@@ -568,7 +571,7 @@ typespec
 { $$ = new Tajada::Type::Array($[contenido], $[longitud]->value); }
 
 /* §2.5p4 */
-| REF_OP typespec[referido]
+| REF_OP typespec[referido] REF_CL
 { $$ = new Tajada::Type::Reference($[referido]); }
 
 ;
@@ -669,6 +672,8 @@ expr
 /* §3.4.3.2l1.5             */ | PAREN_OP OP_MOD  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MOD  [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
 /* §3.4.3.2l1.6             */ | PAREN_OP OP_EQ   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_EQ   [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
 /* §3.4.3.2l1.7             */ | PAREN_OP OP_NEQ  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_NEQ  [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+/* §3.4.3.2l1.8             */ | PAREN_OP OP_LT   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_LT   [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+/* §3.4.3.2l1.9             */ | PAREN_OP OP_GT   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_GT   [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
 
 /* §3.4.4p2 */
 | IDENT[nombre]
@@ -681,7 +686,7 @@ expr
                 s = s->parent;
         }
 
-        if (s == nullptr) {
+        if (!s) {
                 error(
                         @[nombre],
                         u8"“"
@@ -703,12 +708,12 @@ expr
 {
         auto tp = dynamic_cast<Tajada::Type::Tuple *>($[source]->type);
 
-        if (tp == nullptr) {
+        if (!tp) {
                 error(@$, u8"Attempt to access numbered tuple field by number on expression of non‐tuple type");
                 YYERROR;
         }
 
-        if ((*tp)[$[field]->value] == nullptr) {
+        if (!(*tp)[$[field]->value]) {
                 error(@$, u8"Attempt to access nonexistent tuple field");
                 YYERROR;
         }
@@ -721,12 +726,12 @@ expr
 {
         auto tp = dynamic_cast<Tajada::Type::Tuple *>($[source]->type);
 
-        if (tp == nullptr) {
+        if (!tp) {
                 error(@$, u8"Attempt to access tuple field by name on expression of non‐tuple type");
                 YYERROR;
         }
 
-        if ((*tp)[*$[field]] == nullptr) {
+        if (!(*tp)[*$[field]]) {
                 error(@$, u8"Attempt to access nonexistent named tuple field");
                 YYERROR;
         }
@@ -739,14 +744,14 @@ expr
 {
         auto ap = dynamic_cast<Tajada::Type::Array *>($[source]->type);
 
-        if (ap == nullptr) {
+        if (!ap) {
                 error(@$, u8"Attempt to access array element on expression of non‐array type");
                 YYERROR;
         }
 
         auto ip = dynamic_cast<Tajada::Type::Integer *>($[position]->type);
 
-        if (ip == nullptr) {
+        if (!ip) {
                 error(@$, u8"Attempt to access array element on non‐integer position");
                 YYERROR;
         }
@@ -770,13 +775,15 @@ intlit
 
 operator
 
-/* §3.4.3.2l1.1 */ : OP_MINUS[op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::minus); }
-/* §3.4.3.2l1.2 */ | OP_PLUS [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::plus ); }
-/* §3.4.3.2l1.3 */ | OP_MULT [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mult ); }
-/* §3.4.3.2l1.4 */ | OP_DIV  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::div  ); }
-/* §3.4.3.2l1.5 */ | OP_MOD  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mod  ); }
-/* §3.4.3.2l1.6 */ | OP_EQ   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::eq   ); }
-/* §3.4.3.2l1.7 */ | OP_NEQ  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::neq  ); }
+/* §3.4.3.2l1.1 */ : OP_MINUS[op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::minus      ); }
+/* §3.4.3.2l1.2 */ | OP_PLUS [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::plus       ); }
+/* §3.4.3.2l1.3 */ | OP_MULT [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mult       ); }
+/* §3.4.3.2l1.4 */ | OP_DIV  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::div        ); }
+/* §3.4.3.2l1.5 */ | OP_MOD  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mod        ); }
+/* §3.4.3.2l1.6 */ | OP_EQ   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::eq         ); }
+/* §3.4.3.2l1.7 */ | OP_NEQ  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::neq        ); }
+/* §3.4.3.2l1.8 */ | OP_LT   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::lessthan   ); }
+/* §3.4.3.2l1.9 */ | OP_GT   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::greaterthan); }
 
 ;
 
@@ -889,6 +896,29 @@ statement
         $$ = new Tajada::AST::Assignment($[l], $[r]);
 }
 
+/* §3.5.1p7 */
+| union_access[l] ASSIGN expr[r] STMT_END
+{
+        if (!$[l]->is_lvalue) {
+                error(
+                        @$,
+                        u8"lvalue required as left operand of assignment");
+                YYERROR;
+        }
+
+        if (*$[l]->type != *$[r]->type) {
+                error(
+                        @$,
+                        u8"incompatible types in assignment"
+                );
+                std::cerr << "lhs is " << $[l]->type->show() << std::endl;
+                std::cerr << "rhs is " << $[r]->type->show() << std::endl;
+                YYERROR;
+        }
+
+        $$ = new Tajada::AST::Assignment($[l], $[r]);
+}
+
 /* §3.5.2.1p3 */
 | IF PAREN_OP expr[condition] PAREN_CL body[cuerpo_positivo] ELSE body[cuerpo_negativo]
 {
@@ -980,7 +1010,8 @@ statement
 
 /* §3.5.2.4p4 */
 | expr[fuente] SWITCH IDENT[variable] BLOCK_OP {
-        if (!dynamic_cast<Tajada::Type::Union *>($[fuente]->type)) {
+        auto u = dynamic_cast<Tajada::Type::Union *>($[fuente]->type);
+        if (!u) {
                 error(
                         @$,
                         u8"type selection source requires union, but has type “"
@@ -991,7 +1022,9 @@ statement
         }
 
         scope->switch_parameter = $[variable];
+        scope->switch_union     = u;
 } cases[casos] {
+        scope->switch_union     = nullptr;
         scope->switch_parameter = nullptr;
 
         // TODO: check for repeated cases
@@ -1061,7 +1094,7 @@ cases
         scope->children.insert(ns);
         scope = ns;
 
-        auto case_type = (*scope->parent->switch_union)[*$[caso]];
+        auto case_type = (*scope->parent->switch_union)[std::stod(*$[caso])];
 
         if (!case_type) {
                 error(
@@ -1125,6 +1158,46 @@ body
 { $$ = $[block]; }
 
 ;
+
+
+
+union_access
+
+/* §3.4.6p12 */
+: expr[source] UNION_ARROW intlit[field]
+{
+        auto tp = dynamic_cast<Tajada::Type::Union *>($[source]->type);
+
+        if (!tp) {
+                error(@$, u8"Attempt to access numbered union field by number on expression of non‐union type");
+                YYERROR;
+        }
+
+        if (!(*tp)[$[field]->value]) {
+                error(@$, u8"Attempt to access nonexistent union field");
+                YYERROR;
+        }
+
+        $$ = new Tajada::AST::UnionAccessByInteger($[source], $[field]);
+}
+
+/* §3.4.6p12 */
+| expr[source] UNION_ARROW IDENT[field]
+{
+        auto tp = dynamic_cast<Tajada::Type::Union *>($[source]->type);
+
+        if (!tp) {
+                error(@$, u8"Attempt to access union field by name on expression of non‐union type");
+                YYERROR;
+        }
+
+        if (!(*tp)[*$[field]]) {
+                error(@$, u8"Attempt to access nonexistent named union field");
+                YYERROR;
+        }
+
+        $$ = new Tajada::AST::UnionAccessByName($[source], $[field]);
+}
 
 
 

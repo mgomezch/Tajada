@@ -1,4 +1,3 @@
-#include <iostream>
 #include <numeric>
 
 #include "scope.hh"
@@ -11,19 +10,23 @@ namespace Tajada {
                 Tajada::Scope::Type                p_type,
                 Tajada::AST::FunctionDeclaration * p_declaration
         ):
-                id              (next_id++    ),
-                parent          (p_parent     ),
-                declaration     (p_declaration),
-                switch_union    (nullptr      ),
-                switch_parameter(nullptr      )
+                id              (next_id++                   ),
+                parent          (p_parent                    ),
+                declaration     (p_declaration               ),
+                switch_union    (nullptr                     ),
+                switch_parameter(nullptr                     )
         {
                 if (p_parent) {
                         if (!p_declaration) p_declaration = p_parent->declaration;
                         structure = p_parent->structure;
+                        base = p_parent->end;
+                } else {
+                        base = 0;
                 }
 
-                if (p_type != Tajada::Scope::Type::unspecified || parent == nullptr) type = p_type;
-                else switch (parent->type) {
+                if (p_type != Tajada::Scope::Type::unspecified || parent == nullptr) {
+                        type = p_type;
+                } else switch (parent->type) {
                         case Tajada::Scope::Type::unspecified:
                         case Tajada::Scope::Type::global:
                                 type = Tajada::Scope::Type::unspecified;
@@ -35,24 +38,31 @@ namespace Tajada {
                                 break;
 
                         case Tajada::Scope::Type::function:
+                                base = 0;
                         case Tajada::Scope::Type::function_intermediate:
                                 type = Tajada::Scope::Type::function_intermediate;
                                 break;
                 }
+
+                if (p_type == Tajada::Scope::Type::function) base = 0;
+                end = base;
         }
 
         void Scope::define_variable(
                 std::string name,
                 Tajada::Type::Type * type
         ) {
-                variables[name] = type;
+                auto a = type->alignment();
+                if (a) end += (a - end % a) % a;
+                variables[name] = std::make_tuple(type, end);
+                end += type->size();
         }
 
         Tajada::Type::Type * Scope::variable_type(
                 std::string name
         ) {
                 auto it = variables.find(name);
-                return (it != variables.end()) ? it->second : nullptr;
+                return (it != variables.end()) ? std::get<0>(it->second) : nullptr;
         }
 
         std::string Scope::show(unsigned int depth) {
@@ -78,6 +88,8 @@ namespace Tajada {
                                 }
                                 return u8"";
                         } ()
+                        + u8", base: "
+                        + std::to_string(base)
                         + u8"] "
                         + (
                                 declaration
@@ -96,8 +108,10 @@ namespace Tajada {
                                                 + std::string((depth + 1) * 8, ' ')
                                                 + x.first
                                                 + std::string(u8" es ")
-                                                + x.second->show()
-                                                + std::string(u8"\n");
+                                                + std::get<0>(x.second)->show()
+                                                + std::string(u8". [[offset: ")
+                                                + std::to_string(std::get<1>(x.second))
+                                                + std::string(u8"]]\n");
                                 }
                         )
 

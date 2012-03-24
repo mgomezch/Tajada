@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
-if [ "${#@}" -ge 1 ]
+if [[ ${#@} -ge 1 ]]
 then
         export COLUMNS="$1"
 else
         export COLUMNS="0"
 fi
+
+
+
+fails=()
+
+
 
 for i in ../test/good/*.tajada
 do
@@ -18,6 +24,7 @@ EOF
 
         if [[ $? != 0 ]]
         then
+                fails+=("$i")
                 ruby <<-EOF
                         puts 'GOOD TEST FAILED: $i'.center($COLUMNS).tr ' ', '_'
                         puts "\n"*5
@@ -30,6 +37,8 @@ EOF
         fi
 done
 
+
+
 for i in ../test/bad/*.tajada
 do
         ruby <<-EOF
@@ -41,6 +50,7 @@ EOF
 
         if [[ $? == 0 ]]
         then
+                fails+=("$i")
                 ruby <<-EOF
                         puts 'BAD TEST FAILED: $i'.center($COLUMNS).tr ' ', '_'
                         puts "\n"*5
@@ -52,3 +62,17 @@ EOF
 EOF
         fi
 done
+
+
+
+n="${#fails[@]}"
+if [[ $n == 0 ]]
+then
+        echo "All OK"
+else
+        echo "$n tests failed:"
+        for i in "${fails[@]}"
+        do
+                echo "$i"
+        done
+fi

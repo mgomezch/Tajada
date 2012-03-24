@@ -16,7 +16,9 @@ namespace Tajada {
                         div,
                         mod,
                         eq,
-                        neq
+                        neq,
+                        lessthan,
+                        greaterthan
                 };
 
                 class AST {
@@ -251,6 +253,32 @@ namespace Tajada {
                                 std::string * field;
 
                                 TupleAccessByName(
+                                        Tajada::AST::Expression * source,
+                                        std::string * field
+                                );
+
+                                virtual std::string show(unsigned int depth = 0);
+                };
+
+                class UnionAccessByInteger : public virtual Tajada::AST::Expression {
+                        public:
+                                Tajada::AST::Expression * source;
+                                Tajada::AST::Literal::Integer * field;
+
+                                UnionAccessByInteger(
+                                        Tajada::AST::Expression * source,
+                                        Tajada::AST::Literal::Integer * field
+                                );
+
+                                virtual std::string show(unsigned int depth = 0);
+                };
+
+                class UnionAccessByName : public virtual Tajada::AST::Expression {
+                        public:
+                                Tajada::AST::Expression * source;
+                                std::string * field;
+
+                                UnionAccessByName(
                                         Tajada::AST::Expression * source,
                                         std::string * field
                                 );

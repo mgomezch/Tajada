@@ -28,7 +28,15 @@ namespace Tajada {
 
                         Tajada::Scope * parent;
                         std::unordered_set<Tajada::Scope *> children;
-                        std::unordered_map<std::string, Tajada::Type::Type *> variables;
+
+                        std::unordered_map<
+                                std::string,
+                                std::tuple<
+                                        Tajada::Type::Type *,
+                                        unsigned int
+                                >
+                        > variables;
+
                         std::unordered_map<std::string, Tajada::Type::Type *> aliases;
 
                         std::unordered_multimap<

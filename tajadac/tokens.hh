@@ -4,7 +4,7 @@
 /* §1.2.2.1 */
 #define TAJADA_ENDLINES       "\u000A\u000B\u000C\u000D\u0085\u2028\u2029"
 
-#define TAJADA_RESERVED_START u8"][←→()$+−×÷~=≠«»⋘⋙␣{}≔.,;…∷∶·‹⫽“\\\\\u0009-\u000D\u0020\u0085\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000"
+#define TAJADA_RESERVED_START u8"][<>←→⇒()$+−×÷~=≠«»⋘⋙␣{}≔.,;…∷∶·‹⫽“\\\\\u0009-\u000D\u0020\u0085\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000"
 
 #define TAJADA_RESERVED_WORD(TOKEN, tag, word)                                  \
         TOKEN(                                                                  \
@@ -293,6 +293,22 @@
                 std::string *                                                  \
         )                                                                      \
                                                                                \
+        /* §3.4.3.2l1e8p1 */                                                   \
+        TOKEN(                                                                 \
+                OP_LT,                                                         \
+                u8"operador menor",                                            \
+                u8"(<)",                                                       \
+                std::string *                                                  \
+        )                                                                      \
+                                                                               \
+        /* §3.4.3.2l1e9p1 */                                                   \
+        TOKEN(                                                                 \
+                OP_GT,                                                         \
+                u8"operador mayor",                                            \
+                u8"(>)",                                                       \
+                std::string *                                                  \
+        )                                                                      \
+                                                                               \
         /* §3.4.6p1 */                                                         \
         TOKEN(                                                                 \
                 PAREN_OP,                                                      \
@@ -338,6 +354,14 @@
                 EXPR_LIST_SEP,                                                 \
                 u8"separador de lista de expresiones",                         \
                 u8"(;)",                                                       \
+                void                                                           \
+        )                                                                      \
+                                                                               \
+        /* §3.4.6p11 */                                                        \
+        TOKEN(                                                                 \
+                UNION_ARROW,                                                   \
+                u8"indicador de acceso a cachapa",                             \
+                u8"(⇒)",                                                       \
                 void                                                           \
         )                                                                      \
                                                                                \

@@ -25,13 +25,13 @@ namespace Tajada {
                 unsigned int Type::size() {
                         if (has_saved_size) return saved_size;
                         has_saved_size = true;
-                        return size_();
+                        return saved_size = size_();
                 }
 
                 unsigned int Type::alignment() {
                         if (has_saved_alignment) return saved_alignment;
                         has_saved_alignment = true;
-                        return alignment_();
+                        return saved_alignment = alignment_();
                 }
 
                 Type::~Type() {}
@@ -133,7 +133,7 @@ namespace Tajada {
                                 r += std::get<0>(**it)->size();
                                 if (it + 1 != elems->end()) {
                                         auto a = std::get<0>(**(it + 1))->alignment();
-                                        r += a - r % a;
+                                        if (a) r += (a - r % a) % a;
                                 }
                         }
 

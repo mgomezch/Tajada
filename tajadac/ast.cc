@@ -395,6 +395,38 @@ namespace Tajada {
                                 + *field;
                 }
 
+                UnionAccessByInteger::UnionAccessByInteger(
+                        Tajada::AST::Expression * source,
+                        Tajada::AST::Literal::Integer * field
+                ):
+                        Tajada::AST::Expression(dynamic_cast<Tajada::Type::Union &>(*source->type)[field->value], source->is_lvalue),
+                        source(source),
+                        field(field)
+                {}
+
+                std::string UnionAccessByInteger::show(unsigned int depth) {
+                        return
+                                source->show(depth)
+                                + std::string(u8" → ")
+                                + field->show(depth);
+                }
+
+                UnionAccessByName::UnionAccessByName(
+                        Tajada::AST::Expression * source,
+                        std::string * field
+                ):
+                        Tajada::AST::Expression(dynamic_cast<Tajada::Type::Union &>(*source->type)[*field], source->is_lvalue),
+                        source(source),
+                        field(field)
+                {}
+
+                std::string UnionAccessByName::show(unsigned int depth) {
+                        return
+                                source->show(depth)
+                                + std::string(u8" ⇒ ")
+                                + *field;
+                }
+
                 ArrayAccess::ArrayAccess(
                         Tajada::AST::Expression * source,
                         Tajada::AST::Expression * position
@@ -609,7 +641,7 @@ namespace Tajada {
                                 fuente->show(depth)
                                 + u8" ∷ "
                                 + *variable
-                                + u8" ∷ {\n"
+                                + u8" {\n"
                                 + std::accumulate(
                                         casos->begin(),
                                         casos->end(),
@@ -617,7 +649,19 @@ namespace Tajada {
                                         [depth](std::string acc, Tajada::AST::TypeCase::TypeCase * c) {
                                                 return
                                                         acc
-                                                        + c->show(depth + 1);
+                                                        + std::string((depth + 1) * 8, ' ')
+                                                        + c->show(depth + 1)
+                                                        + (
+                                                                (
+                                                                        dynamic_cast<Block *>(c->body)
+                                                                        || dynamic_cast<If *>(c->body)
+                                                                        || dynamic_cast<While *>(c->body)
+                                                                        || dynamic_cast<For *>(c->body)
+                                                                        || dynamic_cast<TypeSelection *>(c->body)
+                                                                )
+                                                                ? u8"\n"
+                                                                : u8".\n"
+                                                        );
                                         }
                                 )
                                 + std::string(depth * 8, ' ')

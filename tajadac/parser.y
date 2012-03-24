@@ -691,7 +691,7 @@ expr
                 YYERROR;
         }
 
-        $$ = new Tajada::AST::VariableUse($[nombre], t);
+        $$ = new Tajada::AST::VariableUse(s->id, $[nombre], t);
 }
 
 /* §3.4.6p3 */

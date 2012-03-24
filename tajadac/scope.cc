@@ -52,7 +52,6 @@ namespace Tajada {
                 std::string name
         ) {
                 auto it = variables.find(name);
-                std::cout << "lookup for variable " << name << " in scope " << show() << std::endl;
                 return (it != variables.end()) ? it->second : nullptr;
         }
 

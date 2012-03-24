@@ -220,9 +220,14 @@ namespace Tajada {
 
                 class VariableUse : public virtual Tajada::AST::Expression {
                         public:
+                                unsigned int scope_id;
                                 std::string * name;
 
-                                VariableUse(std::string * name, Tajada::Type::Type * type);
+                                VariableUse(
+                                        unsigned int scope_id,
+                                        std::string * name,
+                                        Tajada::Type::Type * type
+                                );
 
                                 virtual std::string show(unsigned int depth = 0);
                 };

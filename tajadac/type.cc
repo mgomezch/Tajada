@@ -220,14 +220,14 @@ namespace Tajada {
                                                 std::string(*std::get<1>(t) == "" ? "" : "(")
                                                 + std::get<0>(t)->show(depth)
                                                 + (*std::get<1>(t) == "" ? "" : " " + *std::get<1>(t) + ")");
-                                } (*(--(--elems->back())))
+                                } (**(--(--elems->end())))
                                 + u8" o "
                                 + [depth](std::tuple<Type *, std::string *> t) {
                                         return
                                                 std::string(*std::get<1>(t) == "" ? "" : "(")
                                                 + std::get<0>(t)->show(depth)
                                                 + (*std::get<1>(t) == "" ? "" : " " + *std::get<1>(t) + ")");
-                                } (*(--elems->back()));
+                                } (**(--elems->end()));
                 }
 
                 Array::Array(

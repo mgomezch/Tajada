@@ -331,12 +331,90 @@ namespace Tajada {
                                 virtual std::string show(unsigned int depth = 0);
                 };
 
+                class For : public virtual Tajada::AST::Statement {
+                        public:
+                                std::string * counter;
+                                Tajada::AST::Expression * inicio;
+                                Tajada::AST::Expression * fin;
+                                Tajada::AST::Statement * body;
+
+                                For(
+                                        std::string * p_counter,
+                                        Tajada::AST::Expression * p_inicio,
+                                        Tajada::AST::Expression * p_fin,
+                                        Tajada::AST::Statement * p_body
+                                );
+
+                                virtual std::string show(unsigned int depth = 0);
+                };
+
+                namespace TypeCase {
+                        class TypeCase : public virtual Tajada::AST::AST {
+                                public:
+                                        Tajada::AST::Statement * body;
+
+                                        TypeCase(
+                                                Tajada::AST::Statement * p_body
+                                        );
+                        };
+
+                        class Integer : public virtual Tajada::AST::TypeCase::TypeCase {
+                                public:
+                                        int index;
+
+                                        Integer(
+                                                std::string * p_index,
+                                                Tajada::AST::Statement * p_body
+                                        );
+
+                                        virtual std::string show(unsigned int depth = 0);
+                        };
+
+                        class String : public virtual Tajada::AST::TypeCase::TypeCase {
+                                public:
+                                        std::string * index;
+
+                                        String(
+                                                std::string * p_index,
+                                                Tajada::AST::Statement * p_body
+                                        );
+
+                                        virtual std::string show(unsigned int depth = 0);
+                        };
+                }
+
+                class TypeSelection : public virtual Tajada::AST::Statement {
+                        public:
+                                Tajada::AST::Expression * fuente;
+                                std::string * variable;
+                                std::vector<Tajada::AST::TypeCase::TypeCase *> * casos;
+
+                                TypeSelection(
+                                        Tajada::AST::Expression * p_fuente,
+                                        std::string * p_variable,
+                                        std::vector<Tajada::AST::TypeCase::TypeCase *> * p_casos
+                                );
+
+                                virtual std::string show(unsigned int depth = 0);
+                };
+
                 class Return : public virtual Tajada::AST::Statement {
                         public:
                                 Tajada::AST::Expression * expression;
 
                                 Return(
                                         Tajada::AST::Expression * expression
+                                );
+
+                                virtual std::string show(unsigned int depth = 0);
+                };
+
+                class Break : public virtual Tajada::AST::Statement {
+                        public:
+                                Tajada::AST::Statement * statement;
+
+                                Break(
+                                        Tajada::AST::Statement * statement
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);

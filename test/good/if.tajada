@@ -1,0 +1,8 @@
+{
+        if (negrito) negrito.
+        else if (tetero) tetero.
+        else {
+                if (negrito + tetero) negrito + tetero.
+                else negrito × tetero.
+        }
+}

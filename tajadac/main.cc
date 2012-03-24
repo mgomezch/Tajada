@@ -46,7 +46,7 @@ int main(int argc, char * argv[]) {
 
         {
                 re2::StringPiece in(in_s);
-                Tajada::lex::Scanner scanner = { &in };
+                Tajada::lex::Scanner scanner { &in };
                 Tajada::Scope scope(
                         nullptr,
                         Tajada::Scope::Type::global
@@ -127,6 +127,7 @@ TAJADA_OPS(TAJADA_DEFINE_FUNCTION_FOR_TYPE)
                 Tajada::AST::AST * tree = nullptr;
                 if (Tajada::yy::parser(&scanner, &scope, &tree, &filename).parse()) {
                         std::cerr << u8"Parse error." << std::endl;
+                        std::exit(EX_DATAERR);
                 } else {
                         std::cout
                                 << u8"Successful parse:\n"
@@ -135,6 +136,7 @@ TAJADA_OPS(TAJADA_DEFINE_FUNCTION_FOR_TYPE)
                                 << u8"Symbol tables:\n"
                                 << scope.show()
                                 << std::endl;
+                        std::exit(EX_OK);
                 }
         }
 }

@@ -15,17 +15,34 @@ namespace Tajada {
                                         complete
                                 } is_complete;
 
-                                Type(Complete p_is_complete);
+                                Type(
+                                        Complete p_is_complete
+                                );
+
+                                virtual unsigned int size();
+                                virtual unsigned int alignment();
 
                                 virtual std::string show(unsigned int depth = 0) = 0;
 
                                 virtual ~Type() = 0;
+
+                        protected:
+                                bool has_saved_size;
+                                unsigned int saved_size;
+
+                                bool has_saved_alignment;
+                                unsigned int saved_alignment;
+
+                                virtual unsigned int size_()      = 0;
+                                virtual unsigned int alignment_() = 0;
                 };
 
                 class Boolean : public virtual Type {
                         public:
                                 Boolean();
 
+                                virtual unsigned int size_();
+                                virtual unsigned int alignment_();
                                 virtual std::string show(unsigned int depth = 0);
                 };
 
@@ -33,6 +50,8 @@ namespace Tajada {
                         public:
                                 Character();
 
+                                virtual unsigned int size_();
+                                virtual unsigned int alignment_();
                                 virtual std::string show(unsigned int depth = 0);
                 };
 
@@ -40,6 +59,8 @@ namespace Tajada {
                         public:
                                 Integer();
 
+                                virtual unsigned int size_();
+                                virtual unsigned int alignment_();
                                 virtual std::string show(unsigned int depth = 0);
                 };
 
@@ -47,6 +68,8 @@ namespace Tajada {
                         public:
                                 Float();
 
+                                virtual unsigned int size_();
+                                virtual unsigned int alignment_();
                                 virtual std::string show(unsigned int depth = 0);
                 };
 
@@ -61,6 +84,8 @@ namespace Tajada {
 
                                 virtual Tajada::Type::Type * operator [] (int n) const;
                                 virtual Tajada::Type::Type * operator [] (std::string const name) const;
+
+                                virtual unsigned int alignment_();
                 };
 
                 class Tuple : public virtual Structure {
@@ -69,6 +94,7 @@ namespace Tajada {
                                         std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> * elems
                                 );
 
+                                virtual unsigned int size_();
                                 virtual std::string show(unsigned int depth = 0);
                 };
 
@@ -78,6 +104,7 @@ namespace Tajada {
                                         std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> * elems
                                 );
 
+                                virtual unsigned int size_();
                                 virtual std::string show(unsigned int depth = 0);
                 };
 
@@ -95,6 +122,8 @@ namespace Tajada {
                                         unsigned int p_length
                                 );
 
+                                virtual unsigned int size_();
+                                virtual unsigned int alignment_();
                                 virtual std::string show(unsigned int depth = 0);
                 };
 
@@ -106,6 +135,8 @@ namespace Tajada {
                                         Type * p_target
                                 );
 
+                                virtual unsigned int size_();
+                                virtual unsigned int alignment_();
                                 virtual std::string show(unsigned int depth = 0);
                 };
 

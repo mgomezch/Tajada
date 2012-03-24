@@ -1,11 +1,10 @@
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 #include <numeric>
 #include <string>
 #include <tuple>
 #include <typeinfo>
-
-#include <sysexits.h>
 
 #include "type.hh"
 
@@ -15,18 +14,38 @@
 
 namespace Tajada {
         namespace Type {
-                Type::Type(Type::Complete p_is_complete): is_complete(p_is_complete) {}
+                Type::Type(
+                        Type::Complete p_is_complete
+                ):
+                        is_complete        (p_is_complete),
+                        has_saved_size     (false        ),
+                        has_saved_alignment(false        )
+                {}
+
+                unsigned int Type::size() {
+                        if (has_saved_size) return saved_size;
+                        has_saved_size = true;
+                        return size_();
+                }
+
+                unsigned int Type::alignment() {
+                        if (has_saved_alignment) return saved_alignment;
+                        has_saved_alignment = true;
+                        return alignment_();
+                }
+
                 Type::~Type() {}
 
-                std::string Boolean  ::show(unsigned int depth) { TAJADA_UNUSED_PARAMETER(depth); return u8"café"   ; }
-                std::string Character::show(unsigned int depth) { TAJADA_UNUSED_PARAMETER(depth); return u8"caraota"; }
-                std::string Integer  ::show(unsigned int depth) { TAJADA_UNUSED_PARAMETER(depth); return u8"queso"  ; }
-                std::string Float    ::show(unsigned int depth) { TAJADA_UNUSED_PARAMETER(depth); return u8"papelón"; }
-
-                Boolean  ::Boolean  (): Type(Tajada::Type::Type::Complete::complete) {}
-                Character::Character(): Type(Tajada::Type::Type::Complete::complete) {}
-                Integer  ::Integer  (): Type(Tajada::Type::Type::Complete::complete) {}
-                Float    ::Float    (): Type(Tajada::Type::Type::Complete::complete) {}
+#define TAJADA_BASIC_TYPE(n, str, s, a)                                                                      \
+                std::string n::show(unsigned int depth) { TAJADA_UNUSED_PARAMETER(depth); return u8"" str; } \
+                unsigned int n::size_     () { return s; }                                                   \
+                unsigned int n::alignment_() { return a; }                                                   \
+                n::n(): Type(Tajada::Type::Type::Complete::complete) {}
+                TAJADA_BASIC_TYPE(Boolean  , "café"   ,  1,  8)
+                TAJADA_BASIC_TYPE(Character, "caraota", 32, 32)
+                TAJADA_BASIC_TYPE(Integer  , "queso"  , 32, 32)
+                TAJADA_BASIC_TYPE(Float    , "papelón", 32, 32)
+#undef TAJADA_BASIC_TYPE
 
 #define TAJADA_TYPE_STRUCTURE_TYPE_CONSTRUCTOR_CALL                                     \
         Type(                                                                           \
@@ -51,9 +70,9 @@ namespace Tajada {
                         TAJADA_TYPE_STRUCTURE_TYPE_CONSTRUCTOR_CALL,
                         elems(p_elems)
                 {
-                        /* Boring traditional/readable/maintainable/unobfuscated programming is boring. ☹ */
                         auto n = p_elems->size();
 
+                        /* Boring traditional/readable/maintainable/unobfuscated programming is boring. */
                         for (unsigned int i = 0; i < n; ++i) {
                                 auto nameptr = std::get<1>(*(*p_elems)[i]);
                                 if (nameptr) names[*nameptr] = i;
@@ -88,6 +107,53 @@ namespace Tajada {
                                 r == names.end()
                                 ? nullptr
                                 : (*this)[r->second];
+                }
+
+                namespace {
+                        unsigned int gcd(unsigned int n, unsigned int m) {
+                                return
+                                        m == 0
+                                        ? n
+                                        : gcd(m, n % m);
+                        }
+
+                        unsigned int lcm(unsigned int n, unsigned int m) {
+                                return n * m / gcd(n, m);
+                        }
+                }
+
+                unsigned int Structure::alignment_() {
+                        return lcm(32, size());
+                }
+
+                unsigned int Tuple::size_() {
+                        unsigned int r = 0;
+
+                        for (auto it = elems->begin(); it != elems->end(); ++it) {
+                                r += std::get<0>(**it)->size();
+                                if (it + 1 != elems->end()) {
+                                        auto a = std::get<0>(**(it + 1))->alignment();
+                                        r += a - r % a;
+                                }
+                        }
+
+                        return r;
+                }
+
+                unsigned int Union::size_() {
+                        return
+                                std::get<0>(
+                                        **std::max_element(
+                                                elems->begin(),
+                                                elems->end(),
+                                                [](
+                                                        std::tuple<Tajada::Type::Type *, std::string *> * i,
+                                                        std::tuple<Tajada::Type::Type *, std::string *> * j
+                                                ) {
+                                                        return std::get<0>(*i)->size() < std::get<0>(*j)->size();
+                                                }
+                                        )
+                                )->size();
                 }
 
                 std::string Tuple::show(unsigned int depth) {
@@ -181,6 +247,16 @@ namespace Tajada {
                         length(p_length)
                 {}
 
+                unsigned int Array::size_() {
+                        auto s = contents->size();
+                        auto a = contents->alignment();
+                        return length * (s + a - s % a);
+                }
+
+                unsigned int Array::alignment_() {
+                        return contents->alignment();
+                }
+
                 std::string Array::show(unsigned int depth) {
                         return
                                 u8"arroz con "
@@ -193,6 +269,9 @@ namespace Tajada {
                         Type(Tajada::Type::Type::Complete::complete),
                         target(p_target)
                 {}
+
+                unsigned int Reference::size_     () { return 32; }
+                unsigned int Reference::alignment_() { return 32; }
 
                 std::string Reference::show(unsigned int depth) {
                         return

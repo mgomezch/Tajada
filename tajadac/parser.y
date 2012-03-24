@@ -190,8 +190,13 @@
 %union { std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *> * tuple_elems; }
 %type <tuple_elems> tuple_elems
 
-%union {  std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::Function **> * func_spec; }
+%union { std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::Function **> * func_spec; }
 %type <func_spec> func_spec
+
+%union { std::vector<Tajada::AST::TypeCase::TypeCase *> * cases; }
+%type <cases> cases
+
+
 
 
 
@@ -289,7 +294,7 @@ toplevel
         );
         scope->children.insert(ns);
         scope = ns;
-        scope->variables[*std::get<0>(*$[func_spec])->domain_name] = std::get<0>(*$[func_spec])->domain;
+        scope->define_variable(*std::get<0>(*$[func_spec])->domain_name, std::get<0>(*$[func_spec])->domain);
 } blocklevels[statements] {
         scope = scope->parent;
 } BLOCK_CL {
@@ -484,7 +489,7 @@ func_spec
 var_def
 : IDENT[nombre] ES typespec[tipo] STMT_END
 {
-        if (scope->variables.find(*$[nombre]) != scope->variables.end()) {
+        if (scope->variable_type(*$[nombre])) {
                 error(
                         @$,
                         u8"redefinition of “"
@@ -493,7 +498,7 @@ var_def
                 );
                 YYERROR;
         }
-        scope->variables[*$[nombre]] = $[tipo];
+        scope->define_variable(*$[nombre], $[tipo]);
         $$ = new Tajada::AST::VariableDefinition($[nombre], $[tipo]);
 }
 
@@ -515,7 +520,12 @@ typespec
         }
 
         if (s == nullptr) {
-                error(@[nombre], "Attempt to use an undefined type alias");
+                error(
+                        @[nombre],
+                        std::string("type alias “")
+                        + *$[nombre]
+                        + "”"
+                );
                 YYERROR;
         }
 
@@ -664,10 +674,10 @@ expr
 | IDENT[nombre]
 {
         auto s = scope;
-        decltype(s->variables.begin()) it;
+        Tajada::Type::Type * t;
 
         while (s != nullptr) {
-                if ((it = s->variables.find(*$[nombre])) != s->variables.end()) break;
+                if ((t = s->variable_type(*$[nombre]))) break;
                 s = s->parent;
         }
 
@@ -681,7 +691,7 @@ expr
                 YYERROR;
         }
 
-        $$ = new Tajada::AST::VariableUse($[nombre], it->second);
+        $$ = new Tajada::AST::VariableUse($[nombre], t);
 }
 
 /* §3.4.6p3 */
@@ -857,16 +867,20 @@ statement
 { $$ = new Tajada::AST::ExpressionStatement($[expression]); }
 
 /* §3.5.1p7 */
-/* TODO: check for lvalue in action */
 | expr[l] ASSIGN expr[r] STMT_END
 {
         if (!$[l]->is_lvalue) {
-                error(@$, u8"Attempt to assign to expression without l‐value");
+                error(
+                        @$,
+                        u8"lvalue required as left operand of assignment");
                 YYERROR;
         }
 
         if (*$[l]->type != *$[r]->type) {
-                error(@$, u8"Attempt to assign with incompatible types");
+                error(
+                        @$,
+                        u8"incompatible types in assignment"
+                );
                 std::cerr << "lhs is " << $[l]->type->show() << std::endl;
                 std::cerr << "rhs is " << $[r]->type->show() << std::endl;
                 YYERROR;
@@ -875,23 +889,115 @@ statement
         $$ = new Tajada::AST::Assignment($[l], $[r]);
 }
 
-/* TODO: check for bool condition */
 /* §3.5.2.1p3 */
-| IF PAREN_OP expr[condition] PAREN_CL body[body_true] ELSE body[body_false]
-{ $$ = new Tajada::AST::If($[condition], $[body_true], $[body_false]); }
+| IF PAREN_OP expr[condition] PAREN_CL body[cuerpo_positivo] ELSE body[cuerpo_negativo]
+{
+        if (*$[condition]->type != Tajada::Type::Boolean()) {
+                error(
+                        @[condition],
+                        u8"condition requires boolean, but has type “"
+                        + $[condition]->type->show()
+                        + u8"”"
+                );
+                YYERROR;
+        }
 
-/* TODO: check for bool condition */
-| IF PAREN_OP expr[condition] PAREN_CL body[body_true]
-{ $$ = new Tajada::AST::If($[condition], $[body_true], new Tajada::AST::Block(new std::list<Tajada::AST::Statement *>())); }
+        $$ = new Tajada::AST::If($[condition], $[cuerpo_positivo], $[cuerpo_negativo]);
+}
 
-/* TODO: check for bool condition */
+| IF PAREN_OP expr[condition] PAREN_CL body[cuerpo]
+{
+        if (*$[condition]->type != Tajada::Type::Boolean()) {
+                error(
+                        @[condition],
+                        u8"condition requires boolean, but has type “"
+                        + $[condition]->type->show()
+                        + u8"”"
+                );
+                YYERROR;
+        }
+
+        $$ = new Tajada::AST::If($[condition], $[cuerpo], nullptr);
+}
+
 /* §3.5.2.2p2 */
-| WHILE PAREN_OP expr[condition] PAREN_CL body
-{ $$ = new Tajada::AST::While($[condition], $[body]); }
+| WHILE PAREN_OP expr[condition] PAREN_CL {
+        if (*$[condition]->type != Tajada::Type::Boolean()) {
+                error(
+                        @[condition],
+                        u8"condition requires boolean, but has type “"
+                        + $[condition]->type->show()
+                        + u8"”"
+                );
+                YYERROR;
+        }
 
-/* TODO */
+        auto ns = new Scope(scope);
+        scope->children.insert(ns);
+        scope = ns;
+} body[cuerpo] {
+        scope = scope->parent;
+
+        $$ = new Tajada::AST::While($[condition], $[cuerpo]);
+}
+
 /* §3.5.2.3p4 */
-/*| FOR IDENT IN PAREN_OP expr RANGE_SEP expr PAREN_CL body*/
+| FOR IDENT[contador] IN PAREN_OP expr[inicio] RANGE_SEP expr[fin] PAREN_CL {
+        if (*$[inicio]->type != Tajada::Type::Integer()) {
+                error(
+                        @[inicio],
+                        u8"range start requires integer, but has type “"
+                        + $[inicio]->type->show()
+                        + u8"”"
+                );
+                YYERROR;
+        }
+
+        if (*$[fin]->type != Tajada::Type::Integer()) {
+                error(
+                        @[fin],
+                        u8"range end requires integer, but has type “"
+                        + $[fin]->type->show()
+                        + u8"”"
+                );
+                YYERROR;
+        }
+
+        auto ns = new Scope(scope);
+        scope->children.insert(ns);
+        scope = ns;
+
+        scope->define_variable(*$[contador], new Tajada::Type::Integer());
+
+        scope->structure = new Tajada::AST::For($[contador], $[inicio], $[fin], nullptr);
+} body[cuerpo] {
+        auto ret = dynamic_cast<Tajada::AST::For *>(scope->structure);
+        scope = scope->parent;
+
+        ret->body = $[cuerpo];
+        $$ = ret;
+}
+
+/* §3.5.2.4p4 */
+| expr[fuente] SWITCH IDENT[variable] BLOCK_OP {
+        if (!dynamic_cast<Tajada::Type::Union *>($[fuente]->type)) {
+                error(
+                        @$,
+                        u8"type selection source requires union, but has type “"
+                        + $[fuente]->type->show()
+                        + u8"”"
+                );
+                YYERROR;
+        }
+
+        scope->switch_parameter = $[variable];
+} cases[casos] {
+        scope->switch_parameter = nullptr;
+
+        // TODO: check for repeated cases
+} BLOCK_CL {
+        $$ = new Tajada::AST::TypeSelection($[fuente], $[variable], $[casos]);
+}
 
 /* §3.5.2.5p2 */
 | RETURN expr[retornado] STMT_END
@@ -927,10 +1033,85 @@ statement
                         YYERROR;
                 }
         }
+
+        $$ = new Tajada::AST::Return($[retornado]);
 }
 
-/* TODO: union switch/case */
-/* TODO: fin/break */
+/* §3.5.2.6p2 */
+| BREAK STMT_END
+{
+        if (!scope->structure) {
+                error(
+                        @$,
+                        u8"break statement occurs outside of control structure"
+                );
+                YYERROR;
+        }
+        $$ = new Tajada::AST::Break(scope->structure);
+}
+
+;
+
+
+
+cases
+
+: cases[cs] LIT_INT[caso] CASE {
+        auto ns = new Scope(scope);
+        scope->children.insert(ns);
+        scope = ns;
+
+        auto case_type = (*scope->parent->switch_union)[*$[caso]];
+
+        if (!case_type) {
+                error(
+                        @$,
+                        std::string(u8"case index “")
+                        + *$[caso]
+                        + u8"” is out of bounds for the type of the expression in its type selection: “"
+                        + scope->parent->switch_union->show()
+                        + u8"”"
+                );
+                YYERROR;
+        }
+
+        scope->define_variable(*scope->parent->switch_parameter, case_type);
+} body[cuerpo] {
+        scope = scope->parent;
+
+        $[cs]->push_back(new Tajada::AST::TypeCase::Integer($[caso], $[cuerpo]));
+
+        $$ = $[cs];
+}
+
+| cases[cs] IDENT[caso] CASE {
+        auto ns = new Scope(scope);
+        scope->children.insert(ns);
+        scope = ns;
+
+        auto case_type = (*scope->parent->switch_union)[*$[caso]];
+        if (!case_type) {
+                error(
+                        @$,
+                        std::string(u8"case label “")
+                        + *$[caso]
+                        + u8"” is not a member of the type of the expression in its type selection: “"
+                        + scope->parent->switch_union->show()
+                        + u8"”"
+                );
+                YYERROR;
+        }
+        scope->define_variable(*scope->parent->switch_parameter, case_type);
+} body[cuerpo] {
+        scope = scope->parent;
+
+        $[cs]->push_back(new Tajada::AST::TypeCase::String($[caso], $[cuerpo]));
+
+        $$ = $[cs];
+}
+
+|
+{ $$ = new std::vector<Tajada::AST::TypeCase::TypeCase *>{}; }
 
 ;
 

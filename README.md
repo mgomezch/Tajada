@@ -435,7 +435,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 Un literal de arepa rellena es una expresión cuyo tipo es una arepa cuyos ingredientes son los tipos de las expresiones sucesivas del literal de arepa rellena en el mismo orden de aparición y, si en alguna de ellas ocurre el identificador opcional, su correspondiente ingrediente tendrá ese identificador como nombre.  El valor de un literal de arepa rellena es una arepa rellena de su tipo, y los valores de sus rellenos son los valores de sus expresiones correspondientes.
 
-@@//TODO: ¿literales de arroz?  ¿literales de cachapa?
+@@//TODO: ¿literales de arroz?
 
         2.  #### Platos
 
@@ -487,9 +487,9 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
             *   La definición de la variable está en el mismo bloque que la instrucción, y ocurre antes de la instrucción.
 
-            *   El bloque en el que está la instrucción no define ninguna variable con el nombre de la variable de interés, pero el bloque está contenido directamente en otro bloque en el que la variable sería alcanzable si ocurriera una instrucción en el lugar donde aparece el bloque en el que está la instrucción de interés.
+            *   El bloque en el que está la instrucción no define ninguna variable con el nombre de la variable de interés antes de la instrucción de interés, pero el bloque está contenido directamente en otro bloque en el que la variable sería alcanzable si ocurriera una instrucción en el lugar donde aparece el bloque en el que está la instrucción de interés.
 
-            *   El bloque en el que está la instrucción no define ninguna variable con el nombre de la variable de interés, pero el bloque es el cuerpo de un caso de tipo cuyo caso identifica a un ingrediente de la selección por tipo a la que pertenece ese caso de tipo y ese ingrediente es equivalente al tipo de la variable de interés, y el nombre de la variable de interés es igual al identificador de la misma selección por tipo.
+            *   El bloque en el que está la instrucción no define ninguna variable con el nombre de la variable de interés antes de la instrucción de interés, pero el bloque es el cuerpo de un caso de tipo cuyo caso identifica a un ingrediente de la selección por tipo a la que pertenece ese caso de tipo y ese ingrediente es equivalente al tipo de la variable de interés, y el nombre de la variable de interés es igual al identificador de la misma selección por tipo.
 
             *   La variable es el parámetro formal de un plato o cubierto y la instrucción está contenida directa o indirectamente en el cuerpo de ese plato o un cubierto.
 
@@ -620,7 +620,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
                 Un **caso de tipo** es una secuencia compuesta de un identificador o un literal entero (su **caso**), seguido de un indicador de caso de tipo, seguido de un bloque (su **cuerpo**).
 
-                Una **selección por tipo** es una secuencia compuesta de una expresión (su **fuente**) cuyo tipo sea una cachapa, seguida de un indicador de selección por tipo, seguido de un identificador, seguido de otro indicador de selección por tipo, seguido de una secuencia de casos de tipo cuyos casos identifiquen a ingredientes del tipo de la fuente, seguida de un terminador de frase.
+                Una **selección por tipo** es una secuencia compuesta de una expresión (su **fuente**) cuyo tipo sea una cachapa, seguida de un indicador de selección por tipo, seguido de un identificador, seguido de un inicio de bloque, seguido de una secuencia de casos de tipo cuyos casos identifiquen a ingredientes del tipo de la fuente, seguida de un fin de bloque.  Una selección por tipo es una instrucción.
 
                 Una tajada no contiene selecciones por tipo con más de un caso de tipo cuyos casos identifiquen a un mismo ingrediente del tipo de su fuente.
 

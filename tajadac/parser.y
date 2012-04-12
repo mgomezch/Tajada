@@ -138,6 +138,18 @@
 %nonassoc OP_EQ OP_NEQ OP_LT OP_GT
 %left     OP_PLUS OP_MINUS
 %left     OP_MULT OP_DIV OP_MOD
+
+%left INFIXL0 %nonassoc INFIX0 %right INFIXR0
+%left INFIXL1 %nonassoc INFIX1 %right INFIXR1
+%left INFIXL2 %nonassoc INFIX2 %right INFIXR2
+%left INFIXL3 %nonassoc INFIX3 %right INFIXR3
+%left INFIXL4 %nonassoc INFIX4 %right INFIXR4
+%left INFIXL5 %nonassoc INFIX5 %right INFIXR5
+%left INFIXL6 %nonassoc INFIX6 %right INFIXR6
+%left INFIXL7 %nonassoc INFIX7 %right INFIXR7
+%left INFIXL8 %nonassoc INFIX8 %right INFIXR8
+%left INFIXL9 %nonassoc INFIX9 %right INFIXR9
+
 %nonassoc TUPLE_ARROW
 %nonassoc ARRAY_ACCESS_OP
 %nonassoc PAREN_CL
@@ -149,57 +161,38 @@
 %token_data
 %token END 0 "fin del documento"
 
+%token <infix_op>
+INFIXL0 INFIX0 INFIXR0
+INFIXL1 INFIX1 INFIXR1
+INFIXL2 INFIX2 INFIXR2
+INFIXL3 INFIX3 INFIXR3
+INFIXL4 INFIX4 INFIXR4
+INFIXL5 INFIX5 INFIXR5
+INFIXL6 INFIX6 INFIXR6
+INFIXL7 INFIX7 INFIXR7
+INFIXL8 INFIX8 INFIXR8
+INFIXL9 INFIX9 INFIXR9
 
 
-%union { Tajada::AST::Program * tajada; }
-%type <tajada> tajada
 
-%union { std::list<Tajada::AST::Statement *> * statements; }
-%type <statements> toplevels blocklevels
-
-%union { Tajada::AST::Statement * statement; }
-%type <statement> toplevel blocklevel statement body
-
-%union { Tajada::AST::Block * block; }
-%type <block> block
-
-%union { std::tuple<std::string *, Tajada::AST::Operator> * op; }
-%type <op> operator
-
-%union { Tajada::Type::Type * typespec; }
-%type <typespec> typespec
-
-%union { std::tuple<Tajada::Type::Type *, std::string *> * structure_typespec; }
-%type <structure_typespec> structure_typespec
-
-%union { std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> * structure_typespecs; }
-%type <structure_typespecs> structure_typespecs structure_types
-
-%union { Tajada::AST::VariableDefinition * var_def; }
-%type <var_def> var_def
-
-%union { Tajada::AST::Expression * expr; }
-%type <expr> expr
-
-%union { Tajada::AST::Literal::Integer * intlit; }
-%type <intlit> intlit
-
-%union { std::tuple<Tajada::AST::Expression *, std::string *> * tuple_elem; }
-%type <tuple_elem> tuple_elem
-
-%union { std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *> * tuple_elems; }
-%type <tuple_elems> tuple_elems
-
-%union { std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::Function **> * func_spec; }
-%type <func_spec> func_spec
-
-%union { std::vector<Tajada::AST::TypeCase::TypeCase *> * cases; }
-%type <cases> cases
-
-%union { Tajada::AST::Expression * union_access; }
-%type <union_access> union_access
-
-
+%union { Tajada::AST::Program                                                     * tajada             ; } %type <tajada>              tajada
+%union { std::list<Tajada::AST::Statement *>                                      * statements         ; } %type <statements>          toplevels blocklevels
+%union { Tajada::AST::Statement                                                   * statement          ; } %type <statement>           toplevel blocklevel statement body
+%union { Tajada::AST::Block                                                       * block              ; } %type <block>               block
+%union { Tajada::Type::Type                                                       * typespec           ; } %type <typespec>            typespec
+%union { std::tuple<Tajada::Type::Type *, std::string *>                          * structure_typespec ; } %type <structure_typespec>  structure_typespec
+%union { std::vector<std::tuple<Tajada::Type::Type *, std::string *> *>           * structure_typespecs; } %type <structure_typespecs> structure_typespecs structure_types
+%union { Tajada::AST::VariableDefinition                                          * var_def            ; } %type <var_def>             var_def
+%union { Tajada::AST::Expression                                                  * expr               ; } %type <expr>                expr
+%union { Tajada::AST::Literal::Integer                                            * intlit             ; } %type <intlit>              intlit
+%union { std::tuple<Tajada::AST::Expression *, std::string *>                     * tuple_elem         ; } %type <tuple_elem>          tuple_elem
+%union { std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *>      * tuple_elems        ; } %type <tuple_elems>         tuple_elems
+%union { std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::Function **> * func_spec          ; } %type <func_spec>           func_spec
+%union { std::vector<Tajada::AST::TypeCase::TypeCase *>                           * cases              ; } %type <cases>               cases
+%union { Tajada::AST::Expression                                                  * union_access       ; } %type <union_access>        union_access
+%union { Tajada::AST::InfixFunctionID::Associativity                                associativity      ; } %type <associativity>       associativity
+%union { Tajada::AST::FunctionID                                                  * func_id            ; } %type <func_id>             func_id
+%union { std::string                                                              * infix_op           ; } %type <infix_op>            infix_op
 
 
 
@@ -314,22 +307,52 @@ toplevel
 
 func_spec
 
-/* §3.1.2p5 */
-: IDENT[nombre] ES UN PLATO DE typespec[dominio] IDENT[nombre_dominio] CON SALSA DE typespec[codominio]
+/* TODO: sección; las viejas eran §3.1.2p5 y §3.1.3p5 */
+: func_id DE typespec[dominio] IDENT[nombre_dominio] CON SALSA DE typespec[codominio]
 {
-        auto bucket = scope->functions.bucket(*$[nombre]);
+        auto ifid = dynamic_cast<Tajada::AST::InfixFunctionID *>($[func_id]);
+
+        if (ifid) {
+                auto t = dynamic_cast<Tajada::Type::Tuple *>($[dominio]);
+
+                if (!t) {
+                        error(
+                                @[dominio],
+                                u8"Domain of infix function “"
+                                + *$[func_id]->name
+                                + u8"” declared as non‐tuple type “"
+                                + $[dominio]->show()
+                                + u8"”"
+                        );
+                        YYERROR;
+                }
+
+                if (t->elems->size() != 2) {
+                        error(
+                                @[dominio],
+                                u8"Domain of infix function “"
+                                + *$[func_id]->name
+                                + u8"” declared as tuple of size "
+                                + std::to_string(t->elems->size())
+                                + u8"; expected size 2"
+                        );
+                        YYERROR;
+                }
+        }
+
+        auto bucket = scope->functions.bucket(*$[func_id]->name);
         bool insert = true;
 
         auto it = scope->functions.begin(bucket);
         for (; it != scope->functions.end(bucket); ++it) {
-                // TODO: ponerlo así para meterle polimorfismo más bonito
+                // TODO: ponerlo así para meterle sobrecarga más bonita
                 // if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
                 if (*$[dominio] != *std::get<0>(it->second)) continue;
                 if (*$[codominio] != *std::get<1>(it->second)) {
                         error(
                                 @$,
                                 u8"Conflicting types for “"
-                                + *$[nombre]
+                                + *$[func_id]->name
                                 + u8"” taking “"
                                 + $[dominio]->show()
                                 + u8"”"
@@ -349,7 +372,7 @@ func_spec
         if (insert) {
                 auto it = scope->functions.insert(
                         std::make_pair(
-                                *$[nombre],
+                                *$[func_id]->name,
                                 std::make_tuple(
                                         $[dominio],
                                         $[codominio],
@@ -364,127 +387,47 @@ func_spec
         }
 
         $$ = new std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::Function **>(
-                new Tajada::AST::FunctionDeclaration($[nombre], $[nombre_dominio], $[dominio], $[codominio]),
+                new Tajada::AST::FunctionDeclaration(
+                        $[func_id],
+                        $[nombre_dominio],
+                        $[dominio],
+                        $[codominio]
+                ),
                 r
         );
 }
 
-/* §3.1.3p5 */
-| HAY UN CUBIERTO operator[operador] PARA typespec[dominio] IDENT[nombre_dominio] Y SALSA DE typespec[codominio]
+;
+
+
+
+func_id
+
+/* TODO: sección */
+: IDENT[nombre] ES UN PLATO
+{ $$ = new Tajada::AST::PrefixFunctionID($[nombre]); }
+
+/* TODO: sección */
+| IDENT[nombre] ES INFIX associativity LIT_INT[precedence]
 {
-        auto t = dynamic_cast<Tajada::Type::Tuple *>($[dominio]);
-
-        if (!t) {
-                error(
-                        @[dominio],
-                        u8"Domain of operator “"
-                        + *std::get<0>(*$[operador])
-                        + u8"” declared as non‐tuple type “"
-                        + $[dominio]->show()
-                        + u8"”"
-                );
-                YYERROR;
-        }
-
-        switch (t->elems->size()) {
-                case 1:
-                        switch (std::get<1>(*$[operador])) {
-                                case Tajada::AST::Operator::minus:
-                                        break;
-
-                                default:
-                                        error(
-                                                @$,
-                                                u8"Invalid unary operator “"
-                                                + *std::get<0>(*$[operador])
-                                                + u8"”"
-                                        );
-                                        YYERROR;
-                        }
-                        break;
-
-                case 2:
-                        switch (std::get<1>(*$[operador])) {
-                                case Tajada::AST::Operator::minus:
-                                case Tajada::AST::Operator::plus:
-                                case Tajada::AST::Operator::mult:
-                                case Tajada::AST::Operator::div:
-                                case Tajada::AST::Operator::mod:
-                                case Tajada::AST::Operator::eq:
-                                case Tajada::AST::Operator::neq:
-                                        break;
-
-                                default:
-                                        error(
-                                                @$,
-                                                u8"Invalid binary operator “"
-                                                + *std::get<0>(*$[operador])
-                                                + u8"”"
-                                        );
-                                        YYERROR;
-                        }
-                        break;
-
-                default:
-                        error(
-                                @$,
-                                u8"Operator “"
-                                + *std::get<0>(*$[operador])
-                                + u8"” declared with invalid arity "
-                                + std::to_string(t->elems->size())
-                        );
-                        YYERROR;
-        }
-
-        auto bucket = scope->functions.bucket(*std::get<0>(*$[operador]));
-        bool insert = true;
-
-        auto it = scope->functions.begin(bucket);
-        for (; it != scope->functions.end(bucket); ++it) {
-                // TODO: ponerlo así para meterle polimorfismo más bonito
-                // if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
-                if (*$[dominio] != *std::get<0>(it->second)) continue;
-                if (*$[codominio] != *std::get<1>(it->second)) {
-                        error(
-                                @$,
-                                u8"Conflicting return types for “"
-                                + *std::get<0>(*$[operador])
-                                + u8"” taking “"
-                                + $[dominio]->show()
-                                + u8"”"
-                        );
-                        YYERROR;
-                }
-                insert = false;
-                break;
-        }
-
-        Tajada::AST::Function ** r;
-
-        if (insert) {
-                auto it = scope->functions.insert(
-                        std::make_pair(
-                                *std::get<0>(*$[operador]),
-                                std::make_tuple(
-                                        $[dominio],
-                                        $[codominio],
-                                        new Tajada::AST::Function * (nullptr),
-                                        @$
-                                )
-                        )
-                );
-                r = std::get<2>(it->second);
-        } else {
-                r = std::get<2>(it->second);
-        }
-
-        $$ = new std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::Function **>(
-                new Tajada::AST::FunctionDeclaration(std::get<0>(*$[operador]), $[nombre_dominio], $[dominio], $[codominio]),
-                r
-        );
-
-        delete $[operador];
+        /* TODO: lexer magic:
+         *       *    the new operator can’t start with a code point that’s contained anywhere in any reserved word or reserved symbol (otherwise the new lexer wouldn’t be able to lex those tokens anymore, as they’d get split up).
+         *       *    it shouldn’t make the new lexer ambiguous
+         *       *    we have to escape the operator string (it could contain special regex chars)
+         */
+        $$ = new Tajada::AST::InfixFunctionID($[nombre], $[precedence], $[associativity]);
 }
+
+;
+
+
+
+/* TODO: sección */
+associativity
+: LEFT  { $$ = Tajada::AST::InfixFunctionID::Associativity::left ; }
+| RIGHT { $$ = Tajada::AST::InfixFunctionID::Associativity::right; }
+|       { $$ = Tajada::AST::InfixFunctionID::Associativity::none ; }
+;
 
 
 
@@ -663,17 +606,32 @@ expr
 | TUPLE_OP tuple_elems TUPLE_CL
 { $$ = new Tajada::AST::Literal::Tuple($[tuple_elems]); }
 
-/* §3.4.2p2                 */ |             IDENT[nombre]          CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) }
-/* TODO: operadores unarios */ |          OP_MINUS[nombre]               expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) }
-/* §3.4.3.2l1.1             */ | PAREN_OP OP_MINUS[nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MINUS[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
-/* §3.4.3.2l1.2             */ | PAREN_OP OP_PLUS [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_PLUS [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
-/* §3.4.3.2l1.3             */ | PAREN_OP OP_MULT [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MULT [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
-/* §3.4.3.2l1.4             */ | PAREN_OP OP_DIV  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_DIV  [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
-/* §3.4.3.2l1.5             */ | PAREN_OP OP_MOD  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MOD  [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
-/* §3.4.3.2l1.6             */ | PAREN_OP OP_EQ   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_EQ   [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
-/* §3.4.3.2l1.7             */ | PAREN_OP OP_NEQ  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_NEQ  [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
-/* §3.4.3.2l1.8             */ | PAREN_OP OP_LT   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_LT   [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
-/* §3.4.3.2l1.9             */ | PAREN_OP OP_GT   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_GT   [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+/* TODO: sección */
+|             IDENT[nombre]          CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) }
+| PAREN_OP infix_op[nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) }
+
+/* TODO: sección */
+| expr[l] INFIXL0[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX0[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR0[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
+| expr[l] INFIXL1[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX1[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR1[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
+| expr[l] INFIXL2[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX2[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR2[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
+| expr[l] INFIXL3[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX3[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR3[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
+| expr[l] INFIXL4[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX4[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR4[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
+| expr[l] INFIXL5[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX5[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR5[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
+| expr[l] INFIXL6[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX6[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR6[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
+| expr[l] INFIXL7[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX7[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR7[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
+| expr[l] INFIXL8[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX8[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR8[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
+| expr[l] INFIXL9[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX9[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR9[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
+
+/* §3.4.2p2     */ /*|             IDENT[nombre]          CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) }                                                                                                 */
+/* §3.4.3.2l1.1 */ /*| PAREN_OP OP_MINUS[nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MINUS[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } */
+/* §3.4.3.2l1.2 */ /*| PAREN_OP OP_PLUS [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_PLUS [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } */
+/* §3.4.3.2l1.3 */ /*| PAREN_OP OP_MULT [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MULT [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } */
+/* §3.4.3.2l1.4 */ /*| PAREN_OP OP_DIV  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_DIV  [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } */
+/* §3.4.3.2l1.5 */ /*| PAREN_OP OP_MOD  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MOD  [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } */
+/* §3.4.3.2l1.6 */ /*| PAREN_OP OP_EQ   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_EQ   [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } */
+/* §3.4.3.2l1.7 */ /*| PAREN_OP OP_NEQ  [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_NEQ  [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } */
+/* §3.4.3.2l1.8 */ /*| PAREN_OP OP_LT   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_LT   [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } */
+/* §3.4.3.2l1.9 */ /*| PAREN_OP OP_GT   [nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_GT   [nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } */
 
 /* §3.4.4p2 */
 | IDENT[nombre]
@@ -767,25 +725,52 @@ expr
 
 
 
+/* TODO: sección.
+ *       old refs:
+ *           §3.4.3.2l1.1
+ *           §3.4.3.2l1.2
+ *           §3.4.3.2l1.3
+ *           §3.4.3.2l1.4
+ *           §3.4.3.2l1.5
+ *           §3.4.3.2l1.6
+ *           §3.4.3.2l1.7
+ *           §3.4.3.2l1.8
+ *           §3.4.3.2l1.9
+ */
+infix_op
+: INFIXL0 | INFIX0 | INFIXR0
+| INFIXL1 | INFIX1 | INFIXR1
+| INFIXL2 | INFIX2 | INFIXR2
+| INFIXL3 | INFIX3 | INFIXR3
+| INFIXL4 | INFIX4 | INFIXR4
+| INFIXL5 | INFIX5 | INFIXR5
+| INFIXL6 | INFIX6 | INFIXR6
+| INFIXL7 | INFIX7 | INFIXR7
+| INFIXL8 | INFIX8 | INFIXR8
+| INFIXL9 | INFIX9 | INFIXR9
+;
+
+
+
 intlit
 : LIT_INT[token]
 { $$ = new Tajada::AST::Literal::Integer($[token]); }
 
 
 
-operator
+/*operator*/
 
-/* §3.4.3.2l1.1 */ : OP_MINUS[op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::minus      ); }
-/* §3.4.3.2l1.2 */ | OP_PLUS [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::plus       ); }
-/* §3.4.3.2l1.3 */ | OP_MULT [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mult       ); }
-/* §3.4.3.2l1.4 */ | OP_DIV  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::div        ); }
-/* §3.4.3.2l1.5 */ | OP_MOD  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mod        ); }
-/* §3.4.3.2l1.6 */ | OP_EQ   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::eq         ); }
-/* §3.4.3.2l1.7 */ | OP_NEQ  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::neq        ); }
-/* §3.4.3.2l1.8 */ | OP_LT   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::lessthan   ); }
-/* §3.4.3.2l1.9 */ | OP_GT   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::greaterthan); }
+/*: OP_MINUS[op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::minus      ); }*/
+/*| OP_PLUS [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::plus       ); }*/
+/*| OP_MULT [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mult       ); }*/
+/*| OP_DIV  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::div        ); }*/
+/*| OP_MOD  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mod        ); }*/
+/*| OP_EQ   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::eq         ); }*/
+/*| OP_NEQ  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::neq        ); }*/
+/*| OP_LT   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::lessthan   ); }*/
+/*| OP_GT   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::greaterthan); }*/
 
-;
+/*;*/
 
 
 

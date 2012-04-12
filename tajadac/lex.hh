@@ -22,9 +22,21 @@ namespace Tajada {
                 // Tamaño del arreglo de grupos de captura necesario para el conjunto de expresiones regulares usado.
                 extern int nmatch;
 
+                enum class Token : unsigned int {
+                        InfixL0, InfixR0,
+                        InfixL1, InfixR1,
+                        InfixL2, InfixR2,
+                        InfixL3, InfixR3,
+                        InfixL4, InfixR4,
+                        InfixL5, InfixR5,
+                        InfixL6, InfixR6,
+                        InfixL7, InfixR7,
+                        InfixL8, InfixR8,
+                        InfixL9, InfixR9,
 #define TAJADA_TOKEN_TAGS(tag, description, regex, type) tag,
-                enum class Token : unsigned int { TAJADA_TOKEN_DATA(TAJADA_TOKEN_TAGS) };
+                        TAJADA_TOKEN_DATA(TAJADA_TOKEN_TAGS)
 #undef TAJADA_TOKEN_TAGS
+                };
 
                 extern std::vector<std::tuple<TAJADA_TOKEN_TUPLE_TYPES>> ts;
 
@@ -40,11 +52,15 @@ namespace Tajada {
                                 unsigned int col;
                                 unsigned int errors;
 
-                                Scanner(re2::StringPiece * in);
+                                Scanner(re2::StringPiece * p_in);
                                 ~Scanner();
                 };
 
-                int yylex(Tajada::yy::parser::semantic_type * s, Tajada::yy::parser::location_type * l, Tajada::lex::Scanner * scanner);
+                int yylex(
+                        Tajada::yy::parser::semantic_type * s,
+                        Tajada::yy::parser::location_type * l,
+                        Tajada::lex::Scanner * scanner
+                );
 
                 void init(void);
         }

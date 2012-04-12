@@ -56,17 +56,25 @@ namespace Tajada {
         namespace lex {
                 int nmatch = -1;
 
-#define TAJADA_TOKEN_TUPLES(tag, description, regex, type) std::make_tuple<TAJADA_TOKEN_TUPLE_TYPES>(Token::tag, yy::parser::token::tag, #tag, description, regex, NULL),
+#define TAJADA_TOKEN_TUPLES(tag, description, regex, type) \
+        std::make_tuple<TAJADA_TOKEN_TUPLE_TYPES>(         \
+                Token::tag,                                \
+                yy::parser::token::tag,                    \
+                #tag,                                      \
+                description,                               \
+                regex,                                     \
+                NULL                                       \
+        ),
                 std::vector<std::tuple<TAJADA_TOKEN_TUPLE_TYPES>> ts = { TAJADA_TOKEN_DATA(TAJADA_TOKEN_TUPLES) };
 #undef TAJADA_TOKEN_TUPLES
 
                 re2::RE2 * re_line;
 
-                Scanner::Scanner(re2::StringPiece * in):
-                        in(in),
-                        line(1),
-                        col(1),
-                        errors(0)
+                Scanner::Scanner(re2::StringPiece * p_in):
+                        in    (p_in),
+                        line  (1   ),
+                        col   (1   ),
+                        errors(0   )
                 {
                         if (nmatch > 0) {
                                 match = new (std::nothrow) re2::StringPiece[nmatch + 1];
@@ -89,6 +97,7 @@ namespace Tajada {
                                 TAJADA_DEBUG_LEXER_PRINT("Done.");
                                 return 0;
                         }
+
                         for (auto it = ts.begin(); it != ts.end(); ++it) {
                                 if (
                                         TAJADA_TOKEN_RE2(*it) == NULL ||

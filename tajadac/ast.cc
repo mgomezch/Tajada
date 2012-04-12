@@ -27,11 +27,17 @@ namespace Tajada {
         namespace AST {
                 AST::~AST() {}
 
+
+
                 Block::Block(
-                        std::list<Tajada::AST::Statement *> * statements
+                        std::list<Tajada::AST::Statement *> * p_statements
                 ):
-                        statements(statements)
+                        Tajada::AST::AST(),
+                        Tajada::AST::Statement(),
+
+                        statements(p_statements)
                 {}
+
 
                 std::string Block::show(unsigned int depth) {
                         return
@@ -55,72 +61,158 @@ namespace Tajada {
                                                                 )
                                                                 ? u8"\n"
                                                                 : u8".\n"
-                                                        );
+                                                        )
+                                                ;
                                         }
                                 )
                                 + std::string(depth * 8, ' ')
-                                + u8"}";
+                                + u8"}"
+                        ;
                 }
 
+
+
                 TypeAlias::TypeAlias(
-                        std::string * name,
-                        Tajada::Type::Type * type
+                        std::string        * p_name,
+                        Tajada::Type::Type * p_type
                 ):
-                        name(name),
-                        type(type)
+                        Tajada::AST::AST(),
+                        Tajada::AST::Statement(),
+
+                        name(p_name),
+                        type(p_type)
                 {}
+
 
                 std::string TypeAlias::show(unsigned int depth) {
                         return
                                 *name
                                 + std::string(u8" es dulce de ")
-                                + type->show(depth);
+                                + type->show(depth)
+                        ;
                 }
 
+
+
                 VariableDefinition::VariableDefinition(
-                        std::string * name,
-                        Tajada::Type::Type * type
+                        std::string        * p_name,
+                        Tajada::Type::Type * p_type
                 ):
-                        name(name),
-                        type(type)
+                        Tajada::AST::AST(),
+                        Tajada::AST::Statement(),
+
+                        name(p_name),
+                        type(p_type)
                 {}
+
 
                 std::string VariableDefinition::show(unsigned int depth) {
                         return
                                 *name
                                 + std::string(u8" es ")
-                                + type->show(depth);
+                                + type->show(depth)
+                        ;
                 }
 
-                FunctionDeclaration::FunctionDeclaration(
-                        std::string * name,
-                        std::string * domain_name,
-                        Tajada::Type::Type * domain,
-                        Tajada::Type::Type * codomain
+
+
+                FunctionID::FunctionID(
+                        std::string * p_name
                 ):
-                        name(name),
-                        domain_name(domain_name),
-                        domain(domain),
-                        codomain(codomain)
+                        Tajada::AST::AST(),
+
+                        name(p_name)
                 {}
+
+
+                std::string FunctionID::show(unsigned int depth) {
+                        TAJADA_UNUSED_PARAMETER(depth);
+                        return *name;
+                }
+
+
+
+                PrefixFunctionID::PrefixFunctionID(
+                        std::string * p_name
+                ):
+                        AST(),
+                        FunctionID(p_name)
+                {}
+
+
+                std::string PrefixFunctionID::show(unsigned int depth) {
+                        return
+                                FunctionID::show(depth)
+                                + std::string(u8" es un plato")
+                        ;
+                }
+
+
+
+                InfixFunctionID::InfixFunctionID(
+                        std::string                                 * p_name         ,
+                        std::string                                 * p_precedence   ,
+                        Tajada::AST::InfixFunctionID::Associativity   p_associativity
+                ):
+                        AST(),
+                        FunctionID(p_name),
+
+                        precedence   (std::stoi(*p_precedence)),
+                        associativity(p_associativity         )
+                {}
+
+
+                std::string InfixFunctionID::show(unsigned int depth) {
+                        return
+                                FunctionID::show(depth)
+                                + std::string(u8" es infijo ")
+                                + [&associativity](){
+                                        switch (associativity) {
+                                                case Tajada::AST::InfixFunctionID::Associativity::none : return u8""        ;
+                                                case Tajada::AST::InfixFunctionID::Associativity::left : return u8"zurdo "  ;
+                                                case Tajada::AST::InfixFunctionID::Associativity::right: return u8"diestro ";
+                                        }
+                                        return ""; // Just to silence a warning.
+                                } ()
+                                + std::to_string(precedence)
+                        ;
+                }
+
+
+
+                FunctionDeclaration::FunctionDeclaration(
+                        Tajada::AST::FunctionID * p_id         ,
+                        std::string             * p_domain_name,
+                        Tajada::Type::Type      * p_domain     ,
+                        Tajada::Type::Type      * p_codomain
+                ):
+                        id         (p_id         ),
+                        domain_name(p_domain_name),
+                        domain     (p_domain     ),
+                        codomain   (p_codomain   )
+                {}
+
 
                 std::string FunctionDeclaration::show(unsigned int depth) {
                         return
-                                *name
-                                + std::string(u8" es un plato de ")
+                                id->show()
+                                + std::string(u8" de ")
                                 + domain->show(depth)
                                 + u8" "
                                 + *domain_name
                                 + std::string(u8" y salsa de ")
-                                + codomain->show(depth);
+                                + codomain->show(depth)
+                        ;
                 }
+
+
 
                 Function::Function(
                         Tajada::AST::FunctionDeclaration * p_declaration,
                         std::function<bool (Tajada::AST::Call *)> p_evaluator
                 ):
                         declaration(p_declaration),
-                        evaluator(p_evaluator)
+                        evaluator  (p_evaluator  )
                 {}
 
                 std::string Function::show(unsigned int depth) {

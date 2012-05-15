@@ -19,7 +19,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
     [Nota: Este documento se basa en y hace referencia a la versión 6.0.0 del estándar Unicode únicamente porque es la más reciente disponible al momento de su redacción, y la intención es que la especificación de Tajada sea independiente de versiones específicas de otros documentos. —fin de la nota]
 
-    Los **símbolos reservados** de Tajada son ciertas secuencias no vacías de puntos de código Unicode usadas por el lenguaje como parte de su sintaxis.  Los **símbolos** son aquellas secuencias no vacías de puntos de código Unicode consecutivos que puedan ocurrir en una tajada, no tienen como subsecuencia a ningún símbolo reservado, y son delimitados por símbolos reservados o el inicio o el final de la tajada.
+    Los **símbolos reservados** de Tajada son ciertas secuencias no vacías de puntos de código Unicode usadas por el lenguaje como parte de su sintaxis.  Los **símbolos** son aquellas secuencias no vacías de puntos de código Unicode consecutivos que pueden ocurrir en una tajada, no tienen como subsecuencia a ningún símbolo reservado, y son delimitados por símbolos reservados o el inicio o el final de la tajada.
 
     [Nota: Este documento utiliza el término “punto de código”, a veces “punto de código Unicode”, para hacer explícita la distinción entre bytes, caracteres y grafemas.  El término se usa en el mismo sentido que “character” y “code point” en el estándar Unicode. —fin de la nota]
 
@@ -127,7 +127,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
             “DIGIT NINE”   (U+0039, **9**)
             -------------- ---------------
 
-            Un **fragmento de literal entero** es una secuencia de uno o más dígitos.  Un **literal entero** es un fragmento de literal entero que no es una subsecuencia de ningún *otro* fragmento de literal entero, ni de un literal de cadena de caracteres, ni de un espacio en blanco, y su primer punto de código sigue inmediatamente al último punto de código de algún símbolo reservado, o al inicio del documento.  Un literal entero es un símbolo reservado.  Se interpreta como un número natural escrito en notación posicional en base decimal.
+            Un **fragmento de literal entero** es una secuencia de uno o más dígitos presente en una tajada.  Un **literal entero** es un fragmento de literal entero que no es una subsecuencia de ningún *otro* fragmento de literal entero en la tajada, ni de un literal de cadena de caracteres, ni de un espacio en blanco, y su primer punto de código sigue inmediatamente al último punto de código de algún símbolo reservado, o al inicio del documento.  Un literal entero es un símbolo reservado.  Se interpreta como un número natural escrito en notación posicional en base decimal.
 
         2.  #### Punto flotante
 

@@ -1,6 +1,4 @@
-defines   = nullptr=NULL _GNU_SOURCE TAJADA_DEBUG=0
-
-SHELL     = bash
+SHELL     =  bash
 
 CC        = gcc
 CFLAGS    = -ggdb -Wall -Wextra $(defines:%=-D%)
@@ -15,6 +13,10 @@ CPP       = gcc -E
 CPPFLAGS  = -P
 
 LDLIBS    = re2
+
+
+defines   = nullptr=NULL _GNU_SOURCE TAJADA_DEBUG=1
+cpp-magic = $(CPP) $(CPPFLAGS) -DMACRO_MAGIC -
 
 
 
@@ -36,7 +38,7 @@ clean:
 
 
 
-tajadac : ast.o lex.o main.o parser.tab.o scope.o type.o ; $(build-exec)
+tajadac: ast.o lex.o main.o parser.tab.o scope.o type.o ; $(build-exec)
 
 
 #          .o:           .cc tokens.hh scope.hh ast.hh type.hh lex.hh debug.hh parser.tab.hh stack.hh location.hh position.hh
@@ -55,12 +57,13 @@ location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml posi
                 '#include "tokens.hh"'                                                    \
                 '#define X(tag, description, r, type) type|%token@<tag>@tag@description!' \
                 'TAJADA_TOKEN_DATA(X)'                                                    \
-                | $(CPP) $(CPPFLAGS) -                                                    \
+                | $(cpp-magic)                                                            \
                 | sed 's/ \?! \?/\n/g'                                                    \
                 | sed                                                                     \
                         -e 's/^void|\(%token@\)<[^>]*>\(@[^ ]*@\)u8\(.*\)$$/\1 \2\3/'     \
                         -e 's/^[^|]*|\(%token@<[^>]*>@[^ ]*@\)u8\(.*\)$$/\1\2/'           \
-                        -e 's/" u8"//g'                                                   \
+                        -e 's/<INFIX\([LR]\|\)[0-9]\+>/<infix_op>/g'                      \
+                        -e 's/" TAJADA_PASTE \(u8\)\?"//g'                                \
                 | column -t -s @                                                          \
                 > token_data.out
 	@printf '%s\n'     \
@@ -71,7 +74,7 @@ location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml posi
                 '#include "tokens.hh"'                       \
                 '#define X(tag, d, r, type) type|type@tag;!' \
                 'TAJADA_TOKEN_DATA(X)'                       \
-                | $(CPP) $(CPPFLAGS) -                        \
+                | $(cpp-magic)                               \
                 | sed 's/ \?! \?/\n/g'                       \
                 | sed                                        \
                         -e '/^void|/d'                       \

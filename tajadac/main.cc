@@ -15,8 +15,6 @@
 #include "type.hh"
 
 int main(int argc, char * argv[]) {
-        Tajada::lex::init();
-
         if (argc != 1 && argc != 2) {
                 std::cerr
                         << u8"Uso: " << (argc > 0 ? argv[0] : u8"tajadac") << u8" [entrada]\n"
@@ -53,7 +51,11 @@ int main(int argc, char * argv[]) {
 
         {}{
                 re2::StringPiece in(in_s);
+
+                Tajada::lex::init();
                 Tajada::lex::Scanner scanner { &in };
+                scanner.build();
+
                 Tajada::Scope scope(
                         nullptr,
                         Tajada::Scope::Type::global

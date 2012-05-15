@@ -28,10 +28,10 @@
 
 
 %code requires {
-        /* Forward‐declaration of lexer data structure.  Don’t ask. */
+        /* Forward‐declaration of lexer class.  Don’t ask. */
         namespace Tajada {
                 namespace lex {
-                        struct Scanner;
+                        class Scanner;
                 }
         }
 }
@@ -160,18 +160,6 @@
 
 %token_data
 %token END 0 "fin del documento"
-
-%token <infix_op>
-INFIXL0 INFIX0 INFIXR0
-INFIXL1 INFIX1 INFIXR1
-INFIXL2 INFIX2 INFIXR2
-INFIXL3 INFIX3 INFIXR3
-INFIXL4 INFIX4 INFIXR4
-INFIXL5 INFIX5 INFIXR5
-INFIXL6 INFIX6 INFIXR6
-INFIXL7 INFIX7 INFIXR7
-INFIXL8 INFIX8 INFIXR8
-INFIXL9 INFIX9 INFIXR9
 
 
 
@@ -411,9 +399,11 @@ func_id
 | IDENT[nombre] ES INFIX associativity LIT_INT[precedence]
 {
         /* TODO: lexer magic:
-         *       *    the new operator can’t start with a code point that’s contained anywhere in any reserved word or reserved symbol (otherwise the new lexer wouldn’t be able to lex those tokens anymore, as they’d get split up).
+         *       *    the new operator can’t start with a code point that’s contained anywhere in any reserved word (otherwise the new lexer wouldn’t be able to lex those tokens anymore, as they’d get split up).
          *       *    it shouldn’t make the new lexer ambiguous
          *       *    we have to escape the operator string (it could contain special regex chars)
+         *
+         *       first things first: add the identifier to the appropriate member of scanner->infix_ops and scanner->reserved_start, and then call Tajada::lex::init()
          */
         $$ = new Tajada::AST::InfixFunctionID($[nombre], $[precedence], $[associativity]);
 }
@@ -611,16 +601,16 @@ expr
 | PAREN_OP infix_op[nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) }
 
 /* TODO: sección */
-| expr[l] INFIXL0[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX0[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR0[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
-| expr[l] INFIXL1[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX1[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR1[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
-| expr[l] INFIXL2[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX2[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR2[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
-| expr[l] INFIXL3[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX3[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR3[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
-| expr[l] INFIXL4[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX4[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR4[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
-| expr[l] INFIXL5[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX5[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR5[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
-| expr[l] INFIXL6[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX6[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR6[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
-| expr[l] INFIXL7[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX7[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR7[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
-| expr[l] INFIXL8[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX8[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR8[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
-| expr[l] INFIXL9[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX9[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR9[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } 
+| expr[l] INFIXL0[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX0[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR0[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+| expr[l] INFIXL1[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX1[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR1[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+| expr[l] INFIXL2[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX2[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR2[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+| expr[l] INFIXL3[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX3[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR3[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+| expr[l] INFIXL4[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX4[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR4[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+| expr[l] INFIXL5[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX5[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR5[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+| expr[l] INFIXL6[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX6[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR6[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+| expr[l] INFIXL7[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX7[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR7[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+| expr[l] INFIXL8[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX8[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR8[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
+| expr[l] INFIXL9[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIX9[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } | expr[l] INFIXR9[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) }
 
 /* §3.4.2p2     */ /*|             IDENT[nombre]          CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) }                                                                                                 */
 /* §3.4.3.2l1.1 */ /*| PAREN_OP OP_MINUS[nombre] PAREN_CL CALL expr[argumento] { TAJADA_CALL_UNARY($[nombre], $[argumento], $$, @[nombre]) } | expr[l] OP_MINUS[nombre] expr[r] { TAJADA_CALL_BINARY($[nombre], $[l], $[r], $$, @[nombre]) } */

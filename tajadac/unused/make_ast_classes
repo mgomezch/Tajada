@@ -1,0 +1,136 @@
+#!/usr/bin/env ruby
+
+def parse(file)
+        indents = [0]
+
+        base = []
+        current = base
+        levels = [base]
+        File::read(file).lines.map { |l| l.chomp }.each do |line|
+                if line =~ /(\s*)(.*)/ and !$2.empty? then
+                        newindent = $1.length
+                        while (newindent < indents.last)
+                                indents.pop
+                                levels.pop
+                                current = levels.last
+                        end
+                        if newindent == indents.last then
+                                current.push $2
+                        else
+                                indents.push newindent
+                                new = [$2]
+                                current.push new
+                                levels.push new
+                                current = new
+                        end
+                end
+        end
+
+        return base
+end
+
+def translate(classes, types, depth)
+        return ["", ""] if classes.nil?
+
+        cc = ""
+        hh = ""
+
+        until classes.empty?
+                d = classes.shift
+
+                if d =~ /^(.*) @ (.*)$/ then
+                        class_name   = $1;
+                        class_parent = $2;
+
+                        ms = if classes.first.is_a? Array then classes.shift else [] end
+
+                        ms.each do |m|
+                                if types[m].nil? then
+                                        STDERR.puts "#{$0}: in class #{$1} declared in #{ARGV[0]}: no type specification for member #{m} found in #{ARGV[1]}"
+                                        exit 1
+                                end
+                        end
+
+                        cc << <<-EOS.gsub(/^ {32}/, " "*8*depth)#.delete "\n"
+                                #{class_name}::#{class_name}(
+                                #{ms.map { |m| " "*8 + "#{types[m]} p_#{m}" }.join(",\n")}
+                                ):
+                                #{ms.map { |m| " "*8 + "#{m}(p_#{m})" }.join(",\n")}
+                                {}
+
+                        EOS
+
+                        hh << <<-EOS.gsub(/^ {32}/, " "*8*depth)#.delete "\n"
+                                class #{class_name} : public virtual #{class_parent} {
+                                        public:
+                                #{ms.map { |m| " "*8*2 + "#{types[m]} #{m};" }.join("\n")}
+
+                                                #{class_name}(
+                                #{ms.map { |m| " "*8*3 + "#{types[m]} p_#{m}" }.join(",\n")}
+                                                );
+
+                                                virtual std::string show(unsigned int depth = 0);
+                                }
+
+                        EOS
+
+                elsif d =~ /^namespace (.*)$/ then
+                        namespace_name = $1;
+                        r = translate(classes.shift, types, depth + 1)
+
+                        cc << <<-EOS.gsub(/^ {32}/, " "*8*depth)#.delete "\n"
+                                namespace #{namespace_name} {
+                                #{r[0]}
+                                }
+
+                        EOS
+
+                        hh << <<-EOS.gsub(/^ {32}/, " "*8*depth)#.delete "\n"
+                                namespace #{namespace_name} {
+                                #{r[1]}
+                                }
+
+                        EOS
+                end
+        end
+
+        return [cc, hh]
+end
+
+r = translate(
+        parse(ARGV[0]),
+        parse(ARGV[1]).each_slice(2).inject(Hash::new) { |acc, p| p[1].each { |n| acc[n] = p[0]; }; acc },
+        2
+)
+
+File::open(ARGV[2], "w") do |f|
+        f << <<-EOS.gsub(/^ {16}/, "")
+                #include "ast.hh"
+                #include "ast.gen.hh"
+                #include "type.hh"
+
+                namespace Tajada {
+                        namespace AST {
+                #{r[0]}
+                        }
+                }
+        EOS
+end
+
+File::open(ARGV[3], "w") do |f|
+        f << <<-EOS.gsub(/^ {16}/, "")
+                #ifndef TAJADA_AST_GEN_H
+                #define TAJADA_AST_GEN_H
+
+                #include "ast.hh"
+                #include "type.hh"
+
+                namespace Tajada {
+                        namespace AST {
+                #{r[1]}
+                        }
+                }
+
+                #endif
+        EOS
+end

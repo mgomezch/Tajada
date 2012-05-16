@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+if [[ ${#@} -ge 1 ]]
+then
+        export COLUMNS="$1"
+else
+        export COLUMNS="0"
+fi
+
+
+
+fails=()
+
+
+
+for i in ../test/good/*.tajada
+do
+        ruby <<-EOF
+                puts "\n"*5
+                puts 'GOOD TEST: $i'.center($COLUMNS).tr ' ', '_'
+EOF
+
+        ./tajadac "$i"
+
+        if [[ $? != 0 ]]
+        then
+                fails+=("$i")
+                ruby <<-EOF
+                        puts 'GOOD TEST FAILED: $i'.center($COLUMNS).tr ' ', '_'
+                        puts "\n"*5
+EOF
+        else
+                ruby <<-EOF
+                        puts 'GOOD TEST PASSED: $i'.center($COLUMNS).tr ' ', '_'
+                        puts "\n"*5
+EOF
+        fi
+done
+
+
+
+for i in ../test/bad/*.tajada
+do
+        ruby <<-EOF
+                puts "\n"*5
+                puts 'BAD TEST: $i'.center($COLUMNS).tr ' ', '_'
+EOF
+
+        ./tajadac "$i"
+
+        if [[ $? == 0 ]]
+        then
+                fails+=("$i")
+                ruby <<-EOF
+                        puts 'BAD TEST FAILED: $i'.center($COLUMNS).tr ' ', '_'
+                        puts "\n"*5
+EOF
+        else
+                ruby <<-EOF
+                        puts 'BAD TEST PASSED: $i'.center($COLUMNS).tr ' ', '_'
+                        puts "\n"*5
+EOF
+        fi
+done
+
+
+
+n="${#fails[@]}"
+if [[ $n == 0 ]]
+then
+        echo "All OK"
+else
+        echo "$n tests failed:"
+        for i in "${fails[@]}"
+        do
+                echo "$i"
+        done
+fi

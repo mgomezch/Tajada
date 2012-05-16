@@ -1,0 +1,16 @@
+*~
+.*.swp*
+tags
+*.gch
+*.o
+*.yy
+*.out
+location.hh
+parser.dot
+parser.xml
+parser.output
+parser.tab.cc
+parser.tab.hh
+position.hh
+stack.hh
+tajadac

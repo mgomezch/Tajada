@@ -9,6 +9,7 @@
 
 #include "parser.tab.hh"
 #include "tokens.hh"
+#include "ast.hh"
 
 
 
@@ -74,6 +75,14 @@ namespace Tajada {
                 );
 
                 void init();
+
+                // TODO: add forward-declaration of this function to parser.y
+                void add_infix(
+                        Tajada::lex::Scanner       * scanner      ,
+                        std::string                  identifier   ,
+                        Tajada::AST::Associativity   associativity,
+                        unsigned int                 predecende
+                );
         }
 }
 

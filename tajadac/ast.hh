@@ -21,6 +21,13 @@ namespace Tajada {
                         greaterthan
                 };
 
+                enum class Associativity : unsigned int {
+                        none ,
+                        left ,
+                        right
+                };
+
+
 
                 class AST {
                         public:
@@ -97,20 +104,13 @@ namespace Tajada {
 
                 class InfixFunctionID : public virtual FunctionID {
                         public:
-                                enum class Associativity : unsigned int {
-                                        none ,
-                                        left ,
-                                        right
-                                };
-
-
-                                unsigned int                                precedence   ;
-                                Tajada::AST::InfixFunctionID::Associativity associativity;
+                                unsigned int               precedence   ;
+                                Tajada::AST::Associativity associativity;
 
                                 InfixFunctionID(
-                                        std::string                                 * p_name         ,
-                                        std::string                                 * p_precedence   ,
-                                        Tajada::AST::InfixFunctionID::Associativity   p_associativity
+                                        std::string                * p_name         ,
+                                        std::string                * p_precedence   ,
+                                        Tajada::AST::Associativity   p_associativity
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);

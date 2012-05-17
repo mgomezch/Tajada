@@ -150,9 +150,9 @@ namespace Tajada {
 
 
                 InfixFunctionID::InfixFunctionID(
-                        std::string                                 * p_name         ,
-                        std::string                                 * p_precedence   ,
-                        Tajada::AST::InfixFunctionID::Associativity   p_associativity
+                        std::string                * p_name         ,
+                        std::string                * p_precedence   ,
+                        Tajada::AST::Associativity   p_associativity
                 ):
                         AST(),
                         FunctionID(p_name),
@@ -168,9 +168,9 @@ namespace Tajada {
                                 + std::string(u8" es infijo ")
                                 + [&associativity](){
                                         switch (associativity) {
-                                                case Tajada::AST::InfixFunctionID::Associativity::none : return u8""        ;
-                                                case Tajada::AST::InfixFunctionID::Associativity::left : return u8"zurdo "  ;
-                                                case Tajada::AST::InfixFunctionID::Associativity::right: return u8"diestro ";
+                                                case Tajada::AST::Associativity::none : return u8""        ;
+                                                case Tajada::AST::Associativity::left : return u8"zurdo "  ;
+                                                case Tajada::AST::Associativity::right: return u8"diestro ";
                                         }
                                         return ""; // Just to silence a warning.
                                 } ()

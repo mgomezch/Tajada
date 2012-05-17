@@ -13,11 +13,23 @@
 
 
 %code {
-        /* Forward‐declaration of lexer function.  Don’t ask. */
+        /* Forward‐declaration of lexer functions.  Don’t ask. */
         namespace Tajada {
                 namespace lex {
 #undef yylex
-                        int yylex(Tajada::yy::parser::semantic_type * s, Tajada::yy::parser::location_type * l, Tajada::lex::Scanner * state);
+                        int yylex(
+                                Tajada::yy::parser::semantic_type * s,
+                                Tajada::yy::parser::location_type * l,
+                                Tajada::lex::Scanner * state
+                        );
+
+                        void add_infix(
+                                Tajada::lex::Scanner       * scanner      ,
+                                std::string                  identifier   ,
+                                Tajada::AST::Associativity   associativity,
+                                unsigned int                 precedence
+                        );
+
 #define yylex Tajada::lex::yylex
                 }
         }
@@ -178,7 +190,7 @@
 %union { std::tuple<Tajada::AST::FunctionDeclaration *, Tajada::AST::Function **> * func_spec          ; } %type <func_spec>           func_spec
 %union { std::vector<Tajada::AST::TypeCase::TypeCase *>                           * cases              ; } %type <cases>               cases
 %union { Tajada::AST::Expression                                                  * union_access       ; } %type <union_access>        union_access
-%union { Tajada::AST::InfixFunctionID::Associativity                                associativity      ; } %type <associativity>       associativity
+%union { Tajada::AST::Associativity                                                 associativity      ; } %type <associativity>       associativity
 %union { Tajada::AST::FunctionID                                                  * func_id            ; } %type <func_id>             func_id
 %union { std::string                                                              * infix_op           ; } %type <infix_op>            infix_op
 
@@ -398,13 +410,19 @@ func_id
 /* TODO: sección */
 | IDENT[nombre] ES INFIX associativity LIT_INT[precedence]
 {
-        /* TODO: lexer magic:
+        /* TODO: some error checking is in order here:
          *       *    the new operator can’t start with a code point that’s contained anywhere in any reserved word (otherwise the new lexer wouldn’t be able to lex those tokens anymore, as they’d get split up).
          *       *    it shouldn’t make the new lexer ambiguous
          *       *    we have to escape the operator string (it could contain special regex chars)
-         *
-         *       first things first: add the identifier to the appropriate member of scanner->infix_ops and scanner->reserved_start, and then call Tajada::lex::init()
          */
+
+        Tajada::lex::add_infix(
+                scanner,
+                *$[nombre],
+                $[associativity],
+                std::stoi(*$[precedence])
+        );
+
         $$ = new Tajada::AST::InfixFunctionID($[nombre], $[precedence], $[associativity]);
 }
 
@@ -414,9 +432,9 @@ func_id
 
 /* TODO: sección */
 associativity
-: LEFT  { $$ = Tajada::AST::InfixFunctionID::Associativity::left ; }
-| RIGHT { $$ = Tajada::AST::InfixFunctionID::Associativity::right; }
-|       { $$ = Tajada::AST::InfixFunctionID::Associativity::none ; }
+: LEFT  { $$ = Tajada::AST::Associativity::left ; }
+| RIGHT { $$ = Tajada::AST::Associativity::right; }
+|       { $$ = Tajada::AST::Associativity::none ; }
 ;
 
 

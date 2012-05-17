@@ -16,6 +16,7 @@
 #include "lex.hh"
 #include "parser.tab.hh"
 #include "tokens.hh"
+#include "ast.hh"
 
 
 
@@ -420,6 +421,53 @@ namespace Tajada {
                         o.set_case_sensitive(true );
 
                         TAJADA_SCANNER_INIT_FIXED_REGEX(re_line, u8"([" TAJADA_ENDLINES "])");
+                }
+
+
+
+                // add the identifier to the appropriate member of scanner->infix_ops and scanner->reserved_start, and then call Tajada::lex::init()
+                void add_infix(
+                        Tajada::lex::Scanner       * scanner      ,
+                        std::string                  identifier   ,
+                        Tajada::AST::Associativity   associativity,
+                        unsigned int                 precedence
+                ) {
+                        Tajada::lex::Token token;
+
+#define TAJADA_INFIX_LEVELS(F, T) F(T, 0) F(T, 1) F(T, 2) F(T, 3) F(T, 4) F(T, 5) F(T, 6) F(T, 7) F(T, 8) F(T, 9)
+
+#define TAJADA_INFIX_CASE(t, n)                   \
+        case n:                                   \
+                token = Tajada::lex::Token::t##n; \
+                break;
+
+#define TAJADA_INFIX_ASSOC_CASE(a, e)              \
+        case Tajada::AST::Associativity::a:        \
+                switch (precedence) {              \
+                        default:                   \
+                                assert(false);     \
+                                break;             \
+                                                   \
+                        TAJADA_INFIX_LEVELS(       \
+                                TAJADA_INFIX_CASE, \
+                                e                  \
+                        )                          \
+                }                                  \
+                break;
+
+                        switch (associativity) {
+                                default:
+                                        assert(false);
+                                        break;
+
+                                TAJADA_INFIX_ASSOC_CASE(left , INFIXL);
+                                TAJADA_INFIX_ASSOC_CASE(none , INFIX );
+                                TAJADA_INFIX_ASSOC_CASE(right, INFIXR);
+                        }
+
+                        scanner->infix_ops[static_cast<unsigned int>(token)].insert(identifier);
+
+                        scanner->build();
                 }
         }
 }

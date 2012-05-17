@@ -1,0 +1,15 @@
+☺ es infijo zurdo 7 de arepa con queso y queso x con salsa de queso {
+        retorna x→0.
+}
+
+☹ es infijo zurdo 5 de arepa con queso y queso x con salsa de queso {
+        retorna x→1.
+}
+
+{
+        a es queso.
+        b es queso.
+        a ≔ 1.
+        b ≔ 1.
+        a☹b☺3.
+}

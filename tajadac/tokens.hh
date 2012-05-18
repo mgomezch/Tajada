@@ -84,9 +84,6 @@
 
 
 #define TAJADA_RESERVED_WORD_DATA(TOKEN)                                        \
-        /* TODO: sección */ TAJADA_RESERVED_WORD(TOKEN, INFIX   , u8"infijo"  ) \
-        /* TODO: sección */ TAJADA_RESERVED_WORD(TOKEN, LEFT    , u8"zurdo"   ) \
-        /* TODO: sección */ TAJADA_RESERVED_WORD(TOKEN, RIGHT   , u8"diestro" ) \
         /* §2.1.1p1      */ TAJADA_RESERVED_WORD(TOKEN, TETERO  , u8"tetero"  ) \
         /* §2.1.1p2      */ TAJADA_RESERVED_WORD(TOKEN, NEGRITO , u8"negrito" ) \
         /* §2.1.1p3      */ TAJADA_RESERVED_WORD(TOKEN, CAFE    , u8"café"    ) \
@@ -117,6 +114,9 @@
         /* §3.5.2.3p2    */ TAJADA_RESERVED_WORD(TOKEN, IN      , u8"in"      ) \
         /* §3.5.2.5p1    */ TAJADA_RESERVED_WORD(TOKEN, RETURN  , u8"retorna" ) \
         /* §3.5.2.6p1    */ TAJADA_RESERVED_WORD(TOKEN, BREAK   , u8"fin"     ) \
+        /* TODO: sección */ TAJADA_RESERVED_WORD(TOKEN, INFIX   , u8"infijo"  ) \
+        /* TODO: sección */ TAJADA_RESERVED_WORD(TOKEN, LEFT    , u8"zurdo"   ) \
+        /* TODO: sección */ TAJADA_RESERVED_WORD(TOKEN, RIGHT   , u8"diestro" ) \
 
 
 #define TAJADA_IDENT_DATA(TOKEN)                     \
@@ -124,7 +124,7 @@
         TOKEN(                                       \
                 IDENT,                               \
                 u8"identificador",                   \
-                u8"([^" TAJADA_RESERVED_START "]+)", \
+                u8"(?:)",                            \
                 std::string *                        \
         )                                            \
 
@@ -149,8 +149,8 @@
 
 #define TAJADA_TOKEN_DATA(TOKEN)           \
         TAJADA_RESERVED_SYMBOL_DATA(TOKEN) \
-        TAJADA_RESERVED_WORD_DATA(TOKEN)   \
         TAJADA_INFIX_DATA(TOKEN)           \
+        TAJADA_RESERVED_WORD_DATA(TOKEN)   \
         TAJADA_IDENT_DATA(TOKEN)           \
 
 

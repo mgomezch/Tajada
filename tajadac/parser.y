@@ -18,9 +18,9 @@
                 namespace lex {
 #undef yylex
                         int yylex(
-                                Tajada::yy::parser::semantic_type * s,
-                                Tajada::yy::parser::location_type * l,
-                                Tajada::lex::Scanner * state
+                                Tajada::yy::parser::semantic_type * s    ,
+                                Tajada::yy::parser::location_type * l    ,
+                                Tajada::lex::Scanner              * state
                         );
 
                         void add_infix(
@@ -130,18 +130,18 @@
 %lex-param   { Tajada::lex::Scanner * scanner }
 
 
-%code requires { #include "scope.hh" }
-%parse-param { Tajada::Scope * scope }
+%code requires { #include "scope.hh"   }
+%parse-param   { Tajada::Scope * scope }
 
 
-%code requires { #include "ast.hh" }
-%parse-param { Tajada::AST::AST ** tree }
+%code requires { #include "ast.hh"        }
+%parse-param   { Tajada::AST::AST ** tree }
 
 
 
 %locations
-%parse-param { std::string * filename }
-%initial-action { @$.begin.filename = @$.end.filename = filename; };
+%parse-param    { std::string * filename                          }
+%initial-action { @$.begin.filename = @$.end.filename = filename; }
 
 
 

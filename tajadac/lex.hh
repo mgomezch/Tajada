@@ -69,9 +69,9 @@ namespace Tajada {
                 };
 
                 int yylex(
-                        Tajada::yy::parser::semantic_type * s,
-                        Tajada::yy::parser::location_type * l,
-                        Tajada::lex::Scanner * scanner
+                        Tajada::yy::parser::semantic_type * s      ,
+                        Tajada::yy::parser::location_type * l      ,
+                        Tajada::lex::Scanner              * scanner
                 );
 
                 void init();

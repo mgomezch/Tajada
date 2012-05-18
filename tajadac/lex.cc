@@ -323,7 +323,15 @@ namespace Tajada {
 
                         for (int i = 0; i < bytes; ++i) scanner->ident_piece += scanner->in->data()[i];
                         scanner->in->remove_prefix(bytes);
-                        TAJADA_DEBUG_LEXER_PRINT("Encontré un pedazo de identificador; mide " << bytes << " byte" << (bytes == 1 ? "" : "s") << " y ahora el acumulado dice " << scanner->ident_piece);
+
+                        TAJADA_DEBUG_LEXER_PRINT(
+                                "Encontré un pedazo de identificador; mide "
+                                << bytes
+                                << " byte"
+                                << (bytes == 1 ? "" : "s")
+                                << " y ahora el acumulado dice "
+                                << scanner->ident_piece
+                        );
 
                         return yylex(s, l, scanner);
                 }
@@ -367,6 +375,9 @@ namespace Tajada {
                                                 o
                                         );
                                 } else {
+                                        // Reserved symbol
+                                        reserved_symbols.insert(TAJADA_TOKEN_REGEX(*it));
+
                                         if (TAJADA_TOKEN_RE2(*it)) continue;
 
                                         r = new re2::RE2(
@@ -375,8 +386,6 @@ namespace Tajada {
                                                 + ")",
                                                 o
                                         );
-
-                                        reserved_symbols.insert(TAJADA_TOKEN_REGEX(*it));
                                 }
 
                                 if (!r->ok()) {

@@ -15,7 +15,7 @@ CPPFLAGS  = -P
 LDLIBS    = re2
 
 
-defines   = nullptr=NULL _GNU_SOURCE TAJADA_DEBUG=1
+defines   = nullptr=NULL _GNU_SOURCE TAJADA_DEBUG=0
 cpp-magic = $(CPP) $(CPPFLAGS) -DMACRO_MAGIC -
 
 

@@ -12,11 +12,12 @@
 #include <re2/re2.h>
 #include <sysexits.h>
 
+#include "Tajada/AST/Associativity.hh"
+
 #include "debug.hh"
 #include "lex.hh"
 #include "parser.tab.hh"
 #include "tokens.hh"
-#include "ast.hh"
 
 
 

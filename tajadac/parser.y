@@ -52,6 +52,9 @@
 /* %code requires { #include "lex.hh" } */
 
 
+%code requires { #include "Tajada/Type.hh" }
+
+
 
 %code {
 #define TAJADA_CALL_UNARY(nombre, argumento, out, loc)                               \
@@ -134,7 +137,7 @@
 %parse-param   { Tajada::Scope * scope }
 
 
-%code requires { #include "ast.hh"        }
+%code requires { #include "Tajada/AST.hh" }
 %parse-param   { Tajada::AST::AST ** tree }
 
 

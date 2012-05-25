@@ -7,12 +7,13 @@
 #include <re2/re2.h>
 #include <sysexits.h>
 
-#include "ast.hh"
+#include "Tajada/AST/AST.hh"
+//#include "Tajada/Type.hh"
+
 #include "lex.hh"
 #include "parser.tab.hh"
 #include "scope.hh"
 #include "tokens.hh"
-#include "type.hh"
 
 int main(int argc, char * argv[]) {
         if (argc != 1 && argc != 2) {

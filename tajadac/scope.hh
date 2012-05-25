@@ -5,9 +5,10 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "ast.hh"
+#include "Tajada/AST.hh"
+#include "Tajada/Type.hh"
+
 #include "location.hh"
-#include "type.hh"
 
 namespace Tajada {
         class Scope {

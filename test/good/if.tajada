@@ -3,6 +3,6 @@
         else if (tetero) tetero.
         else {
                 if (negrito) 4.
-                else return 7.
+                else retorna 7.
         }
 }

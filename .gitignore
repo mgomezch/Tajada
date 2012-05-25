@@ -1,3 +1,7 @@
 *~
+*.d
+*.gch
+*.o
+*.out
 .*.swp
 tags

@@ -1,0 +1,6 @@
+#include "Tajada/AST/Literal/Boolean.hh"
+#include "Tajada/AST/Literal/Character.hh"
+#include "Tajada/AST/Literal/Float.hh"
+#include "Tajada/AST/Literal/Integer.hh"
+#include "Tajada/AST/Literal/String.hh"
+#include "Tajada/AST/Literal/Tuple.hh"

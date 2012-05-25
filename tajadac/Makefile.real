@@ -1,0 +1,115 @@
+SHELL     = bash
+
+CC        = gcc
+CFLAGS    = -ggdb -Wall -Wextra -I. $(defines:%=-D%)
+
+CXX       = g++
+CXXFLAGS  = -ggdb -Wall -Wextra -I. $(defines:%=-D%) -std=gnu++0x
+
+YACC      = bison
+YACCFLAGS = --warnings=all --report=all -g -x
+
+CPP       = g++ -E
+CPPFLAGS  = -P -I.
+
+LDLIBS    = re2
+
+
+defines   = nullptr=NULL _GNU_SOURCE TAJADA_DEBUG=0 'TAJADA_UNUSED_PARAMETER(p)=static_cast<void>(p);'
+cpp-magic = $(CPP) $(CPPFLAGS) -DMACRO_MAGIC -
+
+
+
+build-exec = $(CXX) $(CXXFLAGS) -o $@ $^ $(LDLIBS:%=-l%)
+
+
+
+srcs := $(shell find . -type f -name '*.cc')
+
+%.d: %.cc
+	@echo "Calculating dependencies for $<"
+	@$(CXX) $(CXXFLAGS) -E -MM -MF $@ $<
+	@printf '%s\n'            \
+                '1s@^@$(dir $@)@' \
+                'wq'              \
+                | ed -s ./$@
+
+
+
+%.o: %.cc
+	@echo "Building $<"
+	@$(CXX) $(CXXFLAGS) -c ./$< -o $@
+
+
+
+.PHONY: all
+
+all: tajadac
+
+
+
+tajadac: $(srcs:%.cc=%.o) lex.o main.o parser.tab.o scope.o
+	@echo "Linking $@"
+	@$(build-exec)
+
+
+#          .d: parser.tab.hh stack.hh location.hh position.hh
+        lex.d: parser.tab.hh stack.hh location.hh position.hh
+       main.d: parser.tab.hh stack.hh location.hh position.hh
+ parser.tab.d: parser.tab.hh stack.hh location.hh position.hh
+      scope.d:                        location.hh
+
+#ast.gen.cc ast.gen.hh: make_ast_classes data/ast/classes data/ast/members
+#	./make_ast_classes data/ast/classes data/ast/members ast.gen.cc ast.gen.hh
+
+location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml position.hh stack.hh token_data.out token_data_line.out: parser.y tokens.hh Makefile
+	@printf '%s\n'                                                                    \
+                '#include "tokens.hh"'                                                    \
+                '#define X(tag, description, r, type) type|%token@<tag>@tag@description!' \
+                'TAJADA_TOKEN_DATA(X)'                                                    \
+                | $(cpp-magic)                                                            \
+                | sed 's/ \?! \?/\n/g'                                                    \
+                | sed                                                                     \
+                        -e 's/^void|\(%token@\)<[^>]*>\(@[^ ]*@\)u8\(.*\)$$/\1 \2\3/'     \
+                        -e 's/^[^|]*|\(%token@<[^>]*>@[^ ]*@\)u8\(.*\)$$/\1\2/'           \
+                        -e 's/<INFIX\([LR]\|\)[0-9]\+>/<infix_op>/g'                      \
+                        -e 's/" TAJADA_PASTE \(u8\)\?"//g'                                \
+                | column -t -s @                                                          \
+                > token_data.out
+	@printf '%s\n'     \
+                ''         \
+                '%union {' \
+                >> token_data.out
+	@printf '%s\n'                                       \
+                '#include "tokens.hh"'                       \
+                '#define X(tag, d, r, type) type|type@tag;!' \
+                'TAJADA_TOKEN_DATA(X)'                       \
+                | $(cpp-magic)                               \
+                | sed 's/ \?! \?/\n/g'                       \
+                | sed                                        \
+                        -e '/^void|/d'                       \
+                        -e 's/^[^|]*|/        /'             \
+                        -e '/^$$/d'                          \
+                | column -t -s @                             \
+                >> token_data.out
+	@printf '%s\n' '}' >> token_data.out
+	@tr -d '\n' < token_data.out > token_data_line.out
+	@printf '%s\n' '' >> token_data_line.out
+	@printf '%s\n'                                            \
+                '1s@.*@@'                                         \
+                '1s@$$@/* THIS FILE WAS AUTOMATICALLY GENERATED@' \
+                '1s@$$@ BY THE BUILD SCRIPTS USING THE CONTENTS@' \
+                '1s@$$@ OF “tokens.hh” AND “parser.y”; EDIT@'     \
+                '1s@$$@ THOSE FILES INSTEAD OR YOUR CHANGES@'     \
+                '1s@$$@ WILL BE LOST ONCE IT’S REGENERATED */@'   \
+                '/^%token_data$$/r token_data_line.out'           \
+                '/^%token_data$$/d'                               \
+                'w $<y'                                           \
+                'q'                                               \
+                | ed -s ./$<
+	@echo "Building parser"
+	@$(YACC) $(YACCFLAGS) ./$<y
+
+
+
+-include $(srcs:%.cc=%.d)

@@ -7,9 +7,10 @@
 
 #include <re2/re2.h>
 
+#include "Tajada/AST/Associativity.hh"
+
 #include "parser.tab.hh"
 #include "tokens.hh"
-#include "ast.hh"
 
 
 

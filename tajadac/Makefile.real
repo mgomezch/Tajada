@@ -1,25 +1,23 @@
-SHELL     = bash
+SHELL      = bash
 
-CC        = gcc
-CFLAGS    = -ggdb -Wall -Wextra -I. $(defines:%=-D%)
+CC         = gcc
+CFLAGS     = -ggdb -Wall -Wextra -I. $(defines:%=-D%)
 
-CXX       = g++
-CXXFLAGS  = -ggdb -Wall -Wextra -I. $(defines:%=-D%) -std=gnu++0x
+CXX        = g++
+CXXFLAGS   = -ggdb -Wall -Wextra -I. $(defines:%=-D%) -std=gnu++0x
 
-YACC      = bison
-YACCFLAGS = --warnings=all --report=all -g -x
+YACC       = bison
+YACCFLAGS  = --warnings=all --report=all -g -x
 
-CPP       = g++ -E
-CPPFLAGS  = -P -I.
+CPP        = g++ -E
+CPPFLAGS   = -P -I.
 
-LDLIBS    = re2
-
-
-defines   = nullptr=NULL _GNU_SOURCE TAJADA_DEBUG=0 'TAJADA_UNUSED_PARAMETER(p)=static_cast<void>(p);'
-cpp-magic = $(CPP) $(CPPFLAGS) -DMACRO_MAGIC -
+LDLIBS     = re2
 
 
+defines    = nullptr=NULL _GNU_SOURCE TAJADA_DEBUG=0 'TAJADA_UNUSED_PARAMETER(p)=static_cast<void>(p);'
 
+cpp-magic  = $(CPP) $(CPPFLAGS) -DMACRO_MAGIC -
 build-exec = $(CXX) $(CXXFLAGS) -o $@ $^ $(LDLIBS:%=-l%)
 
 

@@ -1,5 +1,5 @@
-#ifndef TAJADA_AST_HH
-#define TAJADA_AST_HH
+#ifndef TAJADA_AST_AST_HH
+#define TAJADA_AST_AST_HH
 
 #include <string>
 

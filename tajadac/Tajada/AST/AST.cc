@@ -1,4 +1,6 @@
+// Class:
 #include "Tajada/AST/AST.hh"
+
 #include "Tajada/Code/Block.hh"
 
 namespace Tajada {

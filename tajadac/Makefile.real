@@ -27,9 +27,9 @@ build-exec = $(CXX) $(CXXFLAGS) -o $@ $^ $(LDLIBS:%=-l%)
 
 
 
-srcs := $(shell shopt -s globstar && echo **/*.cc)
+sources := $(shell shopt -s globstar && echo **/*.cc)
 
-dep/%.d: %.cc
+$(sources:%.cc=dep/%.d): dep/%.d: %.cc
 	@echo "Calculating dependencies for $<"
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) -E -MM -MF $@ $<
@@ -40,7 +40,7 @@ dep/%.d: %.cc
 
 
 
-obj/%.o: %.cc
+$(sources:%.cc=obj/%.o): obj/%.o: %.cc
 	@echo "Building $<"
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -54,17 +54,17 @@ all: tajadac
 
 
 # El ejecutable principal combina todo el código.  Si hubiera más de uno, esto se complicaría…
-tajadac: $(srcs:%.cc=obj/%.o)
+tajadac: $(sources:%.cc=obj/%.o)
 	@echo "Linking $@"
 	@$(build-exec)
 
 
 # Las dependencias de archivos generados deben escribirse explícitamente.
-#              .d: parser.tab.hh stack.hh location.hh position.hh
-        dep/lex.d: parser.tab.hh stack.hh location.hh position.hh
-       dep/main.d: parser.tab.hh stack.hh location.hh position.hh
- dep/parser.tab.d: parser.tab.hh stack.hh location.hh position.hh
-      dep/scope.d:                        location.hh
+#              .d               .o: parser.tab.hh stack.hh location.hh position.hh
+        dep/lex.d        obj/lex.o: parser.tab.hh stack.hh location.hh position.hh
+       dep/main.d       obj/main.o: parser.tab.hh stack.hh location.hh position.hh
+ dep/parser.tab.d obj/parser.tab.o: parser.tab.hh stack.hh location.hh position.hh
+      dep/scope.d      obj/scope.o:                        location.hh
 
 # Cosas que se usaban cuando pensaba que podría generar parte de las clases del AST automáticamente a partir de una descripción breve.  Pero como no puedes modificar una clase que ya está declarada usando otra declaración, no sirve de mucho.  Los trucos lindos de metaprogramación con Ruby no aplican a C++ (duh). :-(
 #ast.gen.cc ast.gen.hh: make_ast_classes data/ast/classes data/ast/members
@@ -123,4 +123,4 @@ location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml posi
 
 
 
--include $(srcs:%.cc=dep/%.d) dep/parser.tab.d
+-include $(sources:%.cc=dep/%.d) dep/parser.tab.d

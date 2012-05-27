@@ -1,3 +1,5 @@
+Verificar que estén completas las dependencias en el Makefile.  No me convence y ya tuve un segfault…
+
 Quitar los 49857394593872598345 memory leaks y accesos inseguros a apuntadores.  Sería genial usar std::shared_ptr<>
 
 Decidir cuándo hacer delete.

@@ -24,18 +24,20 @@ build-exec = $(CXX) $(CXXFLAGS) -o $@ $^ $(LDLIBS:%=-l%)
 
 srcs := $(shell find . -type f -name '*.cc')
 
-%.d: %.cc
+dep/%.d: %.cc
 	@echo "Calculating dependencies for $<"
+	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) -E -MM -MF $@ $<
-	@printf '%s\n'            \
-                '1s@^@$(dir $@)@' \
-                'wq'              \
+	@printf '%s\n'                   \
+                '1s@^@$@ obj/$(dir $<)@' \
+                'wq'                     \
                 | ed -s ./$@
 
 
 
-%.o: %.cc
+obj/%.o: %.cc
 	@echo "Building $<"
+	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) -c ./$< -o $@
 
 
@@ -46,19 +48,21 @@ all: tajadac
 
 
 
-tajadac: $(srcs:%.cc=%.o) lex.o main.o parser.tab.o scope.o
+tajadac: $(srcs:%.cc=obj/%.o)
 	@echo "Linking $@"
 	@$(build-exec)
 
 
-#          .d: parser.tab.hh stack.hh location.hh position.hh
-        lex.d: parser.tab.hh stack.hh location.hh position.hh
-       main.d: parser.tab.hh stack.hh location.hh position.hh
- parser.tab.d: parser.tab.hh stack.hh location.hh position.hh
-      scope.d:                        location.hh
+#              .d: parser.tab.hh stack.hh location.hh position.hh
+        dep/lex.d: parser.tab.hh stack.hh location.hh position.hh
+       dep/main.d: parser.tab.hh stack.hh location.hh position.hh
+ dep/parser.tab.d: parser.tab.hh stack.hh location.hh position.hh
+      dep/scope.d:                        location.hh
 
 #ast.gen.cc ast.gen.hh: make_ast_classes data/ast/classes data/ast/members
 #	./make_ast_classes data/ast/classes data/ast/members ast.gen.cc ast.gen.hh
+
+dep/parser.tab.d: parser.tab.cc
 
 location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml position.hh stack.hh token_data.out token_data_line.out: parser.y tokens.hh Makefile
 	@printf '%s\n'                                                                    \
@@ -105,9 +109,9 @@ location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml posi
                 'w $<y'                                           \
                 'q'                                               \
                 | ed -s ./$<
-	@echo "Building parser"
+	@echo "Generating parser"
 	@$(YACC) $(YACCFLAGS) ./$<y
 
 
 
--include $(srcs:%.cc=%.d)
+-include $(srcs:%.cc=dep/%.d) dep/parser.tab.d

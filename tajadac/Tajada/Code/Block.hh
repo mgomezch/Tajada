@@ -10,10 +10,16 @@ namespace Tajada {
         namespace Code {
                 class Block {
                         public:
-                                std::vector<Tajada::Code::Instruction *> instructions;
-                                std::vector<Tajada::Code::Block *> successors;
+                                std::string label;
 
-                                // TODO: show
+                                std::vector<Tajada::Code::Instruction *> instructions;
+                                std::vector<Tajada::Code::Block       *> successors  ;
+
+                                Block(
+                                        std::string p_label
+                                );
+
+                                std::string show();
                 };
         }
 }

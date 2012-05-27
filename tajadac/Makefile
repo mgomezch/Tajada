@@ -1,15 +1,14 @@
 SHELL = bash
 
 clean =               \
-        ./**/*.d      \
         ./**/*.gch    \
         ./**/*.gen.*  \
-        ./**/*.o      \
         ./**/*.out    \
         ./**/*.output \
-        ./**/*.tab.cc \
-        ./**/*.yy     \
+        ./parser.yy   \
+        dep           \
         location.hh   \
+        obj           \
         parser.dot    \
         parser.tab.cc \
         parser.tab.hh \
@@ -18,10 +17,13 @@ clean =               \
         stack.hh      \
         tajadac       \
 
+
+
 all:
 
 clean:
-	shopt -s globstar && rm -f $(clean)
+	@echo "Cleaning"
+	@shopt -s globstar && rm -rf $(clean)
 
 %:
 	@$(MAKE) --no-print-directory -f Makefile.real $@

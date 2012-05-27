@@ -7,8 +7,10 @@ namespace Tajada {
         namespace AST {
                 AST::~AST() {}
 
-                Tajada::Code::Block * AST::gen() {
-                        return new Tajada::Code::Block;
+                Tajada::Code::Block * AST::gen(
+                        Tajada::Code::Block * b
+                ) {
+                        return b;
                 }
         }
 }

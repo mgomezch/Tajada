@@ -4,9 +4,17 @@
 // Superclasses:
 #include "Tajada/AST/AST.hh"
 
+#include "Tajada/Code/Block.hh"
+
 namespace Tajada {
         namespace AST {
-                class Statement : public virtual Tajada::AST::AST {};
+                class Statement : public virtual Tajada::AST::AST {
+                        public:
+                                // TODO: make this pure virtual once all subclasses have their implementation
+                                virtual Tajada::Code::Block * gen(
+                                        Tajada::Code::Block * b
+                                );
+                };
         }
 }
 

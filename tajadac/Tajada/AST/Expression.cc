@@ -12,5 +12,23 @@ namespace Tajada {
                         type(p_type),
                         is_lvalue(p_is_lvalue)
                 {}
+
+
+
+                Tajada::Code::Block * Expression::genl(
+                        Tajada::Code::Block * b
+                ) {
+                        // TODO: delete this implementation once all subclasses have their own
+                        return b;
+                }
+
+
+
+                Tajada::Code::Block * Expression::genr(
+                        Tajada::Code::Block * b
+                ) {
+                        // TODO: delete this implementation once all subclasses have their own
+                        return b;
+                }
         }
 }

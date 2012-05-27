@@ -19,11 +19,15 @@ clean =               \
 
 
 
-all:
+.DEFAULT_GOAL := all
+
+.PHONY: force clean
 
 clean:
 	@echo "Cleaning"
 	@shopt -s globstar && rm -rf $(clean)
 
-%:
-	@$(MAKE) --no-print-directory -f Makefile.real $@
+%: force
+	@$(MAKE) --no-builtin-variables --no-print-directory -f Makefile.real $@
+
+Makefile force: ;

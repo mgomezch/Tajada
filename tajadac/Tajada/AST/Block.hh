@@ -7,6 +7,8 @@
 // Superclasses:
 #include "Tajada/AST/Statement.hh"
 
+#include "Tajada/Code/Block.hh"
+
 namespace Tajada {
         namespace AST {
                 class Block : public virtual Tajada::AST::Statement {
@@ -18,6 +20,10 @@ namespace Tajada {
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);
+
+                                virtual Tajada::Code::Block * gen(
+                                        Tajada::Code::Block * b
+                                );
                 };
         }
 }

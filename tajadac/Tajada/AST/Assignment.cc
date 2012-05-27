@@ -13,11 +13,22 @@ namespace Tajada {
                         rhs(rhs)
                 {}
 
+
+
                 std::string Assignment::show(unsigned int depth) {
                         return
                                 lhs->show(depth)
                                 + std::string(u8" ≔ ")
                                 + rhs->show(depth);
+                }
+
+
+
+                Tajada::Code::Block * Assignment::gen(
+                        Tajada::Code::Block * b
+                ) {
+                        // TODO: use this->lhs->genl() and this->rhs->genr()
+                        return b;
                 }
         }
 }

@@ -6,11 +6,5 @@
 namespace Tajada {
         namespace AST {
                 AST::~AST() {}
-
-                Tajada::Code::Block * AST::gen(
-                        Tajada::Code::Block * b
-                ) {
-                        return b;
-                }
         }
 }

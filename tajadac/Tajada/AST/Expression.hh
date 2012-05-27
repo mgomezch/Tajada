@@ -6,6 +6,7 @@
 // Superclasses:
 #include "Tajada/AST/AST.hh"
 
+#include "Tajada/Code/Block.hh"
 #include "Tajada/Type/Type.hh"
 
 namespace Tajada {
@@ -18,6 +19,16 @@ namespace Tajada {
                                 Expression(
                                         Tajada::Type::Type * type,
                                         bool is_lvalue
+                                );
+
+                                // TODO: make this pure virtual once all subclasses have their implementation
+                                virtual Tajada::Code::Block * genl(
+                                        Tajada::Code::Block * b
+                                );
+
+                                // TODO: make this pure virtual once all subclasses have their implementation
+                                virtual Tajada::Code::Block * genr(
+                                        Tajada::Code::Block * b
                                 );
                 };
         }

@@ -9,6 +9,7 @@
 
 #include "Tajada/AST/Block.hh"
 #include "Tajada/AST/Statement.hh"
+#include "Tajada/Code/Block.hh"
 
 namespace Tajada {
         namespace AST {
@@ -23,6 +24,10 @@ namespace Tajada {
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);
+
+                                virtual Tajada::Code::Block * gen(
+                                        Tajada::Code::Block * b
+                                );
                 };
         }
 }

@@ -21,6 +21,10 @@ namespace Tajada {
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);
+
+                                virtual Tajada::Code::Block * gen(
+                                        Tajada::Code::Block * b
+                                );
                 };
         }
 }

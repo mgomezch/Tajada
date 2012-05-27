@@ -1,10 +1,12 @@
-#include <numeric>
 #include <list>
+#include <numeric>
 #include <string>
+
+// Class:
+#include "Tajada/AST/Program.hh"
 
 #include "Tajada/AST/Block.hh"
 #include "Tajada/AST/FunctionDefinition.hh"
-#include "Tajada/AST/Program.hh"
 #include "Tajada/AST/Statement.hh"
 
 namespace Tajada {
@@ -17,6 +19,8 @@ namespace Tajada {
                         main(main)
                 {}
 
+
+
                 std::string Program::show(unsigned int depth) {
                         return
                                 std::accumulate(
@@ -28,16 +32,23 @@ namespace Tajada {
                                                         acc
                                                         + statement->show(depth)
                                                         + (
-                                                                (
-                                                                        dynamic_cast<Tajada::AST::Block *>(statement)
-                                                                        || dynamic_cast<Tajada::AST::FunctionDefinition *>(statement)
-                                                                )
+                                                                   dynamic_cast<Tajada::AST::Block              *>(statement)
+                                                                || dynamic_cast<Tajada::AST::FunctionDefinition *>(statement)
                                                                 ? u8"\n"
                                                                 : u8".\n"
                                                         );
                                         }
                                 )
                                 + main->show(depth);
+                }
+
+
+
+                Tajada::Code::Block * Program::gen(
+                        Tajada::Code::Block * b
+                ) {
+                        b->label = "main";
+                        return this->main->gen(b);
                 }
         }
 }

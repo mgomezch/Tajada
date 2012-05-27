@@ -15,14 +15,19 @@ CPPFLAGS   = -P -I.
 LDLIBS     = re2
 
 
+# `_GNU_SOURCE` porque probablemente querremos alguna cosa bonita de glibc.
+# `nullptr` porque mi GCC apesta.
+# `TAJADA_DEBUG` porque uno que otro código por ahí está instrumentado si eso es 1.
+# `TAJADA_UNUSED_PARAMETER` porque `-Wextra`.
 defines    = nullptr=NULL _GNU_SOURCE TAJADA_DEBUG=0 'TAJADA_UNUSED_PARAMETER(p)=static_cast<void>(p);'
+
 
 cpp-magic  = $(CPP) $(CPPFLAGS) -DMACRO_MAGIC -
 build-exec = $(CXX) $(CXXFLAGS) -o $@ $^ $(LDLIBS:%=-l%)
 
 
 
-srcs := $(shell find . -type f -name '*.cc')
+srcs := $(shell shopt -s globstar && echo **/*.cc)
 
 dep/%.d: %.cc
 	@echo "Calculating dependencies for $<"
@@ -31,14 +36,14 @@ dep/%.d: %.cc
 	@printf '%s\n'                   \
                 '1s@^@$@ obj/$(dir $<)@' \
                 'wq'                     \
-                | ed -s ./$@
+                | ed -s $@
 
 
 
 obj/%.o: %.cc
 	@echo "Building $<"
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) -c ./$< -o $@
+	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
 
@@ -48,23 +53,27 @@ all: tajadac
 
 
 
+# El ejecutable principal combina todo el código.  Si hubiera más de uno, esto se complicaría…
 tajadac: $(srcs:%.cc=obj/%.o)
 	@echo "Linking $@"
 	@$(build-exec)
 
 
+# Las dependencias de archivos generados deben escribirse explícitamente.
 #              .d: parser.tab.hh stack.hh location.hh position.hh
         dep/lex.d: parser.tab.hh stack.hh location.hh position.hh
        dep/main.d: parser.tab.hh stack.hh location.hh position.hh
  dep/parser.tab.d: parser.tab.hh stack.hh location.hh position.hh
       dep/scope.d:                        location.hh
 
+# Cosas que se usaban cuando pensaba que podría generar parte de las clases del AST automáticamente a partir de una descripción breve.  Pero como no puedes modificar una clase que ya está declarada usando otra declaración, no sirve de mucho.  Los trucos lindos de metaprogramación con Ruby no aplican a C++ (duh). :-(
 #ast.gen.cc ast.gen.hh: make_ast_classes data/ast/classes data/ast/members
 #	./make_ast_classes data/ast/classes data/ast/members ast.gen.cc ast.gen.hh
 
 dep/parser.tab.d: parser.tab.cc
 
-location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml position.hh stack.hh token_data.out token_data_line.out: parser.y tokens.hh Makefile
+# Todos los archivos generados por `bison` y el pequeño loco script (que debería ir en un archivo aparte) dependen de donde está el pequeño loco script (este Makefile) y de la seudoentrada de `bison`:
+location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml position.hh stack.hh token_data.out token_data_line.out: parser.y tokens.hh Makefile.real
 	@printf '%s\n'                                                                    \
                 '#include "tokens.hh"'                                                    \
                 '#define X(tag, description, r, type) type|%token@<tag>@tag@description!' \
@@ -108,9 +117,9 @@ location.hh parser.dot parser.output parser.tab.cc parser.tab.hh parser.xml posi
                 '/^%token_data$$/d'                               \
                 'w $<y'                                           \
                 'q'                                               \
-                | ed -s ./$<
+                | ed -s $<
 	@echo "Generating parser"
-	@$(YACC) $(YACCFLAGS) ./$<y
+	@$(YACC) $(YACCFLAGS) $<y
 
 
 

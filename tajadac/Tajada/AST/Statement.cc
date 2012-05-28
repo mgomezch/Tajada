@@ -5,11 +5,11 @@
 
 namespace Tajada {
         namespace AST {
-                Tajada::Code::Block * Statement::gen(
+                // TODO: delete this implementation once all subclasses have their own
+                void Statement::gen(
                         Tajada::Code::Block * b
                 ) {
-                        // TODO: delete this implementation once all subclasses have their own
-                        return b;
+                        TAJADA_UNUSED_PARAMETER(b);
                 }
         }
 }

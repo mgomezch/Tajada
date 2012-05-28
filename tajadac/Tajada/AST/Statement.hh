@@ -11,7 +11,7 @@ namespace Tajada {
                 class Statement : public virtual Tajada::AST::AST {
                         public:
                                 // TODO: make this pure virtual once all subclasses have their implementation
-                                virtual Tajada::Code::Block * gen(
+                                virtual void gen(
                                         Tajada::Code::Block * b
                                 );
                 };

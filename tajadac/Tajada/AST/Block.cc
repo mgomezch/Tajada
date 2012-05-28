@@ -1,5 +1,6 @@
-#include <numeric>
+#include <algorithm>
 #include <list>
+#include <numeric>
 #include <string>
 
 // Class:
@@ -59,18 +60,16 @@ namespace Tajada {
 
 
 
-                Tajada::Code::Block * Block::gen(
+                void Block::gen(
                         Tajada::Code::Block * b
                 ) {
-                        std::accumulate(
+                        std::for_each(
                                 this->statements->begin(),
                                 this->statements->end(),
-                                b,
-                                [](Tajada::Code::Block * acc, Tajada::AST::Statement * s) {
-                                        return s->gen(acc);
+                                [b](Tajada::AST::Statement * s) {
+                                        s->gen(b);
                                 }
                         );
-                        return b;
                 }
         }
 }

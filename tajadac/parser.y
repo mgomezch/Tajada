@@ -150,9 +150,6 @@
 
 %nonassoc CALL
 %left     EXPR_LIST_SEP
-%nonassoc OP_EQ OP_NEQ OP_LT OP_GT
-%left     OP_PLUS OP_MINUS
-%left     OP_MULT OP_DIV OP_MOD
 
 %left INFIXL0 %nonassoc INFIX0 %right INFIXR0
 %left INFIXL1 %nonassoc INFIX1 %right INFIXR1
@@ -766,22 +763,6 @@ infix_op
 intlit
 : LIT_INT[token]
 { $$ = new Tajada::AST::Literal::Integer($[token]); }
-
-
-
-/*operator*/
-
-/*: OP_MINUS[op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::minus      ); }*/
-/*| OP_PLUS [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::plus       ); }*/
-/*| OP_MULT [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mult       ); }*/
-/*| OP_DIV  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::div        ); }*/
-/*| OP_MOD  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::mod        ); }*/
-/*| OP_EQ   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::eq         ); }*/
-/*| OP_NEQ  [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::neq        ); }*/
-/*| OP_LT   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::lessthan   ); }*/
-/*| OP_GT   [op] { $$ = new std::tuple<std::string *, Tajada::AST::Operator>($[op], Tajada::AST::Operator::greaterthan); }*/
-
-/*;*/
 
 
 

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Tajada/Code/Instruction.hh"
+#include "Tajada/Code/Location.hh"
 
 namespace Tajada {
         namespace Code {
@@ -13,13 +14,19 @@ namespace Tajada {
                                 std::string label;
 
                                 std::vector<Tajada::Code::Instruction *> instructions;
-                                std::vector<Tajada::Code::Block       *> successors  ;
+
+                                std::vector<Tajada::Code::Block *> successors  ;
+                                std::vector<Tajada::Code::Block *> predecessors;
+
+                                Tajada::Code::Block * end;
+
 
                                 Block(
                                         std::string p_label
                                 );
 
-                                std::string show();
+
+                                virtual std::string show();
                 };
         }
 }

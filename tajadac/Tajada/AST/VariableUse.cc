@@ -8,6 +8,7 @@
 #include "Tajada/AST/AST.hh"
 
 #include "Tajada/Type/Type.hh"
+#include "Tajada/Code/Intermediate/Location/Variable.hh"
 
 #include "scope.hh"
 
@@ -25,6 +26,8 @@ namespace Tajada {
                         name(p_name)
                 {}
 
+
+
                 std::string VariableUse::show(unsigned int depth) {
                         TAJADA_UNUSED_PARAMETER(depth);
 
@@ -35,5 +38,20 @@ namespace Tajada {
                                 + u8"]]"
                         ;
                 }
+
+
+
+                Tajada::Code::Intermediate::Location::Location * VariableUse::genl(
+                        Tajada::Code::Block * b
+                ) {
+                        TAJADA_UNUSED_PARAMETER(b);
+
+                        return new Tajada::Code::Intermediate::Location::Variable(
+                                this->scope,
+                                this->name
+                        );
+                }
+
+                // TODO: genr
         }
 }

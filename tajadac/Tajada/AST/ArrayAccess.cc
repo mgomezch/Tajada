@@ -1,7 +1,9 @@
 #include <string>
 
-#include "Tajada/AST/Expression.hh"
+// Class:
 #include "Tajada/AST/ArrayAccess.hh"
+
+#include "Tajada/AST/Expression.hh"
 #include "Tajada/Type/Array.hh"
 
 namespace Tajada {

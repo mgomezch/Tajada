@@ -7,6 +7,7 @@
 #include "Tajada/AST/AST.hh"
 
 #include "Tajada/Code/Block.hh"
+#include "Tajada/Code/Intermediate/Location/Location.hh"
 #include "Tajada/Type/Type.hh"
 
 namespace Tajada {
@@ -22,12 +23,12 @@ namespace Tajada {
                                 );
 
                                 // TODO: make this pure virtual once all subclasses have their implementation
-                                virtual Tajada::Code::Block * genl(
+                                virtual Tajada::Code::Intermediate::Location::Location * genl(
                                         Tajada::Code::Block * b
                                 );
 
                                 // TODO: make this pure virtual once all subclasses have their implementation
-                                virtual Tajada::Code::Block * genr(
+                                virtual Tajada::Code::Intermediate::Location::Location * genr(
                                         Tajada::Code::Block * b
                                 );
                 };

@@ -44,11 +44,10 @@ namespace Tajada {
 
 
 
-                Tajada::Code::Block * Program::gen(
-                        Tajada::Code::Block * b
-                ) {
-                        b->label = "main";
-                        return this->main->gen(b);
+                Tajada::Code::Block * Program::gen() {
+                        auto b = new Tajada::Code::Block("main");
+                        main->gen(b);
+                        return b;
                 }
         }
 }

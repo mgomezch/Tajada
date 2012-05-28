@@ -10,7 +10,8 @@ namespace Tajada {
                 Block::Block(
                         std::string p_label
                 ):
-                        label(p_label)
+                        label(p_label),
+                        end  (this   )
                 {}
 
                 std::string Block::show() {
@@ -33,7 +34,7 @@ namespace Tajada {
                                 + (
                                         this->successors.empty()
                                         ? u8""
-                                        :
+                                        : (
                                                 std::accumulate(
                                                         this->successors.begin(),
                                                         --this->successors.end(),
@@ -43,6 +44,7 @@ namespace Tajada {
                                                         }
                                                 )
                                                 + this->successors.back()->label
+                                        )
                                 )
                                 + u8"]\n"
                         ;

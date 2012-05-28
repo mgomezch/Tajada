@@ -15,15 +15,16 @@ namespace Tajada {
                                 class Variable:
                                         public virtual Tajada::Code::Intermediate::Location::Location
                                 {
-                                        Tajada::Scope * scope;
-                                        std::string   * name ;
+                                        public:
+                                                Tajada::Scope * scope;
+                                                std::string   * name ;
 
-                                        Variable(
-                                                Tajada::Scope * p_scope,
-                                                std::string   * p_name
-                                        );
+                                                Variable(
+                                                        Tajada::Scope * p_scope,
+                                                        std::string   * p_name
+                                                );
 
-                                        virtual std::string show();
+                                                virtual std::string show();
                                 };
                         }
                 }

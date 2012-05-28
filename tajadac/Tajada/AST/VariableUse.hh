@@ -7,6 +7,8 @@
 #include "Tajada/AST/Expression.hh"
 
 #include "Tajada/Type/Type.hh"
+#include "Tajada/Code/Block.hh"
+#include "Tajada/Code/Intermediate/Location/Location.hh"
 
 #include "scope.hh"
 
@@ -30,6 +32,10 @@ namespace Tajada {
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);
+
+                                Tajada::Code::Intermediate::Location::Location * genl(
+                                        Tajada::Code::Block * b
+                                );
                 };
         }
 }

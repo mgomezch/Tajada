@@ -1,12 +1,7 @@
 #ifndef TAJADA_CODE_INTERMEDIATE_fwd_HH
 #define TAJADA_CODE_INTERMEDIATE_fwd_HH
 
-namespace Tajada {
-        namespace Code {
-                namespace Intermediate {
-                        class Instruction;
-                }
-        }
-}
+#include "Tajada/Code/Intermediate/Instruction/fwd.hh"
+#include "Tajada/Code/Intermediate/Location/fwd.hh"
 
 #endif

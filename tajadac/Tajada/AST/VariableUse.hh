@@ -8,17 +8,25 @@
 
 #include "Tajada/Type/Type.hh"
 
+#include "scope.hh"
+
+namespace Tajada {
+        class Scope;
+}
+
 namespace Tajada {
         namespace AST {
-                class VariableUse : public virtual Tajada::AST::Expression {
+                class VariableUse:
+                        public virtual Tajada::AST::Expression
+                {
                         public:
-                                unsigned int scope_id;
-                                std::string * name;
+                                Tajada::Scope * scope;
+                                std::string   * name ;
 
                                 VariableUse(
-                                        unsigned int scope_id,
-                                        std::string * name,
-                                        Tajada::Type::Type * type
+                                        Tajada::Scope      * p_scope,
+                                        std::string        * p_name ,
+                                        Tajada::Type::Type * p_type
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);

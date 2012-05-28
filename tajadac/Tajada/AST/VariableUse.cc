@@ -1,28 +1,39 @@
 #include <string>
 
-#include "Tajada/AST/Expression.hh"
+// Class:
 #include "Tajada/AST/VariableUse.hh"
+
+// Superclasses:
+#include "Tajada/AST/Expression.hh"
+#include "Tajada/AST/AST.hh"
+
 #include "Tajada/Type/Type.hh"
+
+#include "scope.hh"
 
 namespace Tajada {
         namespace AST {
                 VariableUse::VariableUse(
-                        unsigned int p_scope_id,
-                        std::string * p_name,
+                        Tajada::Scope      * p_scope,
+                        std::string        * p_name ,
                         Tajada::Type::Type * p_type
                 ):
+                        Tajada::AST::AST(),
                         Tajada::AST::Expression(p_type, true),
-                        scope_id(p_scope_id),
+
+                        scope(p_scope),
                         name(p_name)
                 {}
 
                 std::string VariableUse::show(unsigned int depth) {
                         TAJADA_UNUSED_PARAMETER(depth);
+
                         return
-                                *name
+                                *this->name
                                 + u8"[[scope: "
-                                + std::to_string(scope_id)
-                                + u8"]]";
+                                + std::to_string(this->scope->id)
+                                + u8"]]"
+                        ;
                 }
         }
 }

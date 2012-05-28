@@ -19,7 +19,8 @@ namespace Tajada {
                         return
                                 lhs->show(depth)
                                 + std::string(u8" ≔ ")
-                                + rhs->show(depth);
+                                + rhs->show(depth)
+                        ;
                 }
 
 
@@ -27,7 +28,9 @@ namespace Tajada {
                 Tajada::Code::Block * Assignment::gen(
                         Tajada::Code::Block * b
                 ) {
-                        // TODO: use this->lhs->genl() and this->rhs->genr()
+                        auto bl = this->lhs->genl(b );
+                        auto br = this->rhs->genr(bl);
+                        // TODO: emit Store
                         return b;
                 }
         }

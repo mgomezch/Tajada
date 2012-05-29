@@ -12,6 +12,8 @@ namespace Tajada {
         namespace Type {
                 class Tuple : public virtual Tajada::Type::Structure {
                         public:
+                                std::unordered_map<int, unsigned int> offsets;
+
                                 Tuple(
                                         std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> * elems
                                 );

@@ -6,11 +6,14 @@
 #include <unordered_map>
 #include <vector>
 
+// Superclasses:
 #include "Tajada/Type/Type.hh"
 
 namespace Tajada {
         namespace Type {
-                class Structure : public virtual Tajada::Type::Type {
+                class Structure:
+                        public virtual Tajada::Type::Type
+                {
                         public:
                                 std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> * elems;
                                 std::unordered_map<std::string, int> names;

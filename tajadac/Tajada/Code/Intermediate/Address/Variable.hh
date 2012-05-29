@@ -1,19 +1,19 @@
-#ifndef TAJADA_CODE_INTERMEDIATE_LOCATION_VARIABLE_HH
-#define TAJADA_CODE_INTERMEDIATE_LOCATION_VARIABLE_HH
+#ifndef TAJADA_CODE_INTERMEDIATE_ADDRESS_VARIABLE_HH
+#define TAJADA_CODE_INTERMEDIATE_ADDRESS_VARIABLE_HH
 
 #include <string>
 
 // Superclasses:
-#include "Tajada/Code/Intermediate/Location/Location.hh"
+#include "Tajada/Code/Intermediate/Address/Address.hh"
 
 #include "scope.hh"
 
 namespace Tajada {
         namespace Code {
                 namespace Intermediate {
-                        namespace Location {
+                        namespace Address {
                                 class Variable:
-                                        public virtual Tajada::Code::Intermediate::Location::Location
+                                        public virtual Tajada::Code::Intermediate::Address::Address
                                 {
                                         public:
                                                 Tajada::Scope * scope;

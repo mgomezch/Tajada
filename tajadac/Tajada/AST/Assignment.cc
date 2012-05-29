@@ -10,6 +10,8 @@
 #include "Tajada/AST/Expression.hh"
 #include "Tajada/Code/Block.hh"
 #include "Tajada/Code/Intermediate/Instruction/Copy.hh"
+#include "Tajada/Type/Tuple.hh"
+#include "Tajada/Type/Union.hh"
 
 namespace Tajada {
         namespace AST {

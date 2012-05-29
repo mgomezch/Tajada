@@ -5,6 +5,8 @@ namespace Tajada {
         namespace Code {
                 namespace Intermediate {
                         namespace Instruction {
+                                class Instruction;
+
                                 class Copy;
                         }
                 }

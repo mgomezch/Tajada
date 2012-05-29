@@ -501,7 +501,7 @@ Proyecto de [CI4721][] (Lenguajes de programación 2) de [Federico Flaviani][] (
 
         5.  #### Ubicaciones y expresiones de referencia
 
-            Una **ubicación** es un tipo particular de expresión que representa a un ente que almacena información que puede ser modificada en la ejecución de una tajada.  Cada ubicación tiene asociada un **espacio**, que es el ente que almacena un valor de ese tipo.
+            Una **ubicación** es un tipo particular de expresión que representa a un ente que almacena información que puede ser modificada en la ejecución de una tajada.  Cada ubicación está asociada con un **espacio**, que es el ente que almacena un valor de ese tipo.
 
             Se puede construir una ubicación con el nombre de una variable alcanzable.  El espacio de este tipo de ubicación es el valor referido si su tipo es una referencia; si no, el espacio es la variable.
 

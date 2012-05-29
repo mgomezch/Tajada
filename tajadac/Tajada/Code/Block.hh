@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "Tajada/Code/Instruction.hh"
-#include "Tajada/Code/Location.hh"
 
 namespace Tajada {
         namespace Code {
@@ -27,6 +26,8 @@ namespace Tajada {
 
 
                                 virtual std::string show();
+
+                                virtual std::string show_all();
                 };
         }
 }

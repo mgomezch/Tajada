@@ -8,6 +8,8 @@
 #include <sysexits.h>
 
 #include "Tajada/AST/AST.hh"
+#include "Tajada/AST/Program.hh"
+
 //#include "Tajada/Type.hh"
 
 #include "lex.hh"
@@ -144,11 +146,20 @@ TAJADA_OPS(TAJADA_DEFINE_FUNCTION_FOR_TYPE)
                         std::cout
                                 << u8"Successful parse:\n"
                                 << tree->show()
-                                << u8"\n"
+                                << u8"\n\n"
                                 << u8"Symbol tables:\n"
                                 << scope.show()
                                 << std::endl
                         ;
+
+                        if (auto p = dynamic_cast<Tajada::AST::Program *>(tree)) {
+                                auto code = p->gen();
+                                std::cout
+                                        << u8"Code:\n"
+                                        << code->show_all()
+                                ;
+                        }
+
                         std::exit(EX_OK);
                 }
         }

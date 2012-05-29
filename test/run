@@ -1,11 +1,64 @@
 #!/usr/bin/env bash
 
-if [[ ${#@} -ge 1 ]]
+columns=0
+verbose=0
+color=1
+
+
+
+opts=$(getopt -o c:vC:: --long columns,verbose,color:: -n 'tajadac-test' -- "$@")
+
+if [[ $? != 0 ]]
 then
-        export COLUMNS="$1"
-else
-        export COLUMNS="0"
+        exit 1
 fi
+
+eval set -- "$opts"
+
+
+
+while true
+do
+        case "$1" in
+                -v|--verbose)
+                        verbose=1
+                        shift
+                ;;
+
+
+                -c|--columns)
+                        columns="$2"
+                        # TODO: check for valid number
+                        shift 2
+                ;;
+
+
+                -C|--color)
+                        case "$2" in
+                                off|n|no|0|false)
+                                        color=0
+                                ;;
+
+                                *)
+                                        color=1
+                                ;;
+                        esac
+                        shift 2
+                ;;
+
+
+                --)
+                        shift
+                        break
+                ;;
+
+
+                *)
+                        echo "Internal error in tajadac-test: $1" >&2
+                        exit 1
+                ;;
+        esac
+done
 
 
 
@@ -15,25 +68,58 @@ fails=()
 
 for i in ../test/good/*.tajada
 do
-        ruby <<-EOF
-                puts "\n"*5
-                puts 'GOOD TEST: $i'.center($COLUMNS).tr ' ', '_'
-EOF
-
-        ./tajadac "$i"
-
-        if [[ $? != 0 ]]
+        if ((verbose))
         then
-                fails+=("$i")
                 ruby <<-EOF
-                        puts 'GOOD TEST FAILED: $i'.center($COLUMNS).tr ' ', '_'
                         puts "\n"*5
+                        puts 'GOOD TEST: $i'.center($columns).tr ' ', '_'
 EOF
+
+                ./tajadac "$i"
+
+                if [[ $? != 0 ]]
+                then
+                        fails+=("$i")
+                        ruby <<-EOF
+                                puts 'GOOD TEST FAILED: $i'.center($columns).tr ' ', '_'
+                                puts "\n"*5
+EOF
+                else
+                        ruby <<-EOF
+                                puts 'GOOD TEST PASSED: $i'.center($columns).tr ' ', '_'
+                                puts "\n"*5
+EOF
+                fi
         else
-                ruby <<-EOF
-                        puts 'GOOD TEST PASSED: $i'.center($COLUMNS).tr ' ', '_'
-                        puts "\n"*5
-EOF
+                echo -n "[$i] "
+                if ./tajadac "$i" &> /dev/null
+                then
+                        if ((color))
+                        then
+                                echo -en '\033[01;32m'
+                        fi
+
+                        echo -n "PASS"
+
+                        if ((color))
+                        then
+                                echo -e '\033[00m'
+                        fi
+                else
+                        fails+=("$i")
+
+                        if ((color))
+                        then
+                                echo -en '\033[01;31m'
+                        fi
+
+                        echo -n "FAIL"
+
+                        if ((color))
+                        then
+                                echo -e '\033[00m'
+                        fi
+                fi
         fi
 done
 
@@ -41,25 +127,56 @@ done
 
 for i in ../test/bad/*.tajada
 do
-        ruby <<-EOF
-                puts "\n"*5
-                puts 'BAD TEST: $i'.center($COLUMNS).tr ' ', '_'
-EOF
-
-        ./tajadac "$i"
-
-        if [[ $? == 0 ]]
+        if ((verbose))
         then
-                fails+=("$i")
                 ruby <<-EOF
-                        puts 'BAD TEST FAILED: $i'.center($COLUMNS).tr ' ', '_'
                         puts "\n"*5
+                        puts 'BAD TEST: $i'.center($columns).tr ' ', '_'
 EOF
+
+                if ./tajadac "$i"
+                then
+                        fails+=("$i")
+                        ruby <<-EOF
+                                puts 'BAD TEST FAILED: $i'.center($columns).tr ' ', '_'
+                                puts "\n"*5
+EOF
+                else
+                        ruby <<-EOF
+                                puts 'BAD TEST PASSED: $i'.center($columns).tr ' ', '_'
+                                puts "\n"*5
+EOF
+                fi
         else
-                ruby <<-EOF
-                        puts 'BAD TEST PASSED: $i'.center($COLUMNS).tr ' ', '_'
-                        puts "\n"*5
-EOF
+                echo -n "[$i] "
+                if ./tajadac "$i" &> /dev/null
+                then
+                        fails+=("$i")
+
+                        if ((color))
+                        then
+                                echo -en '\033[01;31m'
+                        fi
+
+                        echo -n "FAIL"
+
+                        if ((color))
+                        then
+                                echo -e '\033[00m'
+                        fi
+                else
+                        if ((color))
+                        then
+                                echo -en '\033[01;32m'
+                        fi
+
+                        echo -n "PASS"
+
+                        if ((color))
+                        then
+                                echo -e '\033[00m'
+                        fi
+                fi
         fi
 done
 

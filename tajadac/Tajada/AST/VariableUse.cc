@@ -8,7 +8,7 @@
 #include "Tajada/AST/AST.hh"
 
 #include "Tajada/Type/Type.hh"
-#include "Tajada/Code/Intermediate/Location/Variable.hh"
+#include "Tajada/Code/Intermediate/Address/Variable.hh"
 
 #include "scope.hh"
 
@@ -41,17 +41,28 @@ namespace Tajada {
 
 
 
-                Tajada::Code::Intermediate::Location::Location * VariableUse::genl(
+                Tajada::Code::Intermediate::Address::Address * VariableUse::genl(
                         Tajada::Code::Block * b
                 ) {
                         TAJADA_UNUSED_PARAMETER(b);
 
-                        return new Tajada::Code::Intermediate::Location::Variable(
+                        return new Tajada::Code::Intermediate::Address::Variable(
                                 this->scope,
                                 this->name
                         );
                 }
 
-                // TODO: genr
+
+
+                Tajada::Code::Intermediate::Address::Address * VariableUse::genr(
+                        Tajada::Code::Block * b
+                ) {
+                        TAJADA_UNUSED_PARAMETER(b);
+
+                        return new Tajada::Code::Intermediate::Address::Variable(
+                                this->scope,
+                                this->name
+                        );
+                }
         }
 }

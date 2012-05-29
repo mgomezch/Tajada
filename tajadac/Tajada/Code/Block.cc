@@ -1,5 +1,8 @@
+#include <algorithm>
+#include <list>
 #include <numeric>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 // Class:
@@ -13,6 +16,8 @@ namespace Tajada {
                         label(p_label),
                         end  (this   )
                 {}
+
+
 
                 std::string Block::show() {
                         return
@@ -47,6 +52,38 @@ namespace Tajada {
                                         )
                                 )
                                 + u8"]\n"
+                        ;
+                }
+
+
+
+                std::string Block::show_all() {
+                        std::unordered_set<Tajada::Code::Block *> bs;
+                        std::list<Tajada::Code::Block *> nbs { this };
+
+                        std::for_each(
+                                nbs.begin(),
+                                nbs.end(),
+                                [&bs, &nbs](Tajada::Code::Block * b) {
+                                        if (bs.count(b)) return;
+                                        bs.insert(b);
+                                        nbs.insert(
+                                                nbs.end(),
+                                                b->successors.begin(),
+                                                b->successors.end()
+                                        );
+                                }
+                        );
+
+                        return
+                                std::accumulate(
+                                        bs.begin(),
+                                        bs.end(),
+                                        std::string(),
+                                        [](std::string acc, Tajada::Code::Block * b) {
+                                                return acc + b->show() + "\n";
+                                        }
+                                )
                         ;
                 }
         }

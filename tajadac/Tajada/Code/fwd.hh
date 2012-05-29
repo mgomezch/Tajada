@@ -8,7 +8,7 @@ namespace Tajada {
         namespace Code {
                 class Block      ;
                 class Instruction;
-                class Location   ;
+                class Address    ;
         }
 }
 

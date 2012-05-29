@@ -3,10 +3,10 @@
 #include <vector>
 
 // Class:
-#include "Tajada/Code/Location.hh"
+#include "Tajada/Code/Address.hh"
 
 namespace Tajada {
         namespace Code {
-                Location::~Location() {}
+                Address::~Address() {}
         }
 }

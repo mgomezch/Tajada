@@ -6,7 +6,7 @@
 // Superclasses:
 #include "Tajada/Code/Intermediate/Instruction/Instruction.hh"
 
-#include "Tajada/Code/Intermediate/Location.hh"
+#include "Tajada/Code/Intermediate/Address.hh"
 
 namespace Tajada {
         namespace Code {
@@ -16,12 +16,12 @@ namespace Tajada {
                                         public virtual Tajada::Code::Intermediate::Instruction::Instruction
                                 {
                                         public:
-                                                Tajada::Code::Intermediate::Location::Location * src;
-                                                Tajada::Code::Intermediate::Location::Location * dst;
+                                                Tajada::Code::Intermediate::Address::Address * dst;
+                                                Tajada::Code::Intermediate::Address::Address * src;
 
                                                 Copy(
-                                                        Tajada::Code::Intermediate::Location::Location * p_src,
-                                                        Tajada::Code::Intermediate::Location::Location * p_dst
+                                                        Tajada::Code::Intermediate::Address::Address * p_dst,
+                                                        Tajada::Code::Intermediate::Address::Address * p_src
                                                 );
 
                                                 virtual std::string show();

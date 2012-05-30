@@ -1,6 +1,5 @@
 #include <cassert>
 #include <string>
-#include <iostream>
 
 // Class:
 #include "Tajada/AST/TupleAccessByInteger.hh"
@@ -51,7 +50,6 @@ namespace Tajada {
                                 auto ii = dynamic_cast<Tajada::Code::Intermediate::Address::Immediate::Integer *>(fa);
                                 assert(tt);
                                 lvar->offset += tt->offsets[ii->value];
-                                std::cout << ii->value << ":" << tt->offsets[ii->value] << std::endl;
                                 return lvar;
                         } else {
                                 assert(false); // TODO: For now, this shouldn’t happen.  Once references are implemented, it might.

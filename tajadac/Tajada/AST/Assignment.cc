@@ -39,7 +39,7 @@ namespace Tajada {
 
 
 
-                void flatten(
+                static void flatten(
                         Tajada::Code::Block * b,
                         Tajada::Code::Intermediate::Address::Variable lv,
                         Tajada::Code::Intermediate::Address::Address * rv

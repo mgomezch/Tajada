@@ -1,0 +1,8 @@
+{
+        a es arepa con (queso guayanés), (papelón conlimón), (café aguado), (arepa viuda quemada) y (caraota roja).
+        a→guayanés ≔ 0.
+        a→conlimón ≔ 3·1415926535.
+        a→aguado   ≔ negrito.
+        a→quemada  ≔ «».
+        a→roja     ≔ \電.
+}

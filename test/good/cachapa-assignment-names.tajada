@@ -1,6 +1,8 @@
-c es cachapa con (queso munster) o (papelón conlimón).
-
 {
-        c ⇒ munster  ≔ 4.
-        c ⇒ conlimón ≔ 4·0.
+        c es cachapa con (queso guayanés), (papelón conlimón), (café aguado), (arepa viuda quemada) o (caraota roja).
+        c⇒guayanés ≔ 0.
+        c⇒conlimón ≔ 3·1415926535.
+        c⇒aguado   ≔ negrito.
+        c⇒quemada  ≔ «».
+        c⇒roja     ≔ \電.
 }

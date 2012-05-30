@@ -26,7 +26,10 @@ namespace Tajada {
 
 
                                         std::string Integer::show() {
-                                                return std::to_string(this->value);
+                                                return
+                                                        std::to_string(this->value)
+                                                        + u8"[I]"
+                                                ;
                                         }
                                 }
                         }

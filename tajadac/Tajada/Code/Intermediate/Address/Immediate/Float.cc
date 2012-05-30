@@ -26,7 +26,10 @@ namespace Tajada {
 
 
                                         std::string Float::show() {
-                                                return std::to_string(this->value);
+                                                return
+                                                        std::to_string(this->value)
+                                                        + u8"[F]"
+                                                ;
                                         }
                                 }
                         }

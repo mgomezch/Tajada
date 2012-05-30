@@ -33,7 +33,7 @@ namespace Tajada {
                 std::string TupleAccessByInteger::show(unsigned int depth) {
                         return
                                 source->show(depth)
-                                + std::string(u8" → ")
+                                + u8" → "
                                 + field->show(depth)
                         ;
                 }
@@ -46,9 +46,12 @@ namespace Tajada {
                         auto sa = this->source->genl(b);
                         auto fa = this->field ->genr(b);
                         if (auto lvar = dynamic_cast<Tajada::Code::Intermediate::Address::Variable *>(sa)) {
-                                auto tt = dynamic_cast<Tajada::Type::Tuple *>(source->type);
-                                auto ii = dynamic_cast<Tajada::Code::Intermediate::Address::Immediate::Integer *>(fa);
+                                auto tt = dynamic_cast<Tajada::Type::Tuple *>(this->source->type);
                                 assert(tt);
+
+                                auto ii = dynamic_cast<Tajada::Code::Intermediate::Address::Immediate::Integer *>(fa);
+                                assert(ii);
+
                                 lvar->offset += tt->offsets[ii->value];
                                 return lvar;
                         } else {
@@ -64,9 +67,12 @@ namespace Tajada {
                         auto sa = this->source->genr(b);
                         auto fa = this->field ->genr(b);
                         if (auto lvar = dynamic_cast<Tajada::Code::Intermediate::Address::Variable *>(sa)) {
-                                auto tt = dynamic_cast<Tajada::Type::Tuple *>(source->type);
-                                auto ii = dynamic_cast<Tajada::Code::Intermediate::Address::Immediate::Integer *>(fa);
+                                auto tt = dynamic_cast<Tajada::Type::Tuple *>(this->source->type);
                                 assert(tt);
+
+                                auto ii = dynamic_cast<Tajada::Code::Intermediate::Address::Immediate::Integer *>(fa);
+                                assert(ii);
+
                                 lvar->offset += tt->offsets[ii->value];
                                 return lvar;
                         } else {

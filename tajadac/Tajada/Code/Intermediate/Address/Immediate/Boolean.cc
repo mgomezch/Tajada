@@ -26,7 +26,10 @@ namespace Tajada {
 
 
                                         std::string Boolean::show() {
-                                                return std::to_string(this->value);
+                                                return
+                                                        std::to_string(this->value)
+                                                        + u8"[B]"
+                                                ;
                                         }
                                 }
                         }

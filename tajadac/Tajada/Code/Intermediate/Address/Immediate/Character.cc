@@ -29,7 +29,7 @@ namespace Tajada {
                                                 return
                                                         u8"'"
                                                         + *this->value
-                                                        + u8"'"
+                                                        + u8"'[C]"
                                                 ;
                                         }
                                 }

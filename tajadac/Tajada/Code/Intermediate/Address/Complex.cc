@@ -8,15 +8,20 @@
 #include "Tajada/Code/Address.hh"
 #include "Tajada/Code/Intermediate/Address/Address.hh"
 
+#include "Tajada/Type/Tuple.hh"
+
 namespace Tajada {
         namespace Code {
                 namespace Intermediate {
                         namespace Address {
-                                Complex::Complex():
+                                Complex::Complex(
+                                        Tajada::Type::Tuple * p_type
+                                ):
                                         Tajada::Code::Address(),
                                         Tajada::Code::Intermediate::Address::Address(),
 
-                                        elems{}
+                                        elems{},
+                                        type(p_type)
                                 {}
 
 

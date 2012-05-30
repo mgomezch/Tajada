@@ -101,7 +101,7 @@ namespace Tajada {
                         int i = 0;
 
                         for (auto it = this->elems->begin(); it != this->elems->end(); ++it, ++i) {
-                                //this->offsets[i] = r;
+                                this->offsets[i] = r;
                                 r += std::get<0>(**it)->size();
                                 if (it + 1 != this->elems->end()) {
                                         if (auto a = std::get<0>(**(it + 1))->alignment()) {
@@ -127,6 +127,7 @@ namespace Tajada {
                                                 }
                                         )
                                 )->size()
+                                + 32
                         ;
                 }
 

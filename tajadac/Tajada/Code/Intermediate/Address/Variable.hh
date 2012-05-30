@@ -16,12 +16,14 @@ namespace Tajada {
                                         public virtual Tajada::Code::Intermediate::Address::Address
                                 {
                                         public:
-                                                Tajada::Scope * scope;
-                                                std::string   * name ;
+                                                Tajada::Scope * scope ;
+                                                std::string   * name  ;
+                                                unsigned int    offset;
 
                                                 Variable(
-                                                        Tajada::Scope * p_scope,
-                                                        std::string   * p_name
+                                                        Tajada::Scope * p_scope     ,
+                                                        std::string   * p_name      ,
+                                                        unsigned int    p_offset = 0
                                                 );
 
                                                 virtual std::string show();

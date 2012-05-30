@@ -19,7 +19,7 @@ namespace Tajada {
                 std::string UnionAccessByInteger::show(unsigned int depth) {
                         return
                                 source->show(depth)
-                                + std::string(u8" → ")
+                                + std::string(u8" ⇒ ")
                                 + field->show(depth);
                 }
         }

@@ -7,6 +7,8 @@
 // Superclasses:
 #include "Tajada/Code/Intermediate/Address/Address.hh"
 
+#include "Tajada/Type/Tuple.hh"
+
 namespace Tajada {
         namespace Code {
                 namespace Intermediate {
@@ -16,8 +18,11 @@ namespace Tajada {
                                 {
                                         public:
                                                 std::vector<Tajada::Code::Intermediate::Address::Address *> elems;
+                                                Tajada::Type::Tuple * type;
 
-                                                Complex();
+                                                Complex(
+                                                        Tajada::Type::Tuple * p_type
+                                                );
 
                                                 virtual std::string show();
                                 };

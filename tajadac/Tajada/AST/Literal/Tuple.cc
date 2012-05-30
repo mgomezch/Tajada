@@ -20,7 +20,12 @@ namespace Tajada {
         namespace AST {
                 namespace Literal {
                         Tuple::Tuple(
-                                std::vector<std::tuple<Tajada::AST::Expression *, std::string *> *> * p_elems
+                                std::vector<
+                                        std::tuple<
+                                                Tajada::AST::Expression *,
+                                                std::string *
+                                        > *
+                                > * p_elems
                         ):
                                 Tajada::AST::AST(),
                                 Tajada::AST::Expression(
@@ -119,7 +124,9 @@ namespace Tajada {
                                 return std::accumulate(
                                         this->elems->begin(),
                                         this->elems->end(),
-                                        new Tajada::Code::Intermediate::Address::Complex(),
+                                        new Tajada::Code::Intermediate::Address::Complex(
+                                                dynamic_cast<Tajada::Type::Tuple *>(this->type)
+                                        ),
                                         [b](
                                                 Tajada::Code::Intermediate::Address::Complex * r,
                                                 decltype(this->elems->front()) elem

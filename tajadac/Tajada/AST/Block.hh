@@ -11,7 +11,9 @@
 
 namespace Tajada {
         namespace AST {
-                class Block : public virtual Tajada::AST::Statement {
+                class Block:
+                        public virtual Tajada::AST::Statement
+                {
                         public:
                                 std::list<Tajada::AST::Statement *> * statements;
 

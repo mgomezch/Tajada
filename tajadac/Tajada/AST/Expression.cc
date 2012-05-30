@@ -6,8 +6,8 @@
 // Superclasses:
 #include "Tajada/AST/AST.hh"
 
-#include "Tajada/Type/Type.hh"
 #include "Tajada/Code/Intermediate/Address/Address.hh"
+#include "Tajada/Type/Type.hh"
 
 // TODO: remove this once all subclasses have their implementation of genl/genr
 namespace Tajada {

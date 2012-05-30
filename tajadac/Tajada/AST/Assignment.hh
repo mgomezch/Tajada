@@ -10,7 +10,9 @@
 
 namespace Tajada {
         namespace AST {
-                class Assignment : public virtual Tajada::AST::Statement {
+                class Assignment:
+                        public virtual Tajada::AST::Statement
+                {
                         public:
                                 Tajada::AST::Expression * lhs;
                                 Tajada::AST::Expression * rhs;

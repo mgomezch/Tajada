@@ -12,7 +12,9 @@
 
 namespace Tajada {
         namespace AST {
-                class Expression : public virtual Tajada::AST::AST {
+                class Expression:
+                        public virtual Tajada::AST::AST
+                {
                         public:
                                 Tajada::Type::Type * type;
                                 bool is_lvalue;

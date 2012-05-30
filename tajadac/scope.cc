@@ -10,11 +10,11 @@ namespace Tajada {
                 Tajada::Scope::Type                p_type,
                 Tajada::AST::FunctionDeclaration * p_declaration
         ):
-                id              (next_id++                   ),
-                parent          (p_parent                    ),
-                declaration     (p_declaration               ),
-                switch_union    (nullptr                     ),
-                switch_parameter(nullptr                     )
+                id              (next_id++    ),
+                parent          (p_parent     ),
+                declaration     (p_declaration),
+                switch_union    (nullptr      ),
+                switch_parameter(nullptr      )
         {
                 if (p_parent) {
                         if (!p_declaration) p_declaration = p_parent->declaration;
@@ -96,7 +96,7 @@ namespace Tajada {
                                 ? declaration->show() + u8" "
                                 : u8""
                         )
-                        + std::string(u8"{\n")
+                        + u8"{\n"
 
                         + std::accumulate(
                                 variables.begin(),
@@ -107,11 +107,12 @@ namespace Tajada {
                                                 acc
                                                 + std::string((depth + 1) * 8, ' ')
                                                 + x.first
-                                                + std::string(u8" es ")
+                                                + u8" es "
                                                 + std::get<0>(x.second)->show()
-                                                + std::string(u8". [[offset: ")
+                                                + u8". [[offset: "
                                                 + std::to_string(std::get<1>(x.second))
-                                                + std::string(u8"]]\n");
+                                                + u8"]]\n"
+                                        ;
                                 }
                         )
 
@@ -120,10 +121,14 @@ namespace Tajada {
                                 children.end(),
                                 std::string(),
                                 [depth](std::string acc, decltype(*children.begin()) x) {
-                                        return acc + x->show(depth + 1);
+                                        return
+                                                acc
+                                                + x->show(depth + 1)
+                                        ;
                                 }
                         )
 
-                        + std::string(depth * 8, ' ') + std::string(u8"}\n");
+                        + std::string(depth * 8, ' ')
+                        + u8"}\n";
         }
 }

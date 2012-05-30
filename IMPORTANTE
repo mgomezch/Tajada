@@ -1,1 +1,3 @@
 Lo que está en el directorio “doc” no se está usando actualmente.  Fue un experimento con Markdown que fracasó.  README.md en la raíz del repositorio es la especificación del lenguaje.  No se puede compilar a nada decente porque LaTeX limita la profundidad de anidamiento de listas y de secciones mucho más de lo razonable para un documento técnico, y los workarounds requieren modificar la plantilla de LaTeX que usa Pandoc, y eso requiere tiempo, y de eso no hay.  La versión HTML es casi legible.
+
+Además, el documento de especificación no refleja el estado actual del lenguaje.  Eso es malo.  Pero tampoco hay tiempo para arreglarlo: hay mucho que implementar.

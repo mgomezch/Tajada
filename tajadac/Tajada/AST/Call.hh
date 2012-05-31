@@ -14,20 +14,30 @@ namespace Tajada {
         namespace AST {
                 class Function;
 
-                class Call : public virtual Tajada::AST::Expression {
+                class Call:
+                        public virtual Tajada::AST::Expression
+                {
                         public:
-                                std::string * name;
-                                Tajada::AST::Function ** definition_ptr;
-                                Tajada::AST::Expression * argument;
+                                std::string              * name          ;
+                                Tajada::AST::Function   ** definition_ptr;
+                                Tajada::AST::Expression  * argument      ;
 
                                 Call(
-                                        std::string * p_name,
-                                        Tajada::AST::Function ** p_definition_ptr,
-                                        Tajada::AST::Expression * p_argument,
-                                        Tajada::Type::Type * p_return_type
+                                        std::string              * p_name          ,
+                                        Tajada::AST::Function   ** p_definition_ptr,
+                                        Tajada::AST::Expression  * p_argument      ,
+                                        Tajada::Type::Type       * p_return_type
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);
+
+                                virtual Tajada::Code::Intermediate::Address::Address * genl(
+                                        Tajada::Code::Block * b
+                                );
+
+                                virtual Tajada::Code::Intermediate::Address::Address * genr(
+                                        Tajada::Code::Block * b
+                                );
                 };
         }
 }

@@ -7,24 +7,8 @@
 #include "Tajada/AST/AST.hh"
 
 #include "Tajada/Code/Intermediate/Address/Address.hh"
+#include "Tajada/Code/Intermediate/Address/Unimplemented.hh" // TODO: remove this once all subclasses have their implementation of genl/genr
 #include "Tajada/Type/Type.hh"
-
-// TODO: remove this once all subclasses have their implementation of genl/genr
-namespace Tajada {
-        namespace Code {
-                namespace Intermediate {
-                        namespace Address {
-                                class Unimplemented:
-                                        public virtual Tajada::Code::Intermediate::Address::Address
-                                {
-                                        std::string show() {
-                                                return u8"‹UNIMPLEMENTED›";
-                                        }
-                                };
-                        }
-                }
-        }
-}
 
 namespace Tajada {
         namespace AST {

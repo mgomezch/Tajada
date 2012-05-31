@@ -4,21 +4,21 @@
 #include <string>
 
 // Superclasses:
-#include "Tajada/Code/Intermediate/Address/Address.hh"
-
-#include "scope.hh"
+#include "Tajada/Code/Intermediate/Address/Location.hh"
 
 namespace Tajada {
         namespace Code {
                 namespace Intermediate {
                         namespace Address {
                                 class Temporary:
-                                        public virtual Tajada::Code::Intermediate::Address::Address
+                                        public virtual Tajada::Code::Intermediate::Address::Location
                                 {
                                         public:
                                                 unsigned long int id;
 
-                                                Temporary();
+                                                Temporary(
+                                                        unsigned int offset = 0
+                                                );
 
                                                 virtual std::string show();
 

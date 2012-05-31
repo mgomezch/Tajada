@@ -6,20 +6,18 @@
 // Superclasses:
 #include "Tajada/AST/FunctionID.hh"
 
-#include "Tajada/AST/Associativity.hh"
 #include "Tajada/AST/AST.hh"
+#include "Tajada/AST/Associativity.hh"
 
 namespace Tajada {
         namespace AST {
-                class InfixFunctionID : public virtual Tajada::AST::FunctionID {
+                class InfixFunctionID:
+                        public virtual Tajada::AST::FunctionID
+                {
                         public:
-                                unsigned int               precedence   ;
-                                Tajada::AST::Associativity associativity;
 
                                 InfixFunctionID(
-                                        std::string                * p_name         ,
-                                        std::string                * p_precedence   ,
-                                        Tajada::AST::Associativity   p_associativity
+                                        std::string * p_name
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);

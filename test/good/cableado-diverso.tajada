@@ -1,0 +1,48 @@
+⫽ Con las precedencias y asociatividades de Haskell∶
+∨ es infijo diestro 2.
+∧ es infijo diestro 3.
+< es infijo         4.
+= es infijo         4.
+> es infijo         4.
+% es infijo diestro 5.
++ es infijo zurdo   6.
+- es infijo zurdo   6.
+× es infijo zurdo   7.
+÷ es infijo zurdo   7.
+
+∨ es un plato de arepa con café    y café    x con salsa de café    cableado or            .
+
+∧ es un plato de arepa con café    y café    x con salsa de café    cableado and           .
+
++ es un plato de arepa con queso   y queso   x con salsa de queso   cableado suma          .
++ es un plato de arepa con papelón y papelón x con salsa de papelón cableado suma          .
+
+- es un plato de arepa con queso   y queso   x con salsa de queso   cableado resta         .
+- es un plato de arepa con papelón y papelón x con salsa de papelón cableado resta         .
+
+× es un plato de arepa con queso   y queso   x con salsa de queso   cableado multiplicación.
+× es un plato de arepa con papelón y papelón x con salsa de papelón cableado multiplicación.
+
+< es un plato de arepa con queso   y queso   x con salsa de café    cableado menor         .
+< es un plato de arepa con papelón y papelón x con salsa de café    cableado menor         .
+
+= es un plato de arepa con queso   y queso   x con salsa de café    cableado igualdad      .
+= es un plato de arepa con papelón y papelón x con salsa de café    cableado igualdad      .
+= es un plato de arepa con café    y café    x con salsa de café    cableado igualdad      .
+= es un plato de arepa con caraota y caraota x con salsa de café    cableado igualdad      .
+
+÷ es un plato de arepa con queso   y queso   x con salsa de queso   cableado división      .
+÷ es un plato de arepa con papelón y papelón x con salsa de papelón cableado división      .
+
+% es un plato de arepa con queso   y queso   x con salsa de queso   cableado módulo        .
+
+¬ es un plato de café x con salsa de café cableado negativo.
+
+> es un plato de arepa con queso   y queso   x con salsa de café { retorna ¬ $ x→0 < x→1 ∨ x→0 = x→1. }
+> es un plato de arepa con papelón y papelón x con salsa de café { retorna ¬ $ x→0 < x→1 ∨ x→0 = x→1. }
+
+{
+        3×5.
+        0·4+0·02.
+        negrito ∧ 57%2 < 5÷2 ∨ 6·2 > 6·3 ∧ 42 = 6×9.
+}

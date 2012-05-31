@@ -52,7 +52,10 @@
 /* %code requires { #include "lex.hh" } */
 
 
-%code requires { #include "Tajada/Type.hh" }
+%code requires {
+        #include "Tajada/Type.hh"
+        #include "Tajada/Builtins.hh"
+}
 
 
 
@@ -240,14 +243,50 @@ tajada
 /* §3p1 */
 toplevels
 
+
 : toplevels[xs] toplevel[x]
 {
         $[xs]->push_back($[x]);
         $$ = $[xs];
 }
 
+
 |
 { $$ = new std::list<Tajada::AST::Statement *>(); }
+
+
+/* TODO: sección */
+| toplevels[xs] IDENT[nombre] ES INFIX associativity LIT_INT[precedence] STMT_END
+{
+        /* TODO: some error checking is in order here:
+         *       *    the new operator becomes a reserved symbol, so bad things happen if its text is a substring of a reserved word.start with a code point that’s contained anywhere in any reserved word (otherwise the new lexer wouldn’t be able to lex those tokens anymore, as they’d get split up).
+         *       *    it shouldn’t make the new lexer ambiguous
+         *       *    we have to escape the operator string (it could contain special regex chars)
+         */
+
+        auto p = std::stoi(*$[precedence]);
+        if (p < 0 || 9 < p) {
+                error(
+                        @[associativity],
+                        u8"invalid precedence “"
+                        + *$[precedence]
+                        + u8"” specified for infix operator “"
+                        + *$[nombre]
+                        + u8"”"
+                );
+                YYERROR;
+        }
+
+        Tajada::lex::add_infix(
+                scanner,
+                *$[nombre],
+                $[associativity],
+                std::stoi(*$[precedence])
+        );
+
+        $$ = $[xs];
+}
+
 
 ;
 
@@ -256,8 +295,10 @@ toplevels
 /* §3p1 */
 toplevel
 
+
 : var_def[def]
 { $$ = $[def]; }
+
 
 /* §3.1.1p4 */
 | IDENT[identificador] ES DULCE DE typespec[tipo] STMT_END
@@ -274,12 +315,14 @@ toplevel
         $$ = new Tajada::AST::TypeAlias($[identificador], $[tipo]);
 }
 
+
 /* §3.1.2p6, §3.1.3p6 */
 | func_spec STMT_END
 {
         $$ = std::get<0>(*$[func_spec]);
         delete $[func_spec];
 }
+
 
 /* §3.2.2p1, §3.2.3p1 */
 | func_spec BLOCK_OP {
@@ -290,16 +333,98 @@ toplevel
         );
         scope->children.insert(ns);
         scope = ns;
-        scope->define_variable(*std::get<0>(*$[func_spec])->domain_name, std::get<0>(*$[func_spec])->domain);
+        scope->define_variable(
+                *std::get<0>(*$[func_spec])->domain_name,
+                std::get<0>(*$[func_spec])->domain
+        );
 } blocklevels[statements] {
         scope = scope->parent;
 } BLOCK_CL {
-        auto ret = new Tajada::AST::FunctionDefinition(std::get<0>(*$[func_spec]), new Tajada::AST::Block($[statements]));
+        auto ret = new Tajada::AST::FunctionDefinition(
+                std::get<0>(*$[func_spec]),
+                new Tajada::AST::Block($[statements])
+        );
 
         *std::get<1>(*$[func_spec]) = ret;
         $$ = ret;
         delete $[func_spec];
 }
+
+
+/* TODO: sección */
+| func_spec BUILTIN IDENT[nombre] STMT_END {
+        unsigned int ncs = 0;
+        std::string name = *$[nombre];
+
+        auto bucket = Tajada::Builtins::builtins.bucket(*$[nombre]);
+
+        auto it = Tajada::Builtins::builtins.begin(bucket);
+        for (; it != Tajada::Builtins::builtins.end(bucket); ++it) {
+                if (*$[nombre] == it->first) {
+                        ++ncs;
+
+                        if (
+                                   *std::get<0>(*$[func_spec])->domain   == *std::get<0>(it->second)
+                                && *std::get<0>(*$[func_spec])->codomain == *std::get<1>(it->second)
+                        ) {
+                                break;
+                        }
+                }
+        }
+
+        if (it == Tajada::Builtins::builtins.end(bucket)) {
+                error(
+                        @$,
+                        u8"invalid definition of “"
+                        + *std::get<0>(*$[func_spec])->id->name
+                        + u8"” taking “"
+                        + std::get<0>(*$[func_spec])->domain->show()
+                        + u8"” and returning “"
+                        + std::get<0>(*$[func_spec])->codomain->show()
+                        + u8"” as builtin “"
+                        + *$[nombre]
+                        + u8"”"
+                );
+                if (!ncs) {
+                        error(
+                                @$,
+                                u8"no builtins named “"
+                                + *$[nombre]
+                                + u8"”"
+                        );
+                } else {
+                        error(
+                                @$,
+                                u8"candidates are:"
+                        );
+                        std::for_each(
+                                Tajada::Builtins::builtins.begin(bucket),
+                                Tajada::Builtins::builtins.end(bucket),
+                                [this, &yyloc, &name](decltype(*Tajada::Builtins::builtins.end()) c) {
+                                        if (name != c.first) return;
+                                        error(
+                                                @$,
+                                                std::get<0>(c.second)->show()
+                                                + u8" x con salsa de "
+                                                + std::get<1>(c.second)->show()
+                                        );
+                                }
+                        );
+                }
+                YYERROR;
+        }
+
+        auto ret = new Tajada::AST::BuiltinFunction(
+                $[nombre],
+                std::get<0>(*$[func_spec]),
+                std::get<2>(it->second),
+                std::get<3>(it->second)
+        );
+
+        $$ = *std::get<1>(*$[func_spec]) = ret;
+        delete $[func_spec];
+}
+
 
 ;
 
@@ -310,9 +435,7 @@ func_spec
 /* TODO: sección; las viejas eran §3.1.2p5 y §3.1.3p5 */
 : func_id DE typespec[dominio] IDENT[nombre_dominio] CON SALSA DE typespec[codominio]
 {
-        auto ifid = dynamic_cast<Tajada::AST::InfixFunctionID *>($[func_id]);
-
-        if (ifid) {
+        if (dynamic_cast<Tajada::AST::InfixFunctionID *>($[func_id])) {
                 auto t = dynamic_cast<Tajada::Type::Tuple *>($[dominio]);
 
                 if (!t) {
@@ -347,7 +470,8 @@ func_spec
         for (; it != scope->functions.end(bucket); ++it) {
                 // TODO: ponerlo así para meterle sobrecarga más bonita
                 // if (*$[dominio] != *std::get<0>(it->second) || *$[codominio] != *std::get<1>(it->second)) continue;
-                if (*$[dominio] != *std::get<0>(it->second)) continue;
+                if (*$[func_id]->name != it->first || *$[dominio] != *std::get<0>(it->second)) continue;
+
                 if (*$[codominio] != *std::get<1>(it->second)) {
                         error(
                                 @$,
@@ -359,7 +483,9 @@ func_spec
                         );
                         error(
                                 std::get<3>(it->second),
-                                u8"First declared here"
+                                u8"“"
+                                + it->first
+                                + u8"” was first declared here"
                         );
                         YYERROR;
                 }
@@ -404,27 +530,19 @@ func_spec
 func_id
 
 /* TODO: sección */
-: IDENT[nombre] ES UN PLATO
-{ $$ = new Tajada::AST::PrefixFunctionID($[nombre]); }
+: IDENT[nombre] ES UN PLATO { $$ = new Tajada::AST::PrefixFunctionID($[nombre]); }
 
 /* TODO: sección */
-| IDENT[nombre] ES INFIX associativity LIT_INT[precedence]
-{
-        /* TODO: some error checking is in order here:
-         *       *    the new operator can’t start with a code point that’s contained anywhere in any reserved word (otherwise the new lexer wouldn’t be able to lex those tokens anymore, as they’d get split up).
-         *       *    it shouldn’t make the new lexer ambiguous
-         *       *    we have to escape the operator string (it could contain special regex chars)
-         */
-
-        Tajada::lex::add_infix(
-                scanner,
-                *$[nombre],
-                $[associativity],
-                std::stoi(*$[precedence])
-        );
-
-        $$ = new Tajada::AST::InfixFunctionID($[nombre], $[precedence], $[associativity]);
-}
+| INFIXL0[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX0[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR0[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
+| INFIXL1[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX1[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR1[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
+| INFIXL2[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX2[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR2[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
+| INFIXL3[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX3[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR3[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
+| INFIXL4[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX4[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR4[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
+| INFIXL5[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX5[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR5[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
+| INFIXL6[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX6[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR6[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
+| INFIXL7[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX7[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR7[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
+| INFIXL8[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX8[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR8[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
+| INFIXL9[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX9[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR9[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
 
 ;
 

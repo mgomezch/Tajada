@@ -14,7 +14,9 @@ namespace Tajada {
         namespace AST {
                 class Call;
 
-                class Function : public virtual Tajada::AST::Statement {
+                class Function:
+                        public virtual Tajada::AST::Statement
+                {
                         public:
                                 Tajada::AST::FunctionDeclaration * declaration;
                                 std::function<bool (Tajada::AST::Call *)> evaluator;

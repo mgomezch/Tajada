@@ -10,42 +10,42 @@
 
 #define TAJADA_RESERVED_START u8"][←→⇒()$«»⋘⋙␣{}≔.,;…∷∶·‹⫽“\\\\\u0009-\u000D\u0020\u0085\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000"
 
-#define TAJADA_RESERVED_SYMBOL_DATA(TOKEN)                                                                                                    \
-        /* §1.2 */                                                                                                                            \
-        TOKEN(                                                                                                                                \
-                IGNORE,                                                                                                                       \
-                u8"espacio en blanco",                                                                                                        \
+#define TAJADA_RESERVED_SYMBOL_DATA(TOKEN)                                                                                                      \
+        /* §1.2 */                                                                                                                              \
+        TOKEN(                                                                                                                                  \
+                IGNORE,                                                                                                                         \
+                u8"espacio en blanco",                                                                                                          \
                 u8"(?:(?:"                                                                                                                      \
-                        /* §1.2.1p4 (comentario de bloque) */                                                                                 \
-                        u8"‹[^›]*›|"                                                                                                          \
-                                                                                                                                              \
-                        /* §1.2.2p5 (comentario de línea) */                                                                                  \
-                        u8"⫽[^" TAJADA_ENDLINES u8"]*"                                                                                        \
-                        u8"["   TAJADA_ENDLINES u8"]|"                                                                                        \
-                                                                                                                                              \
-                        /* §1.2.2p6 (fin de línea) */                                                                                         \
-                        u8"[" TAJADA_ENDLINES u8"]|"                                                                                          \
-                                                                                                                                              \
-                        /* §1.2.3p1 (espacio en blanco individual) */                                                                         \
-                        /* Taken from the PropList.txt file in the Unicode  */                                                                \
-                        /* Character Database, version 6.0.0 (lines 11–22). */                                                                \
-                        u8"["                                                                                                                 \
-                                u8"\u0009"                                                                                                    \
-                                u8"\u0020"                                                                                                    \
-                                u8"\u00A0"                                                                                                    \
-                                u8"\u1680"                                                                                                    \
-                                u8"\u180E"                                                                                                    \
-                                u8"\u2000-\u200A"                                                                                             \
-                                u8"\u202F"                                                                                                    \
-                                u8"\u205F"                                                                                                    \
-                                u8"\u3000"                                                                                                    \
-                        u8"]"                                                                                                                 \
-                u8")+)",                                                                                                                      \
-                void                                                                                                                          \
-        )                                                                                                                                     \
-                                                                                                                                              \
-                                                                                                                                              \
-                                                                                                                                              \
+                        /* §1.2.1p4 (comentario de bloque) */                                                                                   \
+                        u8"‹[^›]*›|"                                                                                                            \
+                                                                                                                                                \
+                        /* §1.2.2p5 (comentario de línea) */                                                                                    \
+                        u8"⫽[^" TAJADA_ENDLINES u8"]*"                                                                                          \
+                        u8"["   TAJADA_ENDLINES u8"]|"                                                                                          \
+                                                                                                                                                \
+                        /* §1.2.2p6 (fin de línea) */                                                                                           \
+                        u8"[" TAJADA_ENDLINES u8"]|"                                                                                            \
+                                                                                                                                                \
+                        /* §1.2.3p1 (espacio en blanco individual) */                                                                           \
+                        /* Taken from the PropList.txt file in the Unicode  */                                                                  \
+                        /* Character Database, version 6.0.0 (lines 11–22). */                                                                  \
+                        u8"["                                                                                                                   \
+                                u8"\u0009"                                                                                                      \
+                                u8"\u0020"                                                                                                      \
+                                u8"\u00A0"                                                                                                      \
+                                u8"\u1680"                                                                                                      \
+                                u8"\u180E"                                                                                                      \
+                                u8"\u2000-\u200A"                                                                                               \
+                                u8"\u202F"                                                                                                      \
+                                u8"\u205F"                                                                                                      \
+                                u8"\u3000"                                                                                                      \
+                        u8"]"                                                                                                                   \
+                u8")+)",                                                                                                                        \
+                void                                                                                                                            \
+        )                                                                                                                                       \
+                                                                                                                                                \
+                                                                                                                                                \
+                                                                                                                                                \
         /* §1.1p7           */ TOKEN(LIT_STR        , u8"literal de cadena de caracteres"       , u8"(?:“(?:[^”\\\\]|\\\\.)*”)", std::string *) \
         /* §1.3.1p2         */ TOKEN(LIT_INT        , u8"literal entero"                        , u8"(?:[0-9]+)"               , std::string *) \
         /* §1.3.2p1         */ TOKEN(FLOAT_SEP      , u8"separador de literal de punto flotante", u8"(?:·)"                    , void         ) \
@@ -117,6 +117,7 @@
         /* TODO: sección */ TAJADA_RESERVED_WORD(TOKEN, INFIX   , u8"infijo"  ) \
         /* TODO: sección */ TAJADA_RESERVED_WORD(TOKEN, LEFT    , u8"zurdo"   ) \
         /* TODO: sección */ TAJADA_RESERVED_WORD(TOKEN, RIGHT   , u8"diestro" ) \
+        /* TODO: sección */ TAJADA_RESERVED_WORD(TOKEN, BUILTIN , u8"cableado") \
 
 
 #define TAJADA_IDENT_DATA(TOKEN)                     \

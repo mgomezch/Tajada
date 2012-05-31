@@ -1,0 +1,17 @@
++ es infijo zurdo 7.
+
++ es un plato de arepa con queso y queso x con salsa de queso cableado suma.
+
+{
+        a1 es queso.  a1 ≔ 1.
+        a2 es queso.  a2 ≔ 2.
+        a3 es queso.  a3 ≔ 3.
+        a4 es queso.  a4 ≔ 4.
+        a5 es queso.  a5 ≔ 5.
+        a6 es queso.  a6 ≔ 6.
+        a7 es queso.  a7 ≔ 7.
+        a8 es queso.  a8 ≔ 8.
+        a9 es queso.  a9 ≔ 9.
+
+        a1+a2+a3+a4+a5+a6+a7+a8+a9+1+2+3+4+5+6+7+8+9.
+}

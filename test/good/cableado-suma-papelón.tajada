@@ -1,0 +1,17 @@
++ es infijo zurdo 7.
+
++ es un plato de arepa con papelón y papelón x con salsa de papelón cableado suma.
+
+{
+        a1 es papelón.  a1 ≔ 1·0.
+        a2 es papelón.  a2 ≔ 2·0.
+        a3 es papelón.  a3 ≔ 3·0.
+        a4 es papelón.  a4 ≔ 4·0.
+        a5 es papelón.  a5 ≔ 5·0.
+        a6 es papelón.  a6 ≔ 6·0.
+        a7 es papelón.  a7 ≔ 7·0.
+        a8 es papelón.  a8 ≔ 8·0.
+        a9 es papelón.  a9 ≔ 9·0.
+
+        a1+a2+a3+a4+a5+a6+a7+a8+a9+1·0+2·0+3·0+4·0+5·0+6·0+7·0+8·0+9·0.
+}

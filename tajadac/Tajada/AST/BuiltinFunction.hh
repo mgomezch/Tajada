@@ -9,14 +9,23 @@
 
 #include "Tajada/AST/Call.hh"
 #include "Tajada/AST/FunctionDeclaration.hh"
+#include "Tajada/Builtins.hh"
 
 namespace Tajada {
         namespace AST {
-                class BuiltinFunction : public virtual Tajada::AST::Function {
+                class BuiltinFunction:
+                        public virtual Tajada::AST::Function
+                {
                         public:
+                                std::string * name;
+
+                                Tajada::Builtins::generator generator;
+
                                 BuiltinFunction(
-                                        Tajada::AST::FunctionDeclaration * p_declaration,
-                                        std::function<bool (Tajada::AST::Call *)> p_evaluator = nullptr
+                                        std::string                               * p_name       ,
+                                        Tajada::AST::FunctionDeclaration          * p_declaration,
+                                        Tajada::Builtins::generator                 p_generator  ,
+                                        std::function<bool (Tajada::AST::Call *)>   p_evaluator
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);

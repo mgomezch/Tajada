@@ -10,7 +10,9 @@
 
 namespace Tajada {
         namespace AST {
-                class ExpressionStatement : public virtual Tajada::AST::Statement {
+                class ExpressionStatement:
+                        public virtual Tajada::AST::Statement
+                {
                         public:
                                 Tajada::AST::Expression * expression;
 
@@ -19,6 +21,10 @@ namespace Tajada {
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);
+
+                                virtual void gen(
+                                        Tajada::Code::Block * b
+                                );
                 };
         }
 }

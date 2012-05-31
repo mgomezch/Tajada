@@ -1,7 +1,10 @@
 #include <string>
 
-#include "Tajada/AST/AST.hh"
+// Class:
 #include "Tajada/AST/FunctionID.hh"
+
+// Superclasses:
+#include "Tajada/AST/AST.hh"
 
 namespace Tajada {
         namespace AST {
@@ -16,6 +19,7 @@ namespace Tajada {
 
                 std::string FunctionID::show(unsigned int depth) {
                         TAJADA_UNUSED_PARAMETER(depth);
+
                         return *name;
                 }
         }

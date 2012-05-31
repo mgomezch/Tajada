@@ -475,7 +475,7 @@ namespace Tajada {
                                 TAJADA_INFIX_ASSOC_CASE(right, INFIXR);
                         }
 
-                        scanner->infix_ops[static_cast<unsigned int>(token)].insert(identifier);
+                        scanner->infix_ops[static_cast<unsigned int>(token)].insert(re2::RE2::QuoteMeta(identifier));
 
                         scanner->build();
                 }

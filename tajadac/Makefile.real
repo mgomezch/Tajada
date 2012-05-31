@@ -33,9 +33,9 @@ $(sources:%.cc=dep/%.d): dep/%.d: %.cc
 	@echo "Calculating dependencies for $<"
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) -E -MM -MF $@ $<
-	@printf '%s\n'                   \
-                '1s@^@$@ obj/$(dir $<)@' \
-                'wq'                     \
+	@printf '%s\n'                                     \
+                '1s@^@$@ obj/$(patsubst ./%,%,$(dir $<))@' \
+                'wq'                                       \
                 | ed -s $@
 
 

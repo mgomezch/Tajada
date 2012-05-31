@@ -1,8 +1,10 @@
-xx es infijo zurdo 7 de arepa con queso y queso x con salsa de queso {
+xx es infijo zurdo 7.
+xx es un plato de arepa con queso y queso x con salsa de queso {
         retorna x→0.
 }
 
-☹ es infijo zurdo 5 de arepa con queso y queso x con salsa de queso {
+☹ es infijo zurdo 5.
+☹ es un plato de arepa con queso y queso x con salsa de queso {
         retorna x→1.
 }
 

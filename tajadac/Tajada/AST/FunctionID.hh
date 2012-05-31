@@ -8,7 +8,9 @@
 
 namespace Tajada {
         namespace AST {
-                class FunctionID : public virtual Tajada::AST::AST {
+                class FunctionID:
+                        public virtual Tajada::AST::AST
+                {
                         public:
                                 std::string * name;
 

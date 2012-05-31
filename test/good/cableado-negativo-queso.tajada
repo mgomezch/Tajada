@@ -1,0 +1,6 @@
+- es un plato de queso x con salsa de queso cableado negativo.
+{
+        x es queso.
+        x ≔ 1.
+        - $ - $ x.
+}

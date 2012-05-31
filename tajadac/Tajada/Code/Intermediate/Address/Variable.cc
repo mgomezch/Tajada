@@ -6,6 +6,7 @@
 // Superclasses:
 #include "Tajada/Code/Address.hh"
 #include "Tajada/Code/Intermediate/Address/Address.hh"
+#include "Tajada/Code/Intermediate/Address/Location.hh"
 
 #include "scope.hh"
 
@@ -20,26 +21,31 @@ namespace Tajada {
                                 ):
                                         Tajada::Code::Address(),
                                         Tajada::Code::Intermediate::Address::Address(),
+                                        Tajada::Code::Intermediate::Address::Location(p_offset),
 
-                                        scope (p_scope ),
-                                        name  (p_name  ),
-                                        offset(p_offset)
+                                        scope(p_scope),
+                                        name (p_name )
                                 {}
 
 
 
                                 std::string Variable::show() {
                                         return
-                                                *this->name
+                                                (
+                                                        this->offset
+                                                        ? std::to_string(this->offset)
+                                                        + u8"("
+                                                        : u8""
+                                                )
+                                                + *this->name
                                                 + u8"[[scope: "
                                                 + std::to_string(this->scope->id)
-                                                + (
-                                                        offset == 0
-                                                        ? u8""
-                                                        : u8", offset: "
-                                                        + std::to_string(this->offset)
-                                                )
                                                 + u8"]]"
+                                                + (
+                                                        this->offset
+                                                        ? u8")"
+                                                        : u8""
+                                                )
                                         ;
                                 }
                         }

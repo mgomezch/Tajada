@@ -1,5 +1,5 @@
 // Class:
-#include "Tajada/Code/Intermediate/Instruction/Copy.hh"
+#include "Tajada/Code/Intermediate/Instruction/Negate.hh"
 
 // Superclasses:
 #include "Tajada/Code/Instruction.hh"
@@ -11,7 +11,7 @@ namespace Tajada {
         namespace Code {
                 namespace Intermediate {
                         namespace Instruction {
-                                Copy::Copy(
+                                Negate::Negate(
                                         Tajada::Code::Intermediate::Address::Address * p_dst,
                                         Tajada::Code::Intermediate::Address::Address * p_src
                                 ):
@@ -22,10 +22,10 @@ namespace Tajada {
                                         src(p_src)
                                 {}
 
-                                std::string Copy::show() {
+                                std::string Negate::show() {
                                         return
                                                 this->dst->show()
-                                                + " ≔ "
+                                                + " ≔ neg "
                                                 + this->src->show()
                                         ;
                                 }

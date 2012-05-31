@@ -4,7 +4,7 @@
 #include <string>
 
 // Superclasses:
-#include "Tajada/Code/Intermediate/Address/Address.hh"
+#include "Tajada/Code/Intermediate/Address/Location.hh"
 
 #include "scope.hh"
 
@@ -13,12 +13,11 @@ namespace Tajada {
                 namespace Intermediate {
                         namespace Address {
                                 class Variable:
-                                        public virtual Tajada::Code::Intermediate::Address::Address
+                                        public virtual Tajada::Code::Intermediate::Address::Location
                                 {
                                         public:
-                                                Tajada::Scope * scope ;
-                                                std::string   * name  ;
-                                                unsigned int    offset;
+                                                Tajada::Scope * scope;
+                                                std::string   * name ;
 
                                                 Variable(
                                                         Tajada::Scope * p_scope     ,

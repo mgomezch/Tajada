@@ -7,7 +7,17 @@ namespace Tajada {
                         namespace Instruction {
                                 class Instruction;
 
-                                class Copy;
+                                class Add        ;
+                                class And        ;
+                                class Copy       ;
+                                class Divide     ;
+                                class Equal      ;
+                                class LessThan   ;
+                                class Modulo     ;
+                                class Multiply   ;
+                                class Negate     ;
+                                class Or         ;
+                                class Substract  ;
                         }
                 }
         }

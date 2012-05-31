@@ -11,7 +11,9 @@
 
 namespace Tajada {
         namespace AST {
-                class FunctionDeclaration : public virtual Tajada::AST::Statement {
+                class FunctionDeclaration:
+                        public virtual Tajada::AST::Statement
+                {
                         public:
                                 Tajada::AST::FunctionID * id         ;
                                 std::string             * domain_name;

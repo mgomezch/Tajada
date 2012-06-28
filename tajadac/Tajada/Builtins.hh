@@ -22,16 +22,19 @@ namespace Tajada {
                         generator
                 ;
 
-
-
-                extern std::unordered_multimap<
-                        std::string,
+                typedef
                         std::tuple<
                                 Tajada::Type::Type                        *,
                                 Tajada::Type::Type                        *,
                                 Tajada::Builtins::generator                ,
                                 std::function<bool (Tajada::AST::Call *)>
                         >
+                        descriptor
+                ;
+
+                extern std::unordered_multimap<
+                        std::string,
+                        Builtins::descriptor
                 > builtins;
         }
 }

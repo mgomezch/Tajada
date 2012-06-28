@@ -29,7 +29,7 @@ namespace Tajada {
                                                 this->dst->show()
                                                 + u8" ≔ "
                                                 + this->lsrc->show()
-                                                + u8" + "
+                                                + u8" × "
                                                 + this->rsrc->show()
                                         ;
                                 }

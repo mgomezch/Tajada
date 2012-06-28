@@ -23,509 +23,134 @@
 #include "Tajada/Type/Tuple.hh"
 #include "Tajada/Type/Type.hh"
 
-// This is the ugliest code in the history of humanity.  I’m aware.  I’ll turn it into something trivial and tiny once I have the time.  Copy/paste just happened to be faster than preprocessor magic and this is due two hours ago.
 namespace Tajada {
         namespace Builtins {
-                std::unordered_multimap<
-                        std::string,
-                        std::tuple<
-                                Tajada::Type::Type                        *,
-                                Tajada::Type::Type                        *,
-                                Tajada::Builtins::generator                ,
-                                std::function<bool (Tajada::AST::Call *)>
-                        >
-                > builtins {
-                        std::make_pair(
-                                std::string(u8"negativo"),
+                std::pair<std::string, Builtins::descriptor> unary(
+                        std::string          name,
+                        Tajada::Type::Type * arg ,
+                        Tajada::Type::Type * ret ,
+                        std::function<
+                                Tajada::Code::Intermediate::Instruction::Instruction * (
+                                        Tajada::Code::Intermediate::Address::Temporary *,
+                                        Tajada::Code::Intermediate::Address::Address   *
+                                )
+                        > constructor
+                ) {
+                        return std::make_pair(
+                                name,
                                 std::make_tuple(
-                                        new Tajada::Type::Integer,
+                                        arg,
+                                        ret,
 
-                                        new Tajada::Type::Integer,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
+                                        [constructor](Tajada::AST::Call * c, Tajada::Code::Block * b) {
                                                 auto a = c->argument->genr(b);
                                                 auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Negate(t, a)
-                                                );
+                                                b->end->instructions.push_back(constructor(t, a));
                                                 return t;
                                         },
 
                                         static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
                                 )
-                        ),
+                        );
+                }
 
-
-
-                        std::make_pair(
-                                std::string(u8"negativo"),
-                                std::make_tuple(
-                                        new Tajada::Type::Boolean,
-
-                                        new Tajada::Type::Boolean,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = c->argument->genr(b);
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Negate(t, a)
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
+                std::pair<std::string, Builtins::descriptor> binary(
+                        std::string          name,
+                        Tajada::Type::Type * lhs ,
+                        Tajada::Type::Type * rhs ,
+                        Tajada::Type::Type * ret ,
+                        std::function<
+                                Tajada::Code::Intermediate::Instruction::Instruction * (
+                                        Tajada::Code::Intermediate::Address::Temporary *,
+                                        Tajada::Code::Intermediate::Address::Address   *,
+                                        Tajada::Code::Intermediate::Address::Address   *
                                 )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"suma"),
+                        > constructor
+                ) {
+                        return std::make_pair(
+                                name,
                                 std::make_tuple(
                                         new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string)
+                                                new std::tuple<Tajada::Type::Type *, std::string *>(lhs, new std::string),
+                                                new std::tuple<Tajada::Type::Type *, std::string *>(rhs, new std::string)
                                         })),
 
-                                        new Tajada::Type::Integer,
+                                        ret,
 
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
+                                        [constructor](Tajada::AST::Call * c, Tajada::Code::Block * b) {
                                                 auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
                                                 auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Add(t, a->elems[0], a->elems[1])
-                                                );
+                                                b->end->instructions.push_back(constructor(t, a->elems[0], a->elems[1]));
                                                 return t;
                                         },
 
                                         static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
                                 )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"suma"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Float,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Add(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"resta"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Integer,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Substract(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"resta"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Float,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Substract(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"multiplicación"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Integer,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Multiply(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"multiplicación"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Float,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Multiply(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"división"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Integer,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Divide(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"división"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Float,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Divide(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"módulo"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Integer,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Modulo(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"módulo"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Float,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Modulo(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"or"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Boolean, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Boolean, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Boolean,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Or(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"and"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Boolean, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Boolean, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Boolean,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::And(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"menor"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Boolean,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::LessThan(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"menor"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Boolean,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::LessThan(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"igualdad"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Integer, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Boolean,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Equal(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"igualdad"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Float, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Boolean,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Equal(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"igualdad"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Boolean, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Boolean, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Boolean,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Equal(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        ),
-
-
-
-                        std::make_pair(
-                                std::string(u8"igualdad"),
-                                std::make_tuple(
-                                        new Tajada::Type::Tuple(new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *> ({
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Character, new std::string),
-                                                new std::tuple<Tajada::Type::Type *, std::string *>(new Tajada::Type::Character, new std::string)
-                                        })),
-
-                                        new Tajada::Type::Boolean,
-
-                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
-                                                auto a = dynamic_cast<Tajada::Code::Intermediate::Address::Complex *>(c->argument->genr(b));
-                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
-                                                b->end->instructions.push_back(
-                                                        new Tajada::Code::Intermediate::Instruction::Equal(t, a->elems[0], a->elems[1])
-                                                );
-                                                return t;
-                                        },
-
-                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
-                                )
-                        )
+                        );
+                }
+
+#define TAJADA_BUILTINS_UNARY_CONSTRUCTOR(i)                        \
+        [](                                                         \
+                Tajada::Code::Intermediate::Address::Temporary * t, \
+                Tajada::Code::Intermediate::Address::Address   * a  \
+        ) { return new i(t, a); }
+
+#define TAJADA_BUILTINS_UNARY(name, arg, ret, i)                   \
+        unary(                                                     \
+                name,                                              \
+                new Tajada::Type::arg,                             \
+                new Tajada::Type::ret,                             \
+                TAJADA_BUILTINS_UNARY_CONSTRUCTOR(                 \
+                        Tajada::Code::Intermediate::Instruction::i \
+                )                                                  \
+        )
+
+#define TAJADA_BUILTINS_BINARY_CONSTRUCTOR(i)                        \
+        [](                                                          \
+                Tajada::Code::Intermediate::Address::Temporary * t , \
+                Tajada::Code::Intermediate::Address::Address   * a0, \
+                Tajada::Code::Intermediate::Address::Address   * a1  \
+        ) { return new i(t, a0, a1); }
+
+#define TAJADA_BUILTINS_BINARY(name, lhs, rhs, ret, i)             \
+        binary(                                                    \
+                name,                                              \
+                new Tajada::Type::lhs,                             \
+                new Tajada::Type::rhs,                             \
+                new Tajada::Type::ret,                             \
+                TAJADA_BUILTINS_BINARY_CONSTRUCTOR(                \
+                        Tajada::Code::Intermediate::Instruction::i \
+                )                                                  \
+        )
+
+                std::unordered_multimap<std::string, Builtins::descriptor> builtins {
+                        TAJADA_BUILTINS_UNARY("negativo", Boolean, Boolean, Negate),
+                        TAJADA_BUILTINS_UNARY("negativo", Integer, Integer, Negate),
+                        TAJADA_BUILTINS_UNARY("negativo", Float  , Float  , Negate),
+
+                        TAJADA_BUILTINS_BINARY("suma"          , Integer  , Integer  , Integer, Add      ),
+                        TAJADA_BUILTINS_BINARY("suma"          , Float    , Float    , Float  , Add      ),
+                        TAJADA_BUILTINS_BINARY("resta"         , Integer  , Integer  , Integer, Substract),
+                        TAJADA_BUILTINS_BINARY("resta"         , Float    , Float    , Float  , Substract),
+                        TAJADA_BUILTINS_BINARY("multiplicación", Integer  , Integer  , Integer, Multiply ),
+                        TAJADA_BUILTINS_BINARY("multiplicación", Float    , Float    , Float  , Multiply ),
+                        TAJADA_BUILTINS_BINARY("división"      , Integer  , Integer  , Integer, Divide   ),
+                        TAJADA_BUILTINS_BINARY("división"      , Float    , Float    , Float  , Divide   ),
+                        TAJADA_BUILTINS_BINARY("módulo"        , Integer  , Integer  , Integer, Modulo   ),
+                        TAJADA_BUILTINS_BINARY("or"            , Boolean  , Boolean  , Boolean, Or       ),
+                        TAJADA_BUILTINS_BINARY("and"           , Boolean  , Boolean  , Boolean, And      ),
+                        TAJADA_BUILTINS_BINARY("menor"         , Integer  , Integer  , Boolean, LessThan ),
+                        TAJADA_BUILTINS_BINARY("menor"         , Float    , Float    , Boolean, LessThan ),
+                        TAJADA_BUILTINS_BINARY("menor"         , Character, Character, Boolean, LessThan ),
+                        TAJADA_BUILTINS_BINARY("igualdad"      , Integer  , Integer  , Boolean, Equal    ),
+                        TAJADA_BUILTINS_BINARY("igualdad"      , Float    , Float    , Boolean, Equal    ),
+                        TAJADA_BUILTINS_BINARY("igualdad"      , Boolean  , Boolean  , Boolean, Equal    ),
+                        TAJADA_BUILTINS_BINARY("igualdad"      , Character, Character, Boolean, Equal    ),
                 };
+
+#undef TAJADA_BUILTINS_BINARY
+#undef TAJADA_BUILTINS_BINARY_CONSTRUCTOR
+#undef TAJADA_BUILTINS_UNARY
+#undef TAJADA_BUILTINS_UNARY_CONSTRUCTOR
         }
 }

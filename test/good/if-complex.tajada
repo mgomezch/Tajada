@@ -1,0 +1,20 @@
+∨ es infijo diestro 2.  ∨ es un plato de arepa con café  y café  x con salsa de café  cableado or            .
+∧ es infijo diestro 3.  ∧ es un plato de arepa con café  y café  x con salsa de café  cableado and           .
++ es infijo zurdo   6.  + es un plato de arepa con queso y queso x con salsa de queso cableado suma          .
+× es infijo zurdo   7.  × es un plato de arepa con queso y queso x con salsa de queso cableado multiplicación.
+
+{
+        x es queso.
+        if (negrito ∧ tetero ∨ negrito) {
+                x ≔ 1×2+3.
+                x ≔ 4×(x + 5).
+        } else if (negrito ∧ tetero) {
+                x ≔ 6×7+8.
+                x ≔ 9×(x + 10).
+        } else {
+                x es queso.
+                if (negrito) x ≔ 4.
+                else retorna 7.
+                x ≔ 15.
+        }
+}

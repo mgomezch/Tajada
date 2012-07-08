@@ -10,6 +10,10 @@
 
 namespace Tajada {
         namespace Code {
+                unsigned long int Block::next_label = 0;
+
+
+
                 Block::Block(
                         std::string p_label
                 ):
@@ -45,7 +49,7 @@ namespace Tajada {
                                                         --this->successors.end(),
                                                         std::string(),
                                                         [](std::string acc, Tajada::Code::Block * b) {
-                                                                return acc + u8", " + b->label;
+                                                                return acc + b->label + u8", ";
                                                         }
                                                 )
                                                 + this->successors.back()->label
@@ -85,6 +89,12 @@ namespace Tajada {
                                         }
                                 )
                         ;
+                }
+
+
+
+                unsigned long int Block::make_label() {
+                        return next_label++;
                 }
         }
 }

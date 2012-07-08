@@ -12,17 +12,21 @@ namespace Tajada {
         namespace AST {
                 class If : public virtual Tajada::AST::Statement {
                         public:
-                                Tajada::AST::Expression * condition;
-                                Tajada::AST::Statement * body_true;
-                                Tajada::AST::Statement * body_false;
+                                Tajada::AST::Expression * condition ;
+                                Tajada::AST::Statement  * body_true ;
+                                Tajada::AST::Statement  * body_false;
 
                                 If(
-                                        Tajada::AST::Expression * condition,
-                                        Tajada::AST::Statement * body_true,
-                                        Tajada::AST::Statement * body_false
+                                        Tajada::AST::Expression * condition ,
+                                        Tajada::AST::Statement  * body_true ,
+                                        Tajada::AST::Statement  * body_false
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);
+
+                                virtual void gen(
+                                        Tajada::Code::Block * b
+                                );
                 };
         }
 }

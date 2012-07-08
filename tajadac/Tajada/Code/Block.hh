@@ -28,6 +28,10 @@ namespace Tajada {
                                 virtual std::string show();
 
                                 virtual std::string show_all();
+
+                                static unsigned long int make_label();
+                        private:
+                                static unsigned long int next_label;
                 };
         }
 }

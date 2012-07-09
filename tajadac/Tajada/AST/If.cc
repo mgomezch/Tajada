@@ -1,10 +1,15 @@
 #include <string>
 
+// Class:
+#include "Tajada/AST/If.hh"
+
+// Superclasses:
+#include "Tajada/AST/AST.hh"
+#include "Tajada/AST/Statement.hh"
+
 #include "Tajada/AST/Block.hh"
 #include "Tajada/AST/Expression.hh"
 #include "Tajada/AST/For.hh"
-#include "Tajada/AST/If.hh"
-#include "Tajada/AST/Statement.hh"
 #include "Tajada/AST/TypeSelection.hh"
 #include "Tajada/AST/While.hh"
 #include "Tajada/Code/Block.hh"
@@ -18,6 +23,9 @@ namespace Tajada {
                         Tajada::AST::Statement  * body_true ,
                         Tajada::AST::Statement  * body_false
                 ):
+                        Tajada::AST::AST(),
+                        Tajada::AST::Statement(),
+
                         condition (condition ),
                         body_true (body_true ),
                         body_false(body_false)
@@ -67,13 +75,11 @@ namespace Tajada {
                 void If::gen(
                         Tajada::Code::Block * b
                 ) {
-                        // TODO: handle absent else case
-
                         auto l = std::to_string(Tajada::Code::Block::make_label());
 
-                        auto be = new Tajada::Code::Block("e_" + l);
                         auto bt = new Tajada::Code::Block("t_" + l);
                         auto bf = new Tajada::Code::Block("f_" + l);
+                        auto be = new Tajada::Code::Block("e_" + l);
 
                         auto c = this->condition->genr(b);
 

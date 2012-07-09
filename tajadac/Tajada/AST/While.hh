@@ -13,14 +13,18 @@ namespace Tajada {
                 class While : public virtual Tajada::AST::Statement {
                         public:
                                 Tajada::AST::Expression * condition;
-                                Tajada::AST::Statement * body;
+                                Tajada::AST::Statement  * body     ;
 
                                 While(
                                         Tajada::AST::Expression * condition,
-                                        Tajada::AST::Statement * body
+                                        Tajada::AST::Statement  * body
                                 );
 
                                 virtual std::string show(unsigned int depth = 0);
+
+                                virtual void gen(
+                                        Tajada::Code::Block * b
+                                );
                 };
         }
 }

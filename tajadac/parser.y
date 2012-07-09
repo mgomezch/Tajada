@@ -74,6 +74,7 @@
                         it != s->functions.end(bucket);                              \
                         ++it                                                         \
                 ) {                                                                  \
+                        if (it->first != *nombre) continue;                          \
                         if (*argumento->type == *std::get<0>(it->second)) {          \
                                 go = false;                                          \
                                 break;                                               \
@@ -533,16 +534,16 @@ func_id
 : IDENT[nombre] ES UN PLATO { $$ = new Tajada::AST::PrefixFunctionID($[nombre]); }
 
 /* TODO: sección */
-| INFIXL0[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX0[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR0[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
-| INFIXL1[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX1[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR1[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
-| INFIXL2[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX2[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR2[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
-| INFIXL3[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX3[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR3[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
-| INFIXL4[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX4[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR4[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
-| INFIXL5[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX5[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR5[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
-| INFIXL6[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX6[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR6[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
-| INFIXL7[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX7[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR7[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
-| INFIXL8[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX8[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR8[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
-| INFIXL9[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX9[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR9[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } 
+| INFIXL0[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX0[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR0[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); }
+| INFIXL1[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX1[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR1[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); }
+| INFIXL2[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX2[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR2[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); }
+| INFIXL3[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX3[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR3[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); }
+| INFIXL4[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX4[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR4[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); }
+| INFIXL5[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX5[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR5[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); }
+| INFIXL6[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX6[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR6[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); }
+| INFIXL7[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX7[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR7[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); }
+| INFIXL8[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX8[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR8[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); }
+| INFIXL9[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIX9[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); } | INFIXR9[nombre] ES UN PLATO { $$ = new Tajada::AST::InfixFunctionID($[nombre]); }
 
 ;
 
@@ -1052,6 +1053,9 @@ statement
                         @[condition],
                         u8"condition requires boolean, but has type “"
                         + $[condition]->type->show()
+                        + u8"”"
+                        + u8"; condition is “"
+                        + $[condition]->show()
                         + u8"”"
                 );
                 YYERROR;

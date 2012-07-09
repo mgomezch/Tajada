@@ -1,0 +1,15 @@
+< es infijo         4.  < es un plato de arepa con queso y queso x con salsa de café  cableado menor.
++ es infijo zurdo   6.  + es un plato de arepa con queso y queso x con salsa de queso cableado suma .
+
+{
+        x es queso.
+        a es queso.
+
+        x ≔ 0.
+        a ≔ 0.
+        while (x < 10) {
+                a ≔ a + x.
+                x ≔ x + 1.
+        }
+        x ≔ 0.
+}

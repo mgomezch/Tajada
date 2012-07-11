@@ -6,6 +6,8 @@
 // Superclasses:
 #include "Tajada/Code/Intermediate/Address/Immediate/Immediate.hh"
 
+#include "Tajada/Code/MIPS/Address/Address.hh"
+
 namespace Tajada {
         namespace Code {
                 namespace Intermediate {
@@ -22,6 +24,8 @@ namespace Tajada {
                                                         );
 
                                                         virtual std::string show();
+
+                                                        virtual Tajada::Code::MIPS::Address::Address * to_mips();
                                         };
                                 }
                         }

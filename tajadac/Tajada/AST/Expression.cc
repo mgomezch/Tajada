@@ -8,6 +8,7 @@
 
 #include "Tajada/Code/Intermediate/Address/Address.hh"
 #include "Tajada/Code/Intermediate/Address/Unimplemented.hh" // TODO: remove this once all subclasses have their implementation of genl/genr
+#include "Tajada/Code/Intermediate/Instruction/Unimplemented.hh" // TODO: remove this once all subclasses have their implementation of genl/genr
 #include "Tajada/Type/Type.hh"
 
 namespace Tajada {
@@ -28,9 +29,7 @@ namespace Tajada {
                 Tajada::Code::Intermediate::Address::Address * Expression::genl(
                         Tajada::Code::Block * b
                 ) {
-                        TAJADA_UNUSED_PARAMETER(b);
-
-                        return new Tajada::Code::Intermediate::Address::Unimplemented();
+                        return this->genl(b);
                 }
 
 
@@ -39,9 +38,10 @@ namespace Tajada {
                 Tajada::Code::Intermediate::Address::Address * Expression::genr(
                         Tajada::Code::Block * b
                 ) {
-                        TAJADA_UNUSED_PARAMETER(b);
-
-                        return new Tajada::Code::Intermediate::Address::Unimplemented();
+                        b->end->instructions.push_back(
+                                new Tajada::Code::Intermediate::Instruction::Unimplemented(this)
+                        );
+                        return new Tajada::Code::Intermediate::Address::Unimplemented(this);
                 }
         }
 }

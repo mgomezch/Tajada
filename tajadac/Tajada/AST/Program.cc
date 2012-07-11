@@ -45,7 +45,7 @@ namespace Tajada {
 
 
                 Tajada::Code::Block * Program::gen() {
-                        auto b = new Tajada::Code::Block("main");
+                        auto b = new Tajada::Code::Block("main", this->main->scope);
                         main->gen(b);
                         return b;
                 }

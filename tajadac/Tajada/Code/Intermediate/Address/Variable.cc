@@ -8,6 +8,7 @@
 #include "Tajada/Code/Intermediate/Address/Address.hh"
 #include "Tajada/Code/Intermediate/Address/Location.hh"
 
+#include "Tajada/Code/MIPS/Address/Register.hh"
 #include "scope.hh"
 
 namespace Tajada {
@@ -45,6 +46,19 @@ namespace Tajada {
                                                         this->offset
                                                         ? u8")"
                                                         : u8""
+                                                )
+                                        ;
+                                }
+
+
+
+                                Tajada::Code::MIPS::Address::Address * Variable::to_mips() {
+                                        return
+                                                new Tajada::Code::MIPS::Address::Register
+                                                ( this->scope->type == Tajada::Scope::Type::global
+                                                ? Tajada::Code::MIPS::Address::Register::R::gp
+                                                : Tajada::Code::MIPS::Address::Register::R::fp
+                                                , -this->scope->variable_offset(*this->name)
                                                 )
                                         ;
                                 }

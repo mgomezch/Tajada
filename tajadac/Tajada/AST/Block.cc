@@ -15,16 +15,20 @@
 #include "Tajada/AST/TypeSelection.hh"
 #include "Tajada/AST/While.hh"
 #include "Tajada/Code/Block.hh"
+#include "Tajada/Code/Intermediate/Instruction/Jump.hh"
+#include "scope.hh"
 
 namespace Tajada {
         namespace AST {
                 Block::Block(
-                        std::list<Tajada::AST::Statement *> * p_statements
+                        std::list<Tajada::AST::Statement *> * p_statements,
+                        Tajada::Scope                       * p_scope
                 ):
                         Tajada::AST::AST(),
                         Tajada::AST::Statement(),
 
-                        statements(p_statements)
+                        statements(p_statements),
+                        scope     (p_scope     )
                 {}
 
 
@@ -63,13 +67,36 @@ namespace Tajada {
                 void Block::gen(
                         Tajada::Code::Block * b
                 ) {
+                        auto bs = new Tajada::Code::Block(
+                                "scope_" + std::to_string(this->scope->id),
+                                this->scope
+                        );
+
+                        auto be = new Tajada::Code::Block(
+                                b->rawLabel(),
+                                b->end->scope,
+                                b->end->index + 1
+                        );
+
+                        b->end->instructions.push_back(
+                                new Tajada::Code::Intermediate::Instruction::Jump(bs)
+                        );
+                        b->end->successors.push_back(bs); bs->predecessors.push_back(b);
+
                         std::for_each(
                                 this->statements->begin(),
                                 this->statements->end(),
-                                [b](Tajada::AST::Statement * s) {
-                                        s->gen(b);
+                                [bs](Tajada::AST::Statement * s) {
+                                        s->gen(bs);
                                 }
                         );
+
+                        bs->end->instructions.push_back(
+                                new Tajada::Code::Intermediate::Instruction::Jump(be)
+                        );
+                        bs->end->successors.push_back(be); be->predecessors.push_back(bs->end);
+
+                        b->end = be;
                 }
         }
 }

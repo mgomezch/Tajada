@@ -1,6 +1,11 @@
 #include <numeric>
+#include <string>
 
+// Class:
 #include "scope.hh"
+
+#include "Tajada/AST/FunctionDeclaration.hh"
+#include "Tajada/Type/Type.hh"
 
 unsigned int next_id = 0;
 
@@ -48,6 +53,8 @@ namespace Tajada {
                 end = base;
         }
 
+
+
         void Scope::define_variable(
                 std::string name,
                 Tajada::Type::Type * type
@@ -58,12 +65,25 @@ namespace Tajada {
                 end += type->size();
         }
 
+
+
         Tajada::Type::Type * Scope::variable_type(
                 std::string name
         ) {
                 auto it = variables.find(name);
                 return (it != variables.end()) ? std::get<0>(it->second) : nullptr;
         }
+
+
+
+        unsigned int Scope::variable_offset(
+                std::string name
+        ) {
+                auto it = variables.find(name);
+                return (it != variables.end()) ? std::get<1>(it->second) : 0;
+        }
+
+
 
         std::string Scope::show(unsigned int depth) {
                 return
@@ -129,6 +149,13 @@ namespace Tajada {
                         )
 
                         + std::string(depth * 8, ' ')
-                        + u8"}\n";
+                        + u8"}\n"
+                ;
+        }
+
+
+
+        unsigned int getScopeEnd(Tajada::Scope * scope) {
+                return scope->end;
         }
 }

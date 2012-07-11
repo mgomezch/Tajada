@@ -8,6 +8,8 @@
 #include "Tajada/Code/Intermediate/Address/Address.hh"
 #include "Tajada/Code/Intermediate/Address/Location.hh"
 
+#include "Tajada/Code/MIPS/Address/Register.hh"
+#include "Tajada/Code/MIPS/MIPS.hh"
 #include "scope.hh"
 
 namespace Tajada {
@@ -39,6 +41,27 @@ namespace Tajada {
 
                                                 : u8"$t"
                                                 + std::to_string(this->id)
+                                        ;
+                                }
+
+
+
+                                Tajada::Code::MIPS::Address::Address * Temporary::to_mips() {
+                                        unsigned int offset;
+
+                                        auto it = Tajada::Code::MIPS::temp_offsets.find(this->id);
+                                        if (it != Tajada::Code::MIPS::temp_offsets.end()) {
+                                                offset = it->second;
+                                        } else {
+                                                Tajada::Code::MIPS::temp_offsets[this->id] = offset = Tajada::Code::MIPS::next_offset;
+                                                Tajada::Code::MIPS::next_offset += 4; // TODO: shouldn’t this depend on the type somehow?
+                                        }
+
+                                        return
+                                                new Tajada::Code::MIPS::Address::Register(
+                                                        Tajada::Code::MIPS::Address::Register::R::fp,
+                                                        -(offset + this->offset)
+                                                )
                                         ;
                                 }
                         }

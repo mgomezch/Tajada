@@ -80,9 +80,15 @@ int main(int argc, char * argv[]) {
 
                         if (auto p = dynamic_cast<Tajada::AST::Program *>(tree)) {
                                 auto code = p->gen();
+
                                 std::cout
                                         << u8"Code:\n"
                                         << code->show_all()
+                                ;
+
+                                std::cout
+                                        << u8"\n\n\nMIPS:\n"
+                                        << code->to_mips_all()
                                 ;
                         }
 

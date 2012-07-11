@@ -8,6 +8,13 @@
 // Superclasses:
 #include "Tajada/Code/Intermediate/Address/Address.hh"
 
+//#include "Tajada/AST/AST.hh"
+namespace Tajada {
+        namespace AST {
+                class AST;
+        }
+}
+
 namespace Tajada {
         namespace Code {
                 namespace Intermediate {
@@ -16,7 +23,11 @@ namespace Tajada {
                                         public virtual Tajada::Code::Intermediate::Address::Address
                                 {
                                         public:
-                                                Unimplemented();
+                                                Tajada::AST::AST * unimplemented;
+
+                                                Unimplemented(
+                                                        Tajada::AST::AST * p_unimplemented
+                                                );
 
                                                 virtual std::string show();
                                 };

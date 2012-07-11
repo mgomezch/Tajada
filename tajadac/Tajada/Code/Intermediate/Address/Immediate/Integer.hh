@@ -22,6 +22,8 @@ namespace Tajada {
                                                         );
 
                                                         virtual std::string show();
+
+                                                        virtual Tajada::Code::MIPS::Address::Address * to_mips();
                                         };
                                 }
                         }

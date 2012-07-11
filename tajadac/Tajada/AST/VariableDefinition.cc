@@ -19,12 +19,21 @@ namespace Tajada {
                 {}
 
 
+
                 std::string VariableDefinition::show(unsigned int depth) {
                         return
                                 *name
                                 + std::string(u8" es ")
                                 + type->show(depth)
                         ;
+                }
+
+
+
+                void VariableDefinition::gen(
+                        Tajada::Code::Block * b
+                ) {
+                        TAJADA_UNUSED_PARAMETER(b);
                 }
         }
 }

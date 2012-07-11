@@ -19,6 +19,10 @@
 #include "Tajada/Code/Intermediate/Instruction/Negate.hh"
 #include "Tajada/Code/Intermediate/Instruction/Or.hh"
 #include "Tajada/Code/Intermediate/Instruction/Substract.hh"
+#include "Tajada/Type/Boolean.hh"
+#include "Tajada/Type/Character.hh"
+#include "Tajada/Type/Float.hh"
+#include "Tajada/Type/Integer.hh"
 #include "Tajada/Type/Integer.hh"
 #include "Tajada/Type/Tuple.hh"
 #include "Tajada/Type/Type.hh"
@@ -53,6 +57,8 @@ namespace Tajada {
                                 )
                         );
                 }
+
+
 
                 std::pair<std::string, Builtins::descriptor> binary(
                         std::string          name,
@@ -89,6 +95,8 @@ namespace Tajada {
                         );
                 }
 
+
+
 #define TAJADA_BUILTINS_UNARY_CONSTRUCTOR(i)                        \
         [](                                                         \
                 Tajada::Code::Intermediate::Address::Temporary * t, \
@@ -122,6 +130,8 @@ namespace Tajada {
                         Tajada::Code::Intermediate::Instruction::i \
                 )                                                  \
         )
+
+
 
                 std::unordered_multimap<std::string, Builtins::descriptor> builtins {
                         TAJADA_BUILTINS_UNARY("negativo", Boolean, Boolean, Negate),

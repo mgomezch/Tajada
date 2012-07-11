@@ -2,11 +2,15 @@
 #define TAJADA_SCOPE_HH
 
 #include <stack>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Tajada/AST.hh"
-#include "Tajada/Type.hh"
+#include "Tajada/AST/Function.hh"
+#include "Tajada/AST/FunctionDeclaration.hh"
+#include "Tajada/AST/Statement.hh"
+#include "Tajada/Type/Type.hh"
+#include "Tajada/Type/Union.hh"
 
 #include "location.hh"
 
@@ -73,8 +77,16 @@ namespace Tajada {
                                 std::string name
                         );
 
+                        unsigned int variable_offset(
+                                std::string name
+                        );
+
                         std::string show(unsigned int depth = 0);
         };
+
+
+
+        unsigned int getScopeEnd(Tajada::Scope * scope);
 }
 
 #endif

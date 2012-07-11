@@ -23,6 +23,8 @@ namespace Tajada {
                                                 );
 
                                                 virtual std::string show();
+
+                                                virtual std::vector<Tajada::Code::MIPS::Instruction::Instruction *> to_mips();
                                 };
                         }
                 }

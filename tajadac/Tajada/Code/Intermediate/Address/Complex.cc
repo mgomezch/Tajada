@@ -1,3 +1,4 @@
+#include <cassert>
 #include <numeric>
 #include <string>
 
@@ -8,6 +9,7 @@
 #include "Tajada/Code/Address.hh"
 #include "Tajada/Code/Intermediate/Address/Address.hh"
 
+#include "Tajada/Code/MIPS/Address/Address.hh"
 #include "Tajada/Type/Tuple.hh"
 
 namespace Tajada {
@@ -48,6 +50,13 @@ namespace Tajada {
                                                 )
                                                 + u8"]"
                                         ;
+                                }
+
+
+
+                                Tajada::Code::MIPS::Address::Address * Complex::to_mips() {
+                                        assert(false);
+                                        return NULL;
                                 }
                         }
                 }

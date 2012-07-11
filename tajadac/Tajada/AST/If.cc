@@ -77,9 +77,9 @@ namespace Tajada {
                 ) {
                         auto l = std::to_string(Tajada::Code::Block::make_label());
 
-                        auto bt = new Tajada::Code::Block("t_" + l);
-                        auto bf = new Tajada::Code::Block("f_" + l);
-                        auto be = new Tajada::Code::Block("e_" + l);
+                        auto bt = new Tajada::Code::Block("t_" + l, b->end->scope);
+                        auto bf = new Tajada::Code::Block("f_" + l, b->end->scope);
+                        auto be = new Tajada::Code::Block("e_" + l, b->end->scope);
 
                         auto c = this->condition->genr(b);
 

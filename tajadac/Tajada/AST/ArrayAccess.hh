@@ -10,11 +10,11 @@ namespace Tajada {
         namespace AST {
                 class ArrayAccess : public virtual Tajada::AST::Expression {
                         public:
-                                Tajada::AST::Expression * source;
+                                Tajada::AST::Expression * source  ;
                                 Tajada::AST::Expression * position;
 
                                 ArrayAccess(
-                                        Tajada::AST::Expression * source,
+                                        Tajada::AST::Expression * source  ,
                                         Tajada::AST::Expression * position
                                 );
 

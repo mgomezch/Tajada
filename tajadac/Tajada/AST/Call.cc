@@ -61,7 +61,7 @@ namespace Tajada {
                                 return bf->generator(this, b);
                         }
 
-                        return new Tajada::Code::Intermediate::Address::Unimplemented();
+                        return new Tajada::Code::Intermediate::Address::Unimplemented(this);
                 }
         }
 }

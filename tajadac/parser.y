@@ -339,12 +339,14 @@ toplevel
                 std::get<0>(*$[func_spec])->domain
         );
 } blocklevels[statements] {
-        scope = scope->parent;
+        //scope = scope->parent;
 } BLOCK_CL {
         auto ret = new Tajada::AST::FunctionDefinition(
                 std::get<0>(*$[func_spec]),
-                new Tajada::AST::Block($[statements])
+                new Tajada::AST::Block($[statements], scope)
         );
+
+        scope = scope->parent;
 
         *std::get<1>(*$[func_spec]) = ret;
         $$ = ret;
@@ -926,9 +928,11 @@ block
         scope->children.insert(ns);
         scope = ns;
 } blocklevels[statements] {
-        scope = scope->parent;
+        //scope = scope->parent;
 } BLOCK_CL {
-        $$ = new Tajada::AST::Block($[statements]);
+        $$ = new Tajada::AST::Block($[statements], scope);
+
+        scope = scope->parent;
 }
 
 ;

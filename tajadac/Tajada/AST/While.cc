@@ -44,9 +44,9 @@ namespace Tajada {
                 ) {
                         auto l = std::to_string(Tajada::Code::Block::make_label());
 
-                        auto bc = new Tajada::Code::Block("c_" + l);
-                        auto bb = new Tajada::Code::Block("b_" + l);
-                        auto be = new Tajada::Code::Block("e_" + l);
+                        auto bc = new Tajada::Code::Block("c_" + l, b->end->scope);
+                        auto bb = new Tajada::Code::Block("b_" + l, b->end->scope);
+                        auto be = new Tajada::Code::Block("e_" + l, b->end->scope);
 
                         b->end->instructions.push_back(
                                 new Tajada::Code::Intermediate::Instruction::Jump(bc)

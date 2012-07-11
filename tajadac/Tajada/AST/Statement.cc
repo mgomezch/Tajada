@@ -2,6 +2,7 @@
 #include "Tajada/AST/Statement.hh"
 
 #include "Tajada/Code/Block.hh"
+#include "Tajada/Code/Intermediate/Instruction/Unimplemented.hh" // TODO: remove this once all subclasses have their implementation of genl/genr
 
 namespace Tajada {
         namespace AST {
@@ -9,7 +10,9 @@ namespace Tajada {
                 void Statement::gen(
                         Tajada::Code::Block * b
                 ) {
-                        TAJADA_UNUSED_PARAMETER(b);
+                        b->end->instructions.push_back(
+                                new Tajada::Code::Intermediate::Instruction::Unimplemented(this)
+                        );
                 }
         }
 }

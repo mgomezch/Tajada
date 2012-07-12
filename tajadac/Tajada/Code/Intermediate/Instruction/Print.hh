@@ -1,5 +1,5 @@
-#ifndef TAJADA_CODE_INTERMEDIATE_INSTRUCTION_NEGATE_HH
-#define TAJADA_CODE_INTERMEDIATE_INSTRUCTION_NEGATE_HH
+#ifndef TAJADA_CODE_INTERMEDIATE_INSTRUCTION_PRINT_HH
+#define TAJADA_CODE_INTERMEDIATE_INSTRUCTION_PRINT_HH
 
 #include <string>
 
@@ -12,15 +12,13 @@ namespace Tajada {
         namespace Code {
                 namespace Intermediate {
                         namespace Instruction {
-                                class Negate:
+                                class Print:
                                         public virtual Tajada::Code::Intermediate::Instruction::Instruction
                                 {
                                         public:
-                                                Tajada::Code::Intermediate::Address::Address * dst;
                                                 Tajada::Code::Intermediate::Address::Address * src;
 
-                                                Negate(
-                                                        Tajada::Code::Intermediate::Address::Address * p_dst,
+                                                Print(
                                                         Tajada::Code::Intermediate::Address::Address * p_src
                                                 );
 

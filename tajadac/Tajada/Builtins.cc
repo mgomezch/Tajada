@@ -8,7 +8,9 @@
 
 #include "Tajada/AST/Call.hh"
 #include "Tajada/Code/Block.hh"
+#include "Tajada/Code/Intermediate/Address/Address.hh"
 #include "Tajada/Code/Intermediate/Address/Complex.hh"
+#include "Tajada/Code/Intermediate/Address/Temporary.hh"
 #include "Tajada/Code/Intermediate/Instruction/Add.hh"
 #include "Tajada/Code/Intermediate/Instruction/And.hh"
 #include "Tajada/Code/Intermediate/Instruction/Divide.hh"
@@ -18,6 +20,7 @@
 #include "Tajada/Code/Intermediate/Instruction/Multiply.hh"
 #include "Tajada/Code/Intermediate/Instruction/Negate.hh"
 #include "Tajada/Code/Intermediate/Instruction/Or.hh"
+#include "Tajada/Code/Intermediate/Instruction/Print.hh"
 #include "Tajada/Code/Intermediate/Instruction/Substract.hh"
 #include "Tajada/Type/Boolean.hh"
 #include "Tajada/Type/Character.hh"
@@ -156,6 +159,26 @@ namespace Tajada {
                         TAJADA_BUILTINS_BINARY("igualdad"      , Float    , Float    , Boolean, Equal    ),
                         TAJADA_BUILTINS_BINARY("igualdad"      , Boolean  , Boolean  , Boolean, Equal    ),
                         TAJADA_BUILTINS_BINARY("igualdad"      , Character, Character, Boolean, Equal    ),
+
+                        std::make_pair(
+                                "print",
+                                std::make_tuple(
+                                        new Tajada::Type::Integer(),
+                                        new Tajada::Type::Tuple(
+                                                new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *>()
+                                        ),
+
+                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
+                                                auto a = c->argument->genr(b);
+                                                b->end->instructions.push_back(
+                                                        new Tajada::Code::Intermediate::Instruction::Print(a)
+                                                );
+                                                return static_cast<Tajada::Code::Intermediate::Address::Address *>(nullptr);
+                                        },
+
+                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
+                                )
+                        )
                 };
 
 #undef TAJADA_BUILTINS_BINARY

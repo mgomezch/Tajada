@@ -86,10 +86,14 @@ int main(int argc, char * argv[]) {
                                         << code->show_all()
                                 ;
 
+                                auto mips = code->to_mips_all();
+
                                 std::cout
                                         << u8"\n\n\nMIPS:\n"
-                                        << code->to_mips_all()
+                                        << mips
                                 ;
+
+                                if (filename != "") std::ofstream(filename + u8".s") << mips;
                         }
 
                         std::exit(EX_OK);

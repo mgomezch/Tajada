@@ -83,7 +83,7 @@ namespace Tajada {
                 #tag,                                      \
                 description,                               \
                 regex,                                     \
-                NULL                                       \
+                nullptr                                    \
         ),
                                 TAJADA_TOKEN_DATA(TAJADA_TOKEN_TUPLES)
 #undef TAJADA_TOKEN_TUPLES
@@ -98,7 +98,7 @@ namespace Tajada {
                         match =
                                 (nmatch > 0)
                                 ? new re2::StringPiece[nmatch + 1]
-                                : NULL
+                                : nullptr
                         ;
 
 #define TAJADA_INFIX_INITIALIZER(tag, description, regex, type)             \
@@ -109,7 +109,7 @@ namespace Tajada {
 
 
                 Scanner::~Scanner() {
-                        if (match != NULL) delete [] match;
+                        if (match != nullptr) delete [] match;
                 }
 
 
@@ -147,7 +147,7 @@ namespace Tajada {
 
 
                                         // If we failed compiling the regular expression, ignore it.  This is probably no longer necessary and those failures should become fatal errors.
-                                        || TAJADA_TOKEN_RE2(*it) == NULL
+                                        || TAJADA_TOKEN_RE2(*it) == nullptr
 
 
                                         // If the token we’re going to check for is some class of infix operator and none has been defined with its precedence and associativity, skip it; we don’t want to try matching an empty regular expression.
@@ -398,7 +398,7 @@ namespace Tajada {
                                                 << std::endl
                                         ;
                                         delete r;
-                                        r = NULL;
+                                        r = nullptr;
                                 } else {
                                         n = r->NumberOfCapturingGroups();
 

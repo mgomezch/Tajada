@@ -152,10 +152,4 @@ namespace Tajada {
                         + u8"}\n"
                 ;
         }
-
-
-
-        unsigned int getScopeEnd(Tajada::Scope * scope) {
-                return scope->end;
-        }
 }

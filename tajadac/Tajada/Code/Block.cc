@@ -9,13 +9,14 @@
 #include "Tajada/Code/Block.hh"
 
 #include "Tajada/Code/Intermediate/Instruction/Instruction.hh"
+#include "Tajada/Code/MIPS/Address/Immediate/Integer.hh"
+#include "Tajada/Code/MIPS/Address/Register.hh"
+#include "Tajada/Code/MIPS/Block.hh"
+#include "Tajada/Code/MIPS/Instruction/li.hh"
+#include "Tajada/Code/MIPS/Instruction/move.hh"
+#include "Tajada/Code/MIPS/Instruction/syscall.hh"
 #include "Tajada/Code/MIPS/MIPS.hh"
-
-namespace Tajada {
-        class Scope;
-
-        unsigned int getScopeEnd(Tajada::Scope * scope);
-}
+#include "scope.hh"
 
 namespace Tajada {
         namespace Code {
@@ -36,17 +37,29 @@ namespace Tajada {
 
 
 
+                Block::~Block() {}
+
+
+
                 std::string Block::getLabel() {
                         return
                                 this->label
-                                + "_"
-                                + std::to_string(this->index)
+                                + (
+                                        this->index == 0
+                                        ? ""
+                                        : "_"
+                                        + std::to_string(this->index)
+                                )
                         ;
                 }
+
+
 
                 std::string Block::rawLabel() {
                         return this->label;
                 }
+
+
 
                 std::string Block::show() {
                         return
@@ -80,7 +93,7 @@ namespace Tajada {
                                                 + this->successors.back()->getLabel()
                                         )
                                 )
-                                + u8"]\n"
+                                + u8"]\n\n"
                         ;
                 }
 
@@ -126,15 +139,15 @@ namespace Tajada {
 
 
 
-                Block * Block::to_mips() {
+                Tajada::Code::MIPS::Block * Block::to_mips(Tajada::Code::Block * root) {
                         Tajada::Code::MIPS::temp_offsets.clear();
-                        Tajada::Code::MIPS::next_offset = Tajada::getScopeEnd(this->scope);
-                        return std::accumulate(
+                        Tajada::Code::MIPS::next_offset = this->scope->end;
+                        auto r = std::accumulate(
                                 this->instructions.begin(),
                                 this->instructions.end(),
-                                new Tajada::Code::Block(this->getLabel() + "_mips", nullptr),
-                                [](
-                                        Tajada::Code::Block       * acc,
+                                new Tajada::Code::MIPS::Block(this->rawLabel(), this->scope, this->index),
+                                [this, root](
+                                        Tajada::Code::MIPS::Block * acc,
                                         Tajada::Code::Instruction * i
                                 ) {
                                         if (auto ii = dynamic_cast<Tajada::Code::Intermediate::Instruction::Instruction *>(i)) {
@@ -144,6 +157,39 @@ namespace Tajada {
                                         return acc;
                                 }
                         );
+
+
+                        if (this == root) {
+                                r->instructions.push_front(
+                                        new Tajada::Code::MIPS::Instruction::move(
+                                                new Tajada::Code::MIPS::Address::Register(
+                                                        Tajada::Code::MIPS::Address::Register::R::sp,
+                                                        0
+                                                ),
+                                                new Tajada::Code::MIPS::Address::Register(
+                                                        Tajada::Code::MIPS::Address::Register::R::fp,
+                                                        0
+                                                )
+                                        )
+                                );
+                        }
+
+                        if (this == root->end) {
+                                r->instructions.push_back(
+                                        new Tajada::Code::MIPS::Instruction::li(
+                                                new Tajada::Code::MIPS::Address::Immediate::Integer(10), // exit
+                                                new Tajada::Code::MIPS::Address::Register(
+                                                        Tajada::Code::MIPS::Address::Register::R::v0,
+                                                        0
+                                                )
+                                        )
+                                );
+                                r->instructions.push_back(
+                                        new Tajada::Code::MIPS::Instruction::syscall()
+                                );
+                        }
+
+                        return r;
                 }
 
 
@@ -156,8 +202,8 @@ namespace Tajada {
                                         bs.begin(),
                                         bs.end(),
                                         std::string(),
-                                        [](std::string acc, Tajada::Code::Block * b) {
-                                                return acc + b->to_mips()->show() + "\n";
+                                        [this](std::string acc, Tajada::Code::Block * b) {
+                                                return acc + b->to_mips(this)->show() + "\n";
                                         }
                                 )
                         ;

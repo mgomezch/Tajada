@@ -41,7 +41,7 @@ namespace Tajada {
                                                 { new Tajada::Code::MIPS::Instruction::Comment(this->show())
 
                                                 , new Tajada::Code::MIPS::Instruction::j(
-                                                        this->target->getLabel() + "_mips"
+                                                        this->target->getLabel()
                                                 )
 
                                                 }

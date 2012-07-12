@@ -1,20 +1,19 @@
 // Class:
-#include "Tajada/Code/MIPS/Instruction/sw.hh"
+#include "Tajada/Code/MIPS/Instruction/move.hh"
 
 // Superclasses:
 #include "Tajada/Code/Instruction.hh"
 #include "Tajada/Code/MIPS/Instruction/Instruction.hh"
 
-#include "Tajada/Code/MIPS/Address/Address.hh"
 #include "Tajada/Code/MIPS/Address/Register.hh"
 
 namespace Tajada {
         namespace Code {
                 namespace MIPS {
                         namespace Instruction {
-                                sw::sw(
+                                move::move(
                                         Tajada::Code::MIPS::Address::Register * p_src,
-                                        Tajada::Code::MIPS::Address::Address  * p_dst
+                                        Tajada::Code::MIPS::Address::Register * p_dst
                                 ):
                                         Tajada::Code::Instruction(),
                                         Tajada::Code::MIPS::Instruction::Instruction(),
@@ -25,17 +24,12 @@ namespace Tajada {
 
 
 
-                                std::string sw::show() {
-                                        auto rdst = dynamic_cast<Tajada::Code::MIPS::Address::Register *>(this->dst);
+                                std::string move::show() {
                                         return
-                                                "sw "
-                                                + this->src->show()
+                                                "move "
+                                                + this->dst->show()
                                                 + ", "
-                                                + (
-                                                        (rdst && rdst->offset) || !rdst
-                                                        ? this->dst->show()
-                                                        : "(" + this->dst->show() + ")"
-                                                )
+                                                + this->src->show()
                                         ;
                                 }
                         }

@@ -1,5 +1,5 @@
 // Class:
-#include "Tajada/Code/Intermediate/Instruction/Negate.hh"
+#include "Tajada/Code/Intermediate/Instruction/Print.hh"
 
 // Superclasses:
 #include "Tajada/Code/Instruction.hh"
@@ -11,21 +11,18 @@ namespace Tajada {
         namespace Code {
                 namespace Intermediate {
                         namespace Instruction {
-                                Negate::Negate(
-                                        Tajada::Code::Intermediate::Address::Address * p_dst,
+                                Print::Print(
                                         Tajada::Code::Intermediate::Address::Address * p_src
                                 ):
                                         Tajada::Code::Instruction(),
                                         Tajada::Code::Intermediate::Instruction::Instruction(),
 
-                                        dst(p_dst),
                                         src(p_src)
                                 {}
 
-                                std::string Negate::show() {
+                                std::string Print::show() {
                                         return
-                                                this->dst->show()
-                                                + u8" ≔ neg "
+                                                u8"print "
                                                 + this->src->show()
                                         ;
                                 }

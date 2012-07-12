@@ -50,37 +50,22 @@ namespace Tajada {
 
                                 std::vector<Tajada::Code::MIPS::Instruction::Instruction *> Branch::to_mips() {
                                         auto c = this->condition->to_mips();
-                                        auto i = dynamic_cast<Tajada::Code::MIPS::Address::Immediate::Integer  *>(c);
-                                        auto r = dynamic_cast<Tajada::Code::MIPS::Address::Register            *>(c);
                                         return
                                                 { new Tajada::Code::MIPS::Instruction::Comment(this->show())
 
-                                                , i
-                                                ? static_cast<Tajada::Code::MIPS::Instruction::Instruction *>(
-                                                        new Tajada::Code::MIPS::Instruction::li(
-                                                                i,
-                                                                new Tajada::Code::MIPS::Address::Register(
-                                                                        Tajada::Code::MIPS::Address::Register::R::t1
-                                                                )
-                                                        )
-                                                )
-                                                : static_cast<Tajada::Code::MIPS::Instruction::Instruction *>(
-                                                        new Tajada::Code::MIPS::Instruction::lw(
-                                                                r,
-                                                                new Tajada::Code::MIPS::Address::Register(
-                                                                        Tajada::Code::MIPS::Address::Register::R::t1
-                                                                )
-                                                        )
-                                                )
+                                                , TAJADA_LOAD_TO_REGISTER_MIPS(c, t1, Integer)
 
                                                 , new Tajada::Code::MIPS::Instruction::bnez(
                                                         new Tajada::Code::MIPS::Address::Register(
                                                                 Tajada::Code::MIPS::Address::Register::R::t1
                                                         ),
-                                                        this->block_true->getLabel() + "_mips"
+                                                        this->block_true->getLabel()
                                                 )
 
-                                                , new Tajada::Code::MIPS::Instruction::j(this->block_false->getLabel() + "_mips")
+                                                , new Tajada::Code::MIPS::Instruction::j(
+                                                        this->block_false->getLabel()
+                                                )
+
                                                 }
                                         ;
                                 }

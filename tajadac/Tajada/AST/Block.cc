@@ -73,7 +73,7 @@ namespace Tajada {
                         );
 
                         auto be = new Tajada::Code::Block(
-                                b->rawLabel(),
+                                b->end->rawLabel(),
                                 b->end->scope,
                                 b->end->index + 1
                         );
@@ -82,19 +82,20 @@ namespace Tajada {
                                 new Tajada::Code::Intermediate::Instruction::Jump(bs)
                         );
                         b->end->successors.push_back(bs); bs->predecessors.push_back(b);
+                        b->end = bs;
 
                         std::for_each(
                                 this->statements->begin(),
                                 this->statements->end(),
-                                [bs](Tajada::AST::Statement * s) {
-                                        s->gen(bs);
+                                [b](Tajada::AST::Statement * s) {
+                                        s->gen(b);
                                 }
                         );
 
-                        bs->end->instructions.push_back(
+                        b->end->instructions.push_back(
                                 new Tajada::Code::Intermediate::Instruction::Jump(be)
                         );
-                        bs->end->successors.push_back(be); be->predecessors.push_back(bs->end);
+                        b->end->successors.push_back(be); be->predecessors.push_back(b->end);
 
                         b->end = be;
                 }

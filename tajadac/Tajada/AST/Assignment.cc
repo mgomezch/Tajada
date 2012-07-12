@@ -10,6 +10,9 @@
 
 #include "Tajada/AST/Expression.hh"
 #include "Tajada/Code/Block.hh"
+#include "Tajada/Code/Intermediate/Address/Address.hh"
+#include "Tajada/Code/Intermediate/Address/Complex.hh"
+#include "Tajada/Code/Intermediate/Address/Variable.hh"
 #include "Tajada/Code/Intermediate/Instruction/Copy.hh"
 #include "Tajada/Type/Tuple.hh"
 #include "Tajada/Type/Union.hh"

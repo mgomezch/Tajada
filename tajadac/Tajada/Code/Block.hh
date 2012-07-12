@@ -1,25 +1,31 @@
 #ifndef TAJADA_CODE_BLOCK_HH
 #define TAJADA_CODE_BLOCK_HH
 
+#include <deque>
 #include <string>
 #include <vector>
 
 #include "Tajada/Code/Instruction.hh"
 
 namespace Tajada {
+        namespace Code {
+                namespace MIPS {
+                        class Block;
+                }
+        }
         class Scope;
 }
 
 namespace Tajada {
         namespace Code {
                 class Block {
-                        private:
+                        protected:
                                 std::string     label;
                         public:
                                 Tajada::Scope * scope;
                                 unsigned int    index;
 
-                                std::vector<Tajada::Code::Instruction *> instructions;
+                                std::deque<Tajada::Code::Instruction *> instructions;
 
                                 std::vector<Tajada::Code::Block *> successors  ;
                                 std::vector<Tajada::Code::Block *> predecessors;
@@ -33,6 +39,7 @@ namespace Tajada {
                                         unsigned int    p_index = 0
                                 );
 
+                                virtual ~Block();
 
                                 virtual std::string getLabel();
 
@@ -42,7 +49,9 @@ namespace Tajada {
 
                                 virtual std::string show_all();
 
-                                virtual Block * to_mips();
+                                virtual Tajada::Code::MIPS::Block * to_mips(
+                                        Tajada::Code::Block * root
+                                );
 
                                 virtual std::string to_mips_all();
 

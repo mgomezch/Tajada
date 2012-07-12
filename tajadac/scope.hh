@@ -83,10 +83,6 @@ namespace Tajada {
 
                         std::string show(unsigned int depth = 0);
         };
-
-
-
-        unsigned int getScopeEnd(Tajada::Scope * scope);
 }
 
 #endif

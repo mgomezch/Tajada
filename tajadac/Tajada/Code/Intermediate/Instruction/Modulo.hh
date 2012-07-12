@@ -6,7 +6,7 @@
 // Superclasses:
 #include "Tajada/Code/Intermediate/Instruction/Instruction.hh"
 
-#include "Tajada/Code/Intermediate/Address.hh"
+#include "Tajada/Code/Intermediate/Address/Address.hh"
 
 namespace Tajada {
         namespace Code {

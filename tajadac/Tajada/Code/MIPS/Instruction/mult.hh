@@ -1,28 +1,27 @@
-#ifndef TAJADA_CODE_MIPS_INSTRUCTION_LW_HH
-#define TAJADA_CODE_MIPS_INSTRUCTION_LW_HH
+#ifndef TAJADA_CODE_MIPS_INSTRUCTION_MULT_HH
+#define TAJADA_CODE_MIPS_INSTRUCTION_MULT_HH
 
 #include <string>
 
 // Superclasses:
 #include "Tajada/Code/MIPS/Instruction/Instruction.hh"
 
-#include "Tajada/Code/MIPS/Address/Address.hh"
 #include "Tajada/Code/MIPS/Address/Register.hh"
 
 namespace Tajada {
         namespace Code {
                 namespace MIPS {
                         namespace Instruction {
-                                class lw:
+                                class mult:
                                         public virtual Tajada::Code::MIPS::Instruction::Instruction
                                 {
                                         public:
-                                                Tajada::Code::MIPS::Address::Address  * src;
-                                                Tajada::Code::MIPS::Address::Register * dst;
+                                                Tajada::Code::MIPS::Address::Register * lsrc;
+                                                Tajada::Code::MIPS::Address::Register * rsrc;
 
-                                                lw(
-                                                        Tajada::Code::MIPS::Address::Address  * p_src,
-                                                        Tajada::Code::MIPS::Address::Register * p_dst
+                                                mult(
+                                                        Tajada::Code::MIPS::Address::Register * p_lsrc,
+                                                        Tajada::Code::MIPS::Address::Register * p_rsrc
                                                 );
 
                                                 virtual std::string show();

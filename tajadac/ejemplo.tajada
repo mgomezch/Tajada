@@ -1,0 +1,46 @@
+println es un plato de queso x con salsa de arepa viuda cableado imprimirln.
+
+read es un plato de arepa viuda x con salsa de queso cableado leer.
+
+∨ es infijo diestro 2.  ∨ es un plato de arepa con café  y café  x con salsa de café  cableado or            .
+∧ es infijo diestro 3.  ∧ es un plato de arepa con café  y café  x con salsa de café  cableado and           .
+< es infijo         4.  < es un plato de arepa con queso y queso x con salsa de café  cableado menor         .
++ es infijo zurdo   6.  + es un plato de arepa con queso y queso x con salsa de queso cableado suma          .
+× es infijo zurdo   7.  × es un plato de arepa con queso y queso x con salsa de queso cableado multiplicación.
+
+{
+        {
+                f es arepa con queso y queso.
+                f ≔ «1, 2».
+
+                println $ f→0.
+                println $ f→1.
+
+                f ≔ «f→1, f→0».
+
+                println $ f→0.
+                println $ f→1.
+        }
+
+        f es queso.
+        f ≔ read $ «».
+
+        if (f < 1) {
+                println $ 1.
+        } else {
+                datos es arepa con queso y queso.
+                datos ≔ «1, 1».
+
+                i es queso.  i ≔ 0.
+                while (i < f) {
+                        println $ datos→0.
+
+                        f es queso.
+                        f ≔ datos→0 + datos→1.
+                        datos→0 ≔ datos→1.
+                        datos→1 ≔ f.
+                        i ≔ i + 1.
+                }
+                println $ datos→1.
+        }
+}

@@ -21,6 +21,8 @@
 #include "Tajada/Code/Intermediate/Instruction/Negate.hh"
 #include "Tajada/Code/Intermediate/Instruction/Or.hh"
 #include "Tajada/Code/Intermediate/Instruction/Print.hh"
+#include "Tajada/Code/Intermediate/Instruction/PrintLine.hh"
+#include "Tajada/Code/Intermediate/Instruction/ReadI.hh"
 #include "Tajada/Code/Intermediate/Instruction/Substract.hh"
 #include "Tajada/Type/Boolean.hh"
 #include "Tajada/Type/Character.hh"
@@ -161,7 +163,28 @@ namespace Tajada {
                         TAJADA_BUILTINS_BINARY("igualdad"      , Character, Character, Boolean, Equal    ),
 
                         std::make_pair(
-                                "print",
+                                "leer",
+                                std::make_tuple(
+                                        new Tajada::Type::Tuple(
+                                                new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *>()
+                                        ),
+                                        new Tajada::Type::Integer(),
+
+                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
+                                                c->argument->genr(b);
+                                                auto t = new Tajada::Code::Intermediate::Address::Temporary();
+                                                b->end->instructions.push_back(
+                                                        new Tajada::Code::Intermediate::Instruction::ReadI(t)
+                                                );
+                                                return t;
+                                        },
+
+                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
+                                )
+                        ),
+
+                        std::make_pair(
+                                "imprimir",
                                 std::make_tuple(
                                         new Tajada::Type::Integer(),
                                         new Tajada::Type::Tuple(
@@ -172,6 +195,26 @@ namespace Tajada {
                                                 auto a = c->argument->genr(b);
                                                 b->end->instructions.push_back(
                                                         new Tajada::Code::Intermediate::Instruction::Print(a)
+                                                );
+                                                return static_cast<Tajada::Code::Intermediate::Address::Address *>(nullptr);
+                                        },
+
+                                        static_cast<std::function<bool (Tajada::AST::Call *)>>(nullptr)
+                                )
+                        ),
+
+                        std::make_pair(
+                                "imprimirln",
+                                std::make_tuple(
+                                        new Tajada::Type::Integer(),
+                                        new Tajada::Type::Tuple(
+                                                new std::vector<std::tuple<Tajada::Type::Type *, std::string *> *>()
+                                        ),
+
+                                        [](Tajada::AST::Call * c, Tajada::Code::Block * b) {
+                                                auto a = c->argument->genr(b);
+                                                b->end->instructions.push_back(
+                                                        new Tajada::Code::Intermediate::Instruction::PrintLine(a)
                                                 );
                                                 return static_cast<Tajada::Code::Intermediate::Address::Address *>(nullptr);
                                         },

@@ -1,25 +1,25 @@
-#ifndef TAJADA_CODE_INTERMEDIATE_INSTRUCTION_PRINT_HH
-#define TAJADA_CODE_INTERMEDIATE_INSTRUCTION_PRINT_HH
+#ifndef TAJADA_CODE_INTERMEDIATE_INSTRUCTION_READI_HH
+#define TAJADA_CODE_INTERMEDIATE_INSTRUCTION_READI_HH
 
 #include <string>
 
 // Superclasses:
 #include "Tajada/Code/Intermediate/Instruction/Instruction.hh"
 
-#include "Tajada/Code/Intermediate/Address/Address.hh"
+#include "Tajada/Code/Intermediate/Address/Location.hh"
 
 namespace Tajada {
         namespace Code {
                 namespace Intermediate {
                         namespace Instruction {
-                                class Print:
+                                class ReadI:
                                         public virtual Tajada::Code::Intermediate::Instruction::Instruction
                                 {
                                         public:
-                                                Tajada::Code::Intermediate::Address::Address * src;
+                                                Tajada::Code::Intermediate::Address::Location * dst;
 
-                                                Print(
-                                                        Tajada::Code::Intermediate::Address::Address * p_src
+                                                ReadI(
+                                                        Tajada::Code::Intermediate::Address::Location * p_dst
                                                 );
 
                                                 virtual std::string show();

@@ -160,8 +160,8 @@ namespace Tajada {
 
 
                         if (this == root) {
-                                r->instructions.push_front(
-                                        new Tajada::Code::MIPS::Instruction::move(
+                                std::vector<Tajada::Code::MIPS::Instruction::Instruction *> prelude =
+                                        { new Tajada::Code::MIPS::Instruction::move(
                                                 new Tajada::Code::MIPS::Address::Register(
                                                         Tajada::Code::MIPS::Address::Register::R::sp,
                                                         0
@@ -171,7 +171,11 @@ namespace Tajada {
                                                         0
                                                 )
                                         )
-                                );
+
+                                        }
+                                ;
+
+                                r->instructions.insert(r->instructions.begin(), prelude.begin(), prelude.end());
                         }
 
                         if (this == root->end) {

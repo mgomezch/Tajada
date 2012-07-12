@@ -86,7 +86,13 @@ int main(int argc, char * argv[]) {
                                         << code->show_all()
                                 ;
 
-                                auto mips = code->to_mips_all();
+                                std::string mips =
+                                        // TODO: global data
+                                        ".data\n"
+                                        "endl: .asciiz \"\\n\"\n"
+                                        ".text\n"
+                                        + code->to_mips_all()
+                                ;
 
                                 std::cout
                                         << u8"\n\n\nMIPS:\n"

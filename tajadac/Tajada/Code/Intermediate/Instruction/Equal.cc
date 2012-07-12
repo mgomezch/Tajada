@@ -6,6 +6,11 @@
 #include "Tajada/Code/Intermediate/Instruction/Instruction.hh"
 
 #include "Tajada/Code/Intermediate/Address/Address.hh"
+#include "Tajada/Code/MIPS/Instruction/Comment.hh"
+#include "Tajada/Code/MIPS/Instruction/Instruction.hh"
+#include "Tajada/Code/MIPS/Instruction/nor.hh"
+#include "Tajada/Code/MIPS/Instruction/slt.hh"
+#include "Tajada/Code/MIPS/Instruction/sw.hh"
 
 namespace Tajada {
         namespace Code {
@@ -24,6 +29,8 @@ namespace Tajada {
                                         rsrc(p_rsrc)
                                 {}
 
+
+
                                 std::string Equal::show() {
                                         return
                                                 this->dst->show()
@@ -31,6 +38,46 @@ namespace Tajada {
                                                 + this->lsrc->show()
                                                 + u8" = "
                                                 + this->rsrc->show()
+                                        ;
+                                }
+
+
+
+                                std::vector<Tajada::Code::MIPS::Instruction::Instruction *> Equal::to_mips() {
+                                        auto mlsrc = this->lsrc->to_mips();
+                                        auto mrsrc = this->rsrc->to_mips();
+                                        auto mdst  = this->dst ->to_mips();
+
+                                        return
+                                                { new Tajada::Code::MIPS::Instruction::Comment(this->show())
+
+                                                , TAJADA_LOAD_TO_REGISTER_MIPS(mlsrc, t1, Integer)
+                                                , TAJADA_LOAD_TO_REGISTER_MIPS(mrsrc, t2, Integer)
+
+                                                , new Tajada::Code::MIPS::Instruction::slt(
+                                                        new Tajada::Code::MIPS::Address::Register(Tajada::Code::MIPS::Address::Register::R::t1),
+                                                        new Tajada::Code::MIPS::Address::Register(Tajada::Code::MIPS::Address::Register::R::t2),
+                                                        new Tajada::Code::MIPS::Address::Register(Tajada::Code::MIPS::Address::Register::R::t3)
+                                                )
+
+                                                , new Tajada::Code::MIPS::Instruction::slt(
+                                                        new Tajada::Code::MIPS::Address::Register(Tajada::Code::MIPS::Address::Register::R::t2),
+                                                        new Tajada::Code::MIPS::Address::Register(Tajada::Code::MIPS::Address::Register::R::t1),
+                                                        new Tajada::Code::MIPS::Address::Register(Tajada::Code::MIPS::Address::Register::R::t4)
+                                                )
+
+                                                , new Tajada::Code::MIPS::Instruction::nor(
+                                                        new Tajada::Code::MIPS::Address::Register(Tajada::Code::MIPS::Address::Register::R::t3),
+                                                        new Tajada::Code::MIPS::Address::Register(Tajada::Code::MIPS::Address::Register::R::t4),
+                                                        new Tajada::Code::MIPS::Address::Register(Tajada::Code::MIPS::Address::Register::R::t0)
+                                                )
+
+                                                , new Tajada::Code::MIPS::Instruction::sw(
+                                                        new Tajada::Code::MIPS::Address::Register(Tajada::Code::MIPS::Address::Register::R::t0),
+                                                        dynamic_cast<Tajada::Code::MIPS::Address::Register *>(mdst)
+                                                )
+
+                                                }
                                         ;
                                 }
                         }

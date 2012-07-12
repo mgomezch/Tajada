@@ -58,7 +58,7 @@ namespace Tajada {
                                                 ( this->scope->type == Tajada::Scope::Type::global
                                                 ? Tajada::Code::MIPS::Address::Register::R::gp
                                                 : Tajada::Code::MIPS::Address::Register::R::fp
-                                                , -this->scope->variable_offset(*this->name)
+                                                , -(this->scope->variable_offset(*this->name) + this->offset)
                                                 )
                                         ;
                                 }
